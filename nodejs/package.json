@@ -1,9 +1,9 @@
 {
-  "name": "kmullaney-00070763",
-  "version": "0.0.0-test",
+  "name": "kmullaney-random-invocations",
+  "version": "0.1",
   "esversion": 6,
   "description": "",
-  "main": "index.js",
+  "main": "function.js",
   "scripts": {
     "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
     "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
