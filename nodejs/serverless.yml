@@ -32,15 +32,15 @@ custom:
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
     disableLicenseKeySecret: true
     logEnabled: true
-    logLevel: trace
+    logLevel: info
     debug: true
 
 package:
   individually: true
 
 functions:
-  node18-a:
-    description: Random invocations to generate interesting traffic
+  nodejs16:
+    description: print environment
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
@@ -51,44 +51,8 @@ functions:
         - ./function.js
     provisionedConcurrency: 0
 
-  node18-b:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-c:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-d:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-e:
-    description: Random invocations to generate interesting traffic
+  nodejs18:
+    description: print environment
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
