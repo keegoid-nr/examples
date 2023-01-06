@@ -1,9 +1,9 @@
 {
   "name": "kmullaney-random-invocations",
   "version": "0.1",
-  "esversion": 6,
+  "esversion": 8,
   "description": "",
-  "main": "function.js",
+  "main": "function-a.js",
   "scripts": {
     "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
     "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
@@ -16,5 +16,8 @@
   "devDependencies": {
     "serverless": "~3",
     "serverless-newrelic-lambda-layers": "~3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1289.0"
   }
 }

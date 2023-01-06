@@ -4,10 +4,16 @@ useDotenv: true
 
 provider:
   name: aws
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 'events:PutRule'
+          Resource: '*'
   region: ${env:AWS_DEFAULT_REGION}
   stage: "00082952"
-  runtime: nodejs18.x
   timeout: 4
+  runtime: nodejs18.x
   logRetentionInDays: 14
   tags:
     owner: kmullaney
@@ -17,11 +23,10 @@ provider:
     owner: kmullaney
     reason: ticket
     description: "00082952"
-  layers:
-    - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
+    # NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
 
 plugins:
   - serverless-newrelic-lambda-layers
@@ -30,71 +35,90 @@ custom:
   newRelic:
     accountId: ${env:NEW_RELIC_ACCOUNT_ID}
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
-    disableLicenseKeySecret: true
+    # disableLicenseKeySecret: true
+    # disableAutoSubscription: false
+    logIngestionFunctionName: kmullaney-log-ingestion-39
+    cloudWatchFilter: "*"
+    enableExtension: false
     logEnabled: true
-    logLevel: trace
+    logLevel: info
     debug: true
 
 package:
   individually: true
 
 functions:
-  node18-a:
+  nodejs18-a:
     description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    events:
+      - schedule:
+          name: random_1-5_minutes_a
+          rate: rate(1 minute)
+          description: a random rate between 1 and 5 minutes
+    handler: function_a.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
+      patterns:
+        - 'function_a.js'
     provisionedConcurrency: 0
+    layers:
+      - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
 
-  node18-b:
+  nodejs18-b:
     description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    events:
+      - schedule:
+          name: random_1-5_minutes_b
+          rate: rate(1 minute)
+          description: a random rate between 1 and 5 minutes
+    handler: function_b.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
+      patterns:
+        - 'function_b.js'
     provisionedConcurrency: 0
+    layers:
+      - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
 
-  node18-c:
+  nodejs18-c:
     description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    events:
+      - schedule:
+          name: random_1-5_minutes_c
+          rate: rate(1 minute)
+          description: a random rate between 1 and 5 minutes
+    handler: function_c.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
+      patterns:
+        - 'function_c.js'
     provisionedConcurrency: 0
+    layers:
+      - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
 
-  node18-d:
+  nodejs18-d:
     description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    events:
+      - schedule:
+          name: random_1-5_minutes_d
+          rate: rate(1 minute)
+          description: a random rate between 1 and 5 minutes
+    handler: function_d.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
+      patterns:
+        - 'function_d.js'
     provisionedConcurrency: 0
+    layers:
+      - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
 
-  node18-e:
+  nodejs18-e:
     description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    events:
+      - schedule:
+          name: random_1-5_minutes_e
+          rate: rate(1 minute)
+          description: a random rate between 1 and 5 minutes
+    handler: function_e.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
+      patterns:
+        - 'function_e.js'
     provisionedConcurrency: 0
+    layers:
+      - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"

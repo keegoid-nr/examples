@@ -1,35 +1,28 @@
 var aws = require("aws-sdk")
-var fs = require("fs")
-
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
 // of the module occurs once, during cold start.
-console.log("Lambda Handler starting up")
+console.log("Lambda Handler starting up for function_c")
 
-module.exports.lambda_handler = async function (event, context) {
+module.exports.lambda_handler = function (event, context) {
   // https://stackoverflow.com/questions/41557956/can-you-trigger-an-aws-lambda-on-a-dynamic-timer
   var cloudwatchevents = new aws.CloudWatchEvents()
   var intervals = Array(1, 2, 3, 4, 5)
   var nextInterval = intervals[Math.floor(Math.random() * intervals.length)]
   // var currentTime = new Date().getTime() // UTC time
-  var nextTime = dateAdd(currentTime, "minute", nextInterval)
+  // var nextTime = dateAdd(currentTime, "minute", nextInterval)
   // var nextTime = dateAdd(currentTime, "minute", nextInterval)
   // var nextMinutes = nextTime.getMinutes()
   // var nextHours = nextTime.getHours()
-  var files = fs.readdirSync("/opt/nodejs/")
-  var packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
-
-  // do work
-  console.log("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
-  console.info("EVENT\n" + JSON.stringify(event, null, 2))
-  console.warn("Event not processed.")
-  console.log(files)
-  console.log("***package-lock.json***\n", packageLock)
 
   // update scheduled event
   var scheduleExpression = "rate(" + nextInterval + " minutes)"
+  console.log("*******************")
+  console.log("*" + scheduleExpression + "*")
+  console.log("*******************")
   var params = {
-    Name: "random_1-5_minutes",
+    Name: "random_1-5_minutes_c",
+    Description: "a random rate between 1 and 5 minutes",
     ScheduleExpression: scheduleExpression,
   }
   cloudwatchevents.putRule(params, function (err, data) {
