@@ -18,7 +18,7 @@ module.exports.lambda_handler = function (event, context) {
   // update scheduled event
   var scheduleExpression = "rate(" + nextInterval + " minutes)"
   console.log("*******************")
-  console.log("*" + scheduleExpression + "*")
+  console.log("* " + scheduleExpression + " *")
   console.log("*******************")
   var params = {
     Name: "random_1-5_minutes_d",
