@@ -35,7 +35,7 @@ custom:
     # logEnabled: true
     # logLevel: debug
     debug: true
-    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:83
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:97
   pythonRequirements:
     fileName: ./requirements.txt
 
@@ -44,7 +44,7 @@ package:
 
 functions:
   python37:
-    description: Test with cURL to OTLP endpoint.
+    description: Test with cURL to endpoint.
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
@@ -53,6 +53,6 @@ functions:
         - ./**
       include:
         - ./function.py
-    # cURL is removed from Lambda runtimes >python3.7
+    # cURL is removed from Lambda runtimes > python3.7
     runtime: python3.7
     provisionedConcurrency: 0
