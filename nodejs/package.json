@@ -14,7 +14,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3"
+    "serverless": "~3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1309.0"
   }
 }
