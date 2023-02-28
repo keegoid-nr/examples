@@ -16,7 +16,7 @@ def lambda_handler(event, context):
 
     # Accept distributed tracing headers
     headers = event.get("headers", {})
-    transaction.accept_distributed_trace_headers(headers, "HTTP")
+    transaction.accept_distributed_trace_headers(headers)
 
     # Print out the distributed tracing headers
     trace_headers = transaction.distributed_trace_headers()
