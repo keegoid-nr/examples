@@ -1,6 +1,6 @@
 {
-  "name": "kmullaney-random-invocations",
-  "version": "0.1",
+  "name": "kmullaney-nodejs16x-example",
+  "version": "0.2",
   "esversion": 6,
   "description": "",
   "main": "function.js",

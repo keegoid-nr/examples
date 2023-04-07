@@ -5,20 +5,18 @@ useDotenv: true
 provider:
   name: aws
   region: ${env:AWS_DEFAULT_REGION}
-  stage: "00082952"
-  runtime: nodejs18.x
-  timeout: 4
+  stage: "00102778"
+  runtime: nodejs16.x
+  timeout: 30
   logRetentionInDays: 14
   tags:
     owner: kmullaney
     reason: ticket
-    description: "00082952"
+    description: "00102778"
   stackTags:
     owner: kmullaney
     reason: ticket
-    description: "00082952"
-  layers:
-    - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
+    description: "00102778"
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
@@ -32,63 +30,15 @@ custom:
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
     disableLicenseKeySecret: true
     logEnabled: true
-    logLevel: trace
+    logLevel: info
     debug: true
 
 package:
   individually: true
 
 functions:
-  node18-a:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-b:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-c:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-d:
-    description: Random invocations to generate interesting traffic
-    # events:
-    #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
-    package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-    provisionedConcurrency: 0
-
-  node18-e:
-    description: Random invocations to generate interesting traffic
+  nodejs16x:
+    description: a test nodejs16x function
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
