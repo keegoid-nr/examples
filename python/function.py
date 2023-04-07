@@ -35,6 +35,6 @@ def lambda_handler(event, context):
     r = subprocess.run(cmd, capture_output=True, check=True, text=True)
     print("***STDOUT***\n", r.stdout)
     print("***STDERR***\n", r.stderr)
-    print("response status code: ", response.status_code)
+    print("response.status_code: ", response.status_code)
 
     return r.returncode
