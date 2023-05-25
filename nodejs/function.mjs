@@ -1,11 +1,10 @@
-var aws = require("aws-sdk")
-var fs = require("fs")
+import fs from 'fs'
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
 // of the module occurs once, during cold start.
 console.log("Lambda Handler starting up")
 
-module.exports.lambda_handler = async function (event, context) {
+const lambda_handler = async (event, context) => {
   var files = fs.readdirSync("/opt/nodejs/")
   var packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
 
@@ -18,3 +17,5 @@ module.exports.lambda_handler = async function (event, context) {
 
   return context.logStreamName
 }
+
+export { lambda_handler }
