@@ -18,10 +18,7 @@ provider:
     description: "123456"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    # NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
-    # NEW_RELIC_LOG_LEVEL: info
-    # NEW_RELIC_LOG: stderr
 
 plugins:
   - serverless-python-requirements
@@ -29,13 +26,13 @@ plugins:
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}
-    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
-    # disableLicenseKeySecret: false
-    logEnabled: true
-    logLevel: info
-    debug: true
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:97
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID
+    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY} # User api key
+    disableAutoSubscription: true             # Don't create a subscription filter to the newrelic-log-ingestion function
+    enableFunctionLogs: true                  # Send logs via [NR_EXT]
+    logEnabled: true                          # Python agent logs
+    logLevel: info                            # Python agent log level
+    debug: true                               # Serverless Framework debug
   pythonRequirements:
     fileName: ./requirements.txt
 
