@@ -43,8 +43,8 @@ package:
   individually: true
 
 functions:
-  python39:
-    description: Test dt headers
+  python37:
+    description: print dt headers
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
@@ -54,5 +54,5 @@ functions:
       include:
         - ./function.py
     # cURL is removed from Lambda runtimes > python3.7
-    runtime: python3.9
+    runtime: python3.7
     provisionedConcurrency: 0

@@ -19,27 +19,21 @@ def lambda_handler(event, context):
     transaction.accept_distributed_trace_headers(headers)
 
     # Print out the distributed tracing headers
-    # trace_headers = transaction.distributed_trace_headers()
-    # print("Distributed tracing headers:")
-    # for key, value in trace_headers.items():
-    #     print(f"{key}: {value}")
-
-    # Print out the distributed tracing headers
     print("Distributed tracing headers:")
     for key, value in headers.items():
         print(f"{key}: {value}")
 
     # Make an external HTTP request and inject distributed tracing headers
     url = "https://example.com/api"
-    headers = {}
+    headers = []
     transaction.insert_distributed_trace_headers(headers)
-    response = requests.get(url, headers=headers)
+    return requests.get(url, headers=headers)
 
     # perform cURL operation and print results
-    cmd = ["curl", "-vvv", url]
-    r = subprocess.run(cmd, capture_output=True, check=True, text=True)
-    print("***STDOUT***\n", r.stdout)
-    print("***STDERR***\n", r.stderr)
-    print("response.status_code: ", response.status_code)
+    # cmd = ["curl", "-vvv", url]
+    # r = subprocess.run(cmd, capture_output=True, check=True, text=True)
+    # print("***STDOUT***\n", r.stdout)
+    # print("***STDERR***\n", r.stderr)
+    # print("response.status_code: ", response.status_code)
 
-    return r.returncode
+    # return r.returncode
