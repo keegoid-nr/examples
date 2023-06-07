@@ -1,6 +1,4 @@
-import newrelic.agent
 import requests
-# import subprocess
 
 # In a python Lambda, the runtime loads the handler code as a module; so code in the top level
 # of the module occurs once, during cold start.
@@ -24,23 +22,6 @@ def lambda_handler(event, context):
     # Get the transaction object for this function
     transaction = newrelic.agent.current_transaction()
 
-    # Accept distributed tracing headers
-    headers = event.get("headers", {})
-    transaction.accept_distributed_trace_headers(headers)
-
-    # Print out the distributed tracing headers
-    print("Distributed tracing headers:")
-    for key, value in headers.items():
-        print(f"{key}: {value}")
-
-    # Make an external HTTP request and inject distributed tracing headers
-    url = "https://example.com/api"
-    headers_list = []
-    transaction.insert_distributed_trace_headers(headers_list)
-    headers_dict = {k: v for k, v in headers_list}
-    response = requests.get(url, headers=headers_dict)
-    print(response)
-
     # This is an example of a custom event. `FROM MyPythonEvent SELECT *` in New Relic will find this event.
     newrelic.agent.record_custom_event("MyPythonEvent", {
         "zip": "zap"
@@ -58,11 +39,18 @@ def lambda_handler(event, context):
     print("username: ",username)
     print("password: ",password)
 
-    # perform cURL operation and print results
-    cmd = ["curl", "-vvv", url]
-    r = subprocess.run(cmd, capture_output=True, check=True, text=True)
-    print("***STDOUT***\n", r.stdout)
-    print("***STDERR***\n", r.stderr)
-    print("response.status_code: ", response.status_code)
+    # Accept distributed tracing headers
+    headers = event.get("headers", {})
+    transaction.accept_distributed_trace_headers(headers)
 
-    return r.returncode
+    # Print out the distributed tracing headers
+    print("Distributed tracing headers:")
+    for key, value in headers.items():
+        print(f"{key}: {value}")
+
+    # Make an external HTTP request and inject distributed tracing headers
+    url = "https://example.com/api"
+    headers_list = []
+    transaction.insert_distributed_trace_headers(headers_list)
+    headers_dict = {k: v for k, v in headers_list}
+    return requests.get(url, headers=headers_dict)

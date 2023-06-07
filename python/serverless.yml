@@ -11,11 +11,11 @@ provider:
   tags:
     owner: kmullaney
     reason: case
-    description: "00123465"
+    description: "123456"
   stackTags:
     owner: kmullaney
     reason: case
-    description: "00123465"
+    description: "123456"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     # NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
