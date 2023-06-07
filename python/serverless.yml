@@ -5,17 +5,17 @@ useDotenv: true
 provider:
   name: aws
   region: ${env:AWS_DEFAULT_REGION}
-  stage: "dt-headers"
+  stage: "dt-headers-2"
   timeout: 10
   logRetentionInDays: 14
   tags:
     owner: kmullaney
     reason: case
-    description: "00084843"
+    description: "00123465"
   stackTags:
     owner: kmullaney
     reason: case
-    description: "00084843"
+    description: "00123465"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     # NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}

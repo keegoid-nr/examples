@@ -19,9 +19,14 @@ def lambda_handler(event, context):
     transaction.accept_distributed_trace_headers(headers)
 
     # Print out the distributed tracing headers
-    trace_headers = transaction.distributed_trace_headers()
+    # trace_headers = transaction.distributed_trace_headers()
+    # print("Distributed tracing headers:")
+    # for key, value in trace_headers.items():
+    #     print(f"{key}: {value}")
+
+    # Print out the distributed tracing headers
     print("Distributed tracing headers:")
-    for key, value in trace_headers.items():
+    for key, value in headers.items():
         print(f"{key}: {value}")
 
     # Make an external HTTP request and inject distributed tracing headers
