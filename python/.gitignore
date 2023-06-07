@@ -34,6 +34,7 @@ build/Release
 
 # Dependency directories
 .venv
+.venv37
 node_modules/
 jspm_packages/
 
