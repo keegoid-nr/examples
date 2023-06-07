@@ -33,7 +33,7 @@ custom:
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
     # disableLicenseKeySecret: false
     logEnabled: true
-    logLevel: debug
+    logLevel: info
     debug: true
     # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:97
   pythonRequirements:
