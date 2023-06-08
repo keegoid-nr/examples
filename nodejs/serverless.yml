@@ -33,8 +33,8 @@ custom:
     logLevel: info                            # Python agent log level
     debug: true                               # Serverless Framework debug
 
-package:
-  individually: true
+# package:
+#   individually: true
 
 functions:
   nodejs14x:
@@ -44,9 +44,8 @@ functions:
     handler: function.lambda_handler
     runtime: nodejs14.x
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.js
-        - ./node_modules/axios/**
+      patterns:
+        - '!node_modules/**'
+        - 'node_modules/axios/**'
+        - 'function.js'
     provisionedConcurrency: 0
