@@ -1,5 +1,5 @@
 {
-  "name": "kmullaney-random-invocations",
+  "name": "kmullaney-dt-headers",
   "version": "0.1",
   "esversion": 6,
   "description": "",
@@ -16,5 +16,8 @@
   "devDependencies": {
     "serverless": "~3",
     "serverless-newrelic-lambda-layers": "~3"
+  },
+  "dependencies": {
+    "axios": "^1.4.0"
   }
 }

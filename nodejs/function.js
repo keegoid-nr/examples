@@ -1,78 +1,69 @@
-var aws = require("aws-sdk")
-var fs = require("fs")
-
+// const axios = require("axios")
+const newrelic = require("newrelic")
+const fs = require("fs")
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
 // of the module occurs once, during cold start.
 console.log("Lambda Handler starting up")
 
-module.exports.lambda_handler = async function (event, context) {
-  // https://stackoverflow.com/questions/41557956/can-you-trigger-an-aws-lambda-on-a-dynamic-timer
-  var cloudwatchevents = new aws.CloudWatchEvents()
-  var intervals = Array(1, 2, 3, 4, 5)
-  var nextInterval = intervals[Math.floor(Math.random() * intervals.length)]
-  // var currentTime = new Date().getTime() // UTC time
-  var nextTime = dateAdd(currentTime, "minute", nextInterval)
-  // var nextTime = dateAdd(currentTime, "minute", nextInterval)
-  // var nextMinutes = nextTime.getMinutes()
-  // var nextHours = nextTime.getHours()
-  var files = fs.readdirSync("/opt/nodejs/")
-  var packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
-
-  // do work
-  console.log("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
-  console.info("EVENT\n" + JSON.stringify(event, null, 2))
-  console.warn("Event not processed.")
-  console.log(files)
-  console.log("***package-lock.json***\n", packageLock)
-
-  // update scheduled event
-  var scheduleExpression = "rate(" + nextInterval + " minutes)"
-  var params = {
-    Name: "random_1-5_minutes",
-    ScheduleExpression: scheduleExpression,
-  }
-  cloudwatchevents.putRule(params, function (err, data) {
-    if (err) {
-      console.log(err, err.stack)
-    } else {
-      console.log(data)
-    }
-  })
-
-  return context.logStreamName
+function get_user() {
+  console.log("getting DB username ")
+  return "Bill"
 }
 
-// var dateAdd = function (date, interval, units) {
-//   var ret = new Date(date) // don't change original date
-//   switch (interval.toLowerCase()) {
-//     case "year":
-//       ret.setFullYear(ret.getFullYear() + units)
-//       break
-//     case "quarter":
-//       ret.setMonth(ret.getMonth() + 3 * units)
-//       break
-//     case "month":
-//       ret.setMonth(ret.getMonth() + units)
-//       break
-//     case "week":
-//       ret.setDate(ret.getDate() + 7 * units)
-//       break
-//     case "day":
-//       ret.setDate(ret.getDate() + units)
-//       break
-//     case "hour":
-//       ret.setTime(ret.getTime() + units * 3600000)
-//       break
-//     case "minute":
-//       ret.setTime(ret.getTime() + units * 60000)
-//       break
-//     case "second":
-//       ret.setTime(ret.getTime() + units * 1000)
-//       break
-//     default:
-//       ret = undefined
-//       break
-//   }
-//   return ret
-// }
+function get_pass() {
+  console.log("getting DB password")
+  return "123456"
+}
+
+module.exports.lambda_handler = async function (event, context) {
+  // Call newrelic.getTransaction to retrieve a handle on the current transaction.
+  const transaction = newrelic.getTransaction()
+
+  // Accept distributed tracing headers
+  let headers = event.headers || {}
+  if (!headers.hasOwnProperty("newrelic")) {
+    // Generate distributed tracing headers if headers are not provided
+    newrelic.startBackgroundTransaction(
+      "background task",
+      function executeTransaction() {
+        const backgroundT = newrelic.getTransaction()
+        // Generate the headers
+        backgroundT.insertDistributedTraceHeaders(headers)
+      }
+    )
+  } else {
+    transaction.acceptDistributedTraceHeaders("HTTP", headers)
+  }
+
+  // Print out the distributed tracing headers
+  console.log("Distributed tracing headers:")
+  for (let key in headers) {
+    console.info(`${key}: ${headers[key]}`)
+  }
+  console.log(
+    "The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`"
+  )
+
+  // Make an external HTTP request and inject distributed trace headers
+  // let response = await axios.get("https://example.com", { headers })
+
+  // additional function processes
+  let files = fs.readdirSync("/opt/nodejs/")
+  let packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
+  let username = get_user()
+  let password = get_pass()
+
+  // As normal, anything you write to stdout ends up in CloudWatch
+  console.info("username: ", username)
+  console.info("password: ", password)
+  console.info("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
+  console.info("EVENT\n" + JSON.stringify(event, null, 2))
+  console.warn("This is a warning log.")
+  console.info(files)
+  console.info("***package-lock.json***\n", packageLock)
+  console.info("logStream: ", context.logStreamName)
+
+  // return response.status
+  return context.logStreamName
+}
