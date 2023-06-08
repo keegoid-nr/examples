@@ -48,5 +48,5 @@ functions:
         - ./**
       include:
         - ./function.js
-        # - ./node_modules/axios
+        - ./node_modules/axios/**
     provisionedConcurrency: 0

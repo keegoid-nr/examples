@@ -1,4 +1,4 @@
-// const axios = require("axios")
+const axios = require("axios")
 const newrelic = require("newrelic")
 const fs = require("fs")
 
@@ -46,7 +46,7 @@ module.exports.lambda_handler = async function (event, context) {
   )
 
   // Make an external HTTP request and inject distributed trace headers
-  // let response = await axios.get("https://example.com", { headers })
+  let response = await axios.get("https://example.com", { headers })
 
   // additional function processes
   let files = fs.readdirSync("/opt/nodejs/")
@@ -64,6 +64,6 @@ module.exports.lambda_handler = async function (event, context) {
   console.info("***package-lock.json***\n", packageLock)
   console.info("logStream: ", context.logStreamName)
 
-  // return response.status
-  return context.logStreamName
+  return response.status
+  // return context.logStreamName
 }
