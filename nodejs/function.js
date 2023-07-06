@@ -60,10 +60,10 @@ module.exports.lambda_handler = async function (event, context) {
   console.info("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
   console.info("EVENT\n" + JSON.stringify(event, null, 2))
   console.warn("This is a warning log.")
+  console.error("This is an error log!")
   console.info(files)
   console.info("***package-lock.json***\n", packageLock)
   console.info("logStream: ", context.logStreamName)
 
   return response.status
-  // return context.logStreamName
 }
