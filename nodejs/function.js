@@ -23,27 +23,37 @@ module.exports.lambda_handler = async function (event, context) {
   // Accept distributed tracing headers
   let headers = event.headers || {}
   if (!headers.hasOwnProperty("newrelic")) {
-    // Generate distributed tracing headers if headers are not provided
-    newrelic.startBackgroundTransaction(
-      "background task",
-      function executeTransaction() {
-        const backgroundT = newrelic.getTransaction()
-        // Generate the headers
-        backgroundT.insertDistributedTraceHeaders(headers)
-      }
-    )
+    try {
+      // Generate distributed tracing headers if headers are not provided
+      newrelic.startBackgroundTransaction(
+        "background task",
+        function executeTransaction() {
+          const backgroundT = newrelic.getTransaction()
+          // Generate the headers
+          backgroundT.insertDistributedTraceHeaders(headers)
+        }
+      )
+    } catch (error) {
+      console.log("An exception occurred inserting dt headers:", error.message)
+    }
   } else {
-    transaction.acceptDistributedTraceHeaders("HTTP", headers)
+    try {
+      transaction.acceptDistributedTraceHeaders("HTTP", headers)
+    } catch (error) {
+      console.log("An exception occurred accepting dt headers:", error.message)
+    }
   }
 
   // Print out the distributed tracing headers
   console.log("Distributed tracing headers:")
-  for (let key in headers) {
-    console.info(`${key}: ${headers[key]}`)
+  console.info("The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`")
+  try {
+    for (let key in headers) {
+      console.log(`${key}: ${headers[key]}`)
+    }
+  } catch (error) {
+    console.log("An exception occurred printing dt headers:", error.message)
   }
-  console.log(
-    "The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`"
-  )
 
   // Make an external HTTP request and inject distributed trace headers
   let response = await axios.get("https://example.com", { headers })

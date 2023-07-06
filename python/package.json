@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3",
-    "serverless-python-requirements": "~5"
+    "serverless": "^3.33.0",
+    "serverless-newrelic-lambda-layers": "^3.5.0",
+    "serverless-python-requirements": "^6.0.0"
   }
 }
