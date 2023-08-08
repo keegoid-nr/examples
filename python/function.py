@@ -8,21 +8,26 @@ from newrelic import agent
 # of the module occurs once, during cold start.
 print("Lambda Handler starting up")
 
-# configure log level
-logging.basicConfig(level=logging.INFO)
 
 @agent.profile_trace()
 def get_user():
     print("getting DB username ")
     return "Bill"
 
+
 @agent.function_trace()
 def get_pass():
     print("getting DB password")
     return "123456"
 
+
 @agent.lambda_handler()
 async def lambda_handler(event, context):
+    # Create and configure a logger
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
     # At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
 
     # Get the transaction object for this function
@@ -34,7 +39,9 @@ async def lambda_handler(event, context):
         try:
             transaction.accept_distributed_trace_headers(headers)
         except Exception as e:
-            logging.error("An exception occurred accepting dt headers: %s", e, exc_info=True)
+            logging.error(
+                "An exception occurred accepting dt headers: %s", e, exc_info=True
+            )
     else:
         try:
             # Generate distributed tracing headers if headers are not provided
@@ -42,11 +49,15 @@ async def lambda_handler(event, context):
             transaction.insert_distributed_trace_headers(headers_list)
             headers = {k: v for k, v in headers_list}
         except Exception as e:
-            logging.error("An exception occurred inserting dt headers: %s", e, exc_info=True)
+            logging.error(
+                "An exception occurred inserting dt headers: %s", e, exc_info=True
+            )
 
     # Print out the distributed tracing headers
     print("Distributed tracing headers:")
-    logging.info("The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`")
+    logging.info(
+        "The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`"
+    )
     try:
         for key, value in headers.items():
             print(f"{key}: {value}")
