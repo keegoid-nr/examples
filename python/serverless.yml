@@ -1,4 +1,4 @@
-service: kmullaney-dt-headers
+service: kmullaney-extension-only-layer-serverless
 
 useDotenv: true
 
