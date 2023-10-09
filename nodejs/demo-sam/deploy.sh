@@ -1,7 +1,8 @@
 #!/bin/bash
 
-accountId=$1
-region=$2
+accountId="$1"
+region="$2"
+licenseKey="$3"
 
 echo "region set to ${region}"
 
@@ -18,4 +19,5 @@ aws cloudformation deploy \
 	--template-file packaged.yaml \
 	--stack-name "${bucket}" \
 	--capabilities CAPABILITY_IAM \
-	--parameter-overrides "NRAccountId=${accountId}"
+	--parameter-overrides "NRAccountId=${accountId}" \
+  --parameter-overrides "NRLicenseKey=${licenseKey}"

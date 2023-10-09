@@ -7,6 +7,9 @@ Parameters:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
+  NRLicenseKey:
+    Type: String
+    Description: Your New Relic ingest license key.
 
 Resources:
   kmullaneyextensiononlylayersam:
@@ -28,6 +31,7 @@ Resources:
       PackageType: Zip
       Environment:
         Variables:
+          NEW_RELIC_LICENSE_KEY: !Sub ${NRLicenseKey}            # setting the license key here avoids time spent checking in Secrets Manager and SSM Parameter Store
           NEW_RELIC_NO_CONFIG_FILE: true                         # Lambda uses environment variables instead
           NEW_RELIC_APP_NAME: kmullaneyextensiononlylayersam     # the function will be named the same as in AWS
           NEW_RELIC_LAMBDA_HANDLER: app.lambdaHandler            # so the instrumentation handler can invoke your real handler

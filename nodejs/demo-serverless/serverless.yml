@@ -11,11 +11,11 @@ provider:
   tags:
     owner: kmullaney
     reason: demo
-    description: "demo a Lambda using SAM deploy"
+    description: "demo a Lambda using SLS deploy"
   stackTags:
     owner: kmullaney
     reason: demo
-    description: "demo a Lambda using SAM deploy"
+    description: "demo a Lambda using SLS deploy"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
