@@ -16,7 +16,7 @@ function get_pass() {
   return "123456"
 }
 
-module.exports.lambda_handler = async function (event, context) {
+module.exports.handler = newrelic.setLambdaHandler(async (event, context) => {
   // Call newrelic.getTransaction to retrieve a handle on the current transaction.
   const transaction = newrelic.getTransaction()
 
@@ -76,4 +76,4 @@ module.exports.lambda_handler = async function (event, context) {
   console.info("logStream: ", context.logStreamName)
 
   return response.status
-}
+})

@@ -19,19 +19,23 @@ provider:
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_APP_NAME: kmullaney-extension-only-layer-serverless-nodejs16x
+    NEW_RELIC_NO_CONFIG_FILE: true
 
 plugins:
   - serverless-newrelic-lambda-layers
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID
-    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY} # User api key
-    disableAutoSubscription: true             # Don't create a subscription filter to the newrelic-log-ingestion function
-    enableFunctionLogs: true                  # Send logs via [NR_EXT]
-    logEnabled: true                          # Node agent logs
-    logLevel: debug                           # Node agent log level
-    debug: true                               # Serverless Framework debug
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}         # User api key
+    disableAutoSubscription: true                     # Don't create a subscription filter to the newrelic-log-ingestion function
+    enableFunctionLogs: true                          # Send logs via [NR_EXT]
+    logEnabled: true                                  # Node agent logs
+    logLevel: debug                                   # Node agent log level
+    debug: true                                       # Serverless Framework debug
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:34
 
 # package:
 #   individually: true
