@@ -16,7 +16,7 @@ function get_pass() {
   return "123456"
 }
 
-module.exports.handler = newrelic.setLambdaHandler(async (event, context) => {
+module.exports.lambda_handler = newrelic.setLambdaHandler(async (event, context) => {
   // Call newrelic.getTransaction to retrieve a handle on the current transaction.
   const transaction = newrelic.getTransaction()
 
@@ -59,8 +59,10 @@ module.exports.handler = newrelic.setLambdaHandler(async (event, context) => {
   let response = await axios.get("https://example.com", { headers })
 
   // additional function processes
-  let files = fs.readdirSync("/opt/nodejs/")
-  let packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
+  // let files = fs.readdirSync("/opt/nodejs/")
+  // let packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
+  let files = fs.readdirSync("/var/task/node_modules/")
+  let packageLock = fs.readFileSync("/var/task/package-lock.json").toString()
   let username = get_user()
   let password = get_pass()
 
