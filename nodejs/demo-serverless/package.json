@@ -15,9 +15,11 @@
   "license": "ISC",
   "devDependencies": {
     "serverless": "^3.35.2",
-    "serverless-newrelic-lambda-layers": "^4.1.0"
+    "serverless-newrelic-lambda-layers": "^4.1.0",
+    "serverless-offline": "^13.2.0"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "^3.427.0",
     "axios": "^1.5.1",
     "newrelic": "^11.1.0"
   }

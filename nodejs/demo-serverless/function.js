@@ -1,5 +1,5 @@
-const axios = require("axios")
 const newrelic = require("newrelic")
+const axios = require("axios")
 const fs = require("fs")
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level

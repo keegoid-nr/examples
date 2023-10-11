@@ -23,6 +23,7 @@ provider:
     NEW_RELIC_NO_CONFIG_FILE: true
 
 plugins:
+  - serverless-offline
   - serverless-newrelic-lambda-layers
 
 custom:
