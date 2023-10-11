@@ -16,7 +16,8 @@ function get_pass() {
   return "123456"
 }
 
-module.exports.lambda_handler = newrelic.setLambdaHandler(async (event, context) => {
+// module.exports.lambda_handler = newrelic.setLambdaHandler(async (event, context) => {
+async function originalLambdaHandler(event, context) {
   // Call newrelic.getTransaction to retrieve a handle on the current transaction.
   const transaction = newrelic.getTransaction()
 
@@ -46,7 +47,9 @@ module.exports.lambda_handler = newrelic.setLambdaHandler(async (event, context)
 
   // Print out the distributed tracing headers
   console.log("Distributed tracing headers:")
-  console.info("The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`")
+  console.info(
+    "The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`"
+  )
   try {
     for (let key in headers) {
       console.log(`${key}: ${headers[key]}`)
@@ -78,4 +81,10 @@ module.exports.lambda_handler = newrelic.setLambdaHandler(async (event, context)
   console.info("logStream: ", context.logStreamName)
 
   return response.status
-})
+}
+
+// Wrap the original Lambda handler function with New Relic's wrapLambdaHandler
+const wrappedHandler = newrelic.wrapLambdaHandler(originalLambdaHandler)
+
+// Export the wrapped Lambda handler function
+module.exports.lambda_handler = wrappedHandler

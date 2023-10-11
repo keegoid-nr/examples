@@ -16,7 +16,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      CodeUri: demo-sam/
+      CodeUri: ./
       Description: A simple Lambda, with New Relic telemetry
       Tags:
         owner: kmullaney
@@ -47,12 +47,23 @@ Resources:
       Layers:
         # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry,
         # as well as the New Relic Agent for Node.js, and a handler wrapper that makes integration easy.
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:33
+        # - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:34
+        - !Ref NewRelicExtensionLayer
       Policies:
         # This policy allows the lambda to know the value of the New Relic license key. We need this so
         # that we can send telemetry back to New Relic
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  NewRelicExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: newrelic-lambda-extension
+      Description: New Relic Lambda Extension Layer
+      ContentUri: layers/newrelic-extension/
+      CompatibleRuntimes:
+        - nodejs18.x
+
   Logs:
     Type: AWS::Logs::LogGroup
     Properties:
