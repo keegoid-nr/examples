@@ -11,11 +11,11 @@ provider:
   logRetentionInDays: 3
   tags:
     owner: kmullaney
-    reason: case
+    reason: case 00156124
     description: load testing newrelic-log-ingestion function
   stackTags:
     owner: kmullaney
-    reason: case
+    reason: case 00156124
     description: load testing newrelic-log-ingestion function
 
 package:
@@ -28,9 +28,7 @@ functions:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.mjs
-        # - ./node_modules/aws-sdk/*
+      patterns:
+        - 'node_modules/**'
+        - 'function.js'
     provisionedConcurrency: 0
