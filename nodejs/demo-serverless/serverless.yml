@@ -7,7 +7,7 @@ provider:
   region: ${env:AWS_DEFAULT_REGION}
   stage: dev
   runtime: nodejs18.x
-  timeout: 4
+  memorySize: 128
   logRetentionInDays: 3
   tags:
     owner: kmullaney
@@ -24,12 +24,26 @@ package:
 functions:
   nodejs18x:
     description: a test nodejs18x function
-    events:
-      - schedule: rate(1 minute)
+    # events:
+    #   - schedule: rate(1 minute)
     handler: function.lambda_handler
+    timeout: 4
     package:
       patterns:
         - 'node_modules/**'
         - 'function.mjs'
-    provisionedConcurrency: 60
+    provisionedConcurrency: 10
+    # reservedConcurrency: 1
+
+  invoker:
+    description: a nodejs18x function to invoke our pumpkin function
+    events:
+      - schedule: rate(1 minute)
+    handler: invoker.handler
+    timeout: 65
+    package:
+      patterns:
+        - 'node_modules/**'
+        - 'invoker.js'
+    provisionedConcurrency: 0
     # reservedConcurrency: 1
