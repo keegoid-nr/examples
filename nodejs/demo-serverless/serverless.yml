@@ -1,0 +1,36 @@
+service: kmullaney
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: ${env:AWS_DEFAULT_REGION}
+  stage: dev
+  runtime: nodejs18.x
+  timeout: 4
+  logRetentionInDays: 3
+  tags:
+    owner: kmullaney
+    reason: case
+    description: load testing newrelic-log-ingestion function
+  stackTags:
+    owner: kmullaney
+    reason: case
+    description: load testing newrelic-log-ingestion function
+
+package:
+  individually: true
+
+functions:
+  nodejs18x:
+    description: a test nodejs18x function
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      exclude:
+        - ./**
+      include:
+        - ./function.mjs
+        # - ./node_modules/aws-sdk/*
+    provisionedConcurrency: 0

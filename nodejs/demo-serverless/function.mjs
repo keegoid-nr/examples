@@ -5,8 +5,8 @@ import fs from 'fs'
 console.log("Lambda Handler starting up")
 
 const lambda_handler = async (event, context) => {
-  var files = fs.readdirSync("/opt/nodejs/")
-  var packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
+  let files = fs.readdirSync("/var/task/node_modules/")
+  let packageLock = fs.readFileSync("/var/task/package-lock.json").toString()
 
   // do work
   console.log("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))

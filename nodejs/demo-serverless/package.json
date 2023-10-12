@@ -1,5 +1,5 @@
 {
-  "name": "kmullaney-nodejs16x-example",
+  "name": "kmullaney-nodejs16x-load-testing-nrlif",
   "version": "0.2",
   "esversion": 6,
   "description": "",
@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3"
+    "serverless": "^3.35.2"
   }
 }
