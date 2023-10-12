@@ -1,4 +1,4 @@
-service: kmullaney
+service: kmullaney-load-test
 
 useDotenv: true
 
@@ -24,11 +24,12 @@ package:
 functions:
   nodejs18x:
     description: a test nodejs18x function
-    # events:
-    #   - schedule: rate(5 minutes)
+    events:
+      - schedule: rate(1 minute)
     handler: function.lambda_handler
     package:
       patterns:
         - 'node_modules/**'
-        - 'function.js'
-    provisionedConcurrency: 0
+        - 'function.mjs'
+    provisionedConcurrency: 60
+    # reservedConcurrency: 1

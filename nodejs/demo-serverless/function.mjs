@@ -1,21 +1,58 @@
-import fs from 'fs'
+const basePumpkin = [
+  "  ,--./,--.",
+  " / #      \\",
+  "|          |",
+  " \\        /",
+  "  `.___.'"
+]
 
-// In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
-// of the module occurs once, during cold start.
-console.log("Lambda Handler starting up")
+const eyes = [
+  ["0", "0"],
+  ["O", "O"],
+  ["o", "o"],
+]
 
-const lambda_handler = async (event, context) => {
-  let files = fs.readdirSync("/var/task/node_modules/")
-  let packageLock = fs.readFileSync("/var/task/package-lock.json").toString()
+const mouths = [
+  "  \\        /",
+  "   \\  __  /",
+  "    \\    /"
+]
 
-  // do work
-  console.log("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
-  console.info("EVENT\n" + JSON.stringify(event, null, 2))
-  console.warn("Event not processed.")
-  console.log(files)
-  console.log("***package-lock.json***\n", packageLock)
+function displayPumpkinPatch(numPumpkins) {
+  let pumpkins = [];
 
-  return context.logStreamName
+  for (let i = 0; i < numPumpkins; i++) {
+    let pumpkin = [...basePumpkin];
+    const eyeIndex = Math.floor(Math.random() * eyes.length);
+    const mouthIndex = Math.floor(Math.random() * mouths.length);
+
+    pumpkin[2] = pumpkin[2].replace(
+      "          ",
+      `  ${eyes[eyeIndex][0]}     ${eyes[eyeIndex][1]}  `
+    );
+    pumpkin[3] = pumpkin[3].replace(" \\        /", mouths[mouthIndex]);
+
+    pumpkins.push(pumpkin.join('\n'));
+  }
+
+  return pumpkins;
 }
+
+const lambda_handler = async (event) => {
+  const numPumpkins = event.numPumpkins || 1000; // Use default value if not provided
+  const pumpkinPatch = displayPumpkinPatch(numPumpkins);
+
+  pumpkinPatch.forEach((pumpkin, i) => {
+    console.log(`Pumpkin ${i + 1}:\n${pumpkin}\n`);
+  });
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'Pumpkin patch generated!',
+      pumpkinPatch,
+    }),
+  };
+};
 
 export { lambda_handler }
