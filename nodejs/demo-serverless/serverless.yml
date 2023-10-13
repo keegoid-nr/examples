@@ -7,7 +7,6 @@ provider:
   region: ${env:AWS_DEFAULT_REGION}
   stage: dev
   runtime: nodejs18.x
-  memorySize: 128
   logRetentionInDays: 3
   tags:
     owner: kmullaney
@@ -27,12 +26,12 @@ functions:
     # events:
     #   - schedule: rate(1 minute)
     handler: function.lambda_handler
-    timeout: 4
+    memorySize: 256
+    timeout: 3
     package:
       patterns:
-        - 'node_modules/**'
         - 'function.mjs'
-    provisionedConcurrency: 10
+    provisionedConcurrency: 2
     # reservedConcurrency: 1
 
   invoker:
@@ -40,6 +39,7 @@ functions:
     events:
       - schedule: rate(1 minute)
     handler: invoker.handler
+    memorySize: 128
     timeout: 65
     package:
       patterns:
