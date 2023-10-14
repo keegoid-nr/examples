@@ -66,3 +66,6 @@ dist/
 
 .DS_Store
 example.service.input.json
+
+.serverless
+.aws-sam
