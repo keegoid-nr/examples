@@ -19,7 +19,7 @@ provider:
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
-    NEW_RELIC_APP_NAME: kmullaney-esm-example
+    NEW_RELIC_APP_NAME: kmullaney-dev-esm-example
     NEW_RELIC_NO_CONFIG_FILE: true
 
 plugins:
@@ -46,7 +46,7 @@ package:
 functions:
   esm-example:
     description: demo ESM instrumentation
-    handler: function.lambda_handler
+    handler: function.handler
     runtime: nodejs18.x
     package:
       patterns:
