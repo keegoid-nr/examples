@@ -4,22 +4,22 @@ useDotenv: true
 
 provider:
   name: aws
-  region: ${env:AWS_DEFAULT_REGION}
+  region: us-west-2
   stage: dev
   runtime: nodejs18.x
   timeout: 4
-  logRetentionInDays: 14
+  logRetentionInDays: 3
   tags:
     owner: kmullaney
-    reason: testing aws
-    description: see if any issues with CF deployment
+    reason: example
+    description: instrumentation with ESM
   stackTags:
     owner: kmullaney
-    reason: testing aws
-    description: see if any issues with CF deployment
+    reason: example
+    description: instrumentation with ESM
   environment:
-    # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
 
 plugins:
   - serverless-newrelic-lambda-layers
@@ -28,7 +28,6 @@ custom:
   newRelic:
     accountId: ${env:NEW_RELIC_ACCOUNT_ID}
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
-    # disableLicenseKeySecret: true
     logEnabled: true
     logLevel: info
     debug: true
