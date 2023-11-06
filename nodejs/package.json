@@ -4,8 +4,6 @@
   "description": "",
   "type": "module",
   "main": "function.mjs",
-  "scripts": {
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
