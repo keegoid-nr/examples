@@ -4,7 +4,7 @@ useDotenv: true
 
 provider:
   name: aws
-  region: ${env:AWS_DEFAULT_REGION}
+  region: us-west-2
   stage: dev
   runtime: nodejs18.x
   logRetentionInDays: 3
@@ -25,7 +25,7 @@ functions:
     description: a test nodejs18x function
     # events:
     #   - schedule: rate(1 minute)
-    handler: function.lambda_handler
+    handler: function.handler
     memorySize: 256
     timeout: 3
     package:

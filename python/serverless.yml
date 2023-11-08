@@ -43,7 +43,7 @@ functions:
     description: Test with cURL to endpoint.
     # events:
     #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    handler: function.handler
     package:
       exclude:
         - ./**

@@ -5,7 +5,7 @@ import subprocess
 # of the module occurs once, during cold start.
 print("Lambda Handler starting up")
 
-def lambda_handler(event, context):
+def handler(event, context):
   # At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
 
   # perform cURL operation and print results

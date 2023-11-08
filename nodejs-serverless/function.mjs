@@ -38,7 +38,7 @@ function displayPumpkinPatch(numPumpkins) {
   return pumpkins;
 }
 
-const lambda_handler = async (event) => {
+const handler = async (event) => {
   const numPumpkins = event.numPumpkins || 1000; // Use default value if not provided
   const pumpkinPatch = displayPumpkinPatch(numPumpkins);
 
@@ -55,4 +55,4 @@ const lambda_handler = async (event) => {
   };
 };
 
-export { lambda_handler }
+export { handler }
