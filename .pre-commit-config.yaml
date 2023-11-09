@@ -7,13 +7,14 @@ repos:
       - id: destroyed-symlinks
       - id: detect-private-key
       - id: mixed-line-ending
+      - id: no-commit-to-branch
   - repo: https://github.com/thlorenz/doctoc
     rev: v2.2.0
     hooks:
       - id: doctoc
         args: [-u]
   - repo: https://github.com/keegoid-nr/check-for-keys
-    rev: v1.3
+    rev: v1.8
     hooks:
       - id: check-for-keys-pre-commit
       - id: check-for-keys-pre-push
