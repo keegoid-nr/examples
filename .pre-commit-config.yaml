@@ -14,7 +14,7 @@ repos:
       - id: doctoc
         args: [-u]
   - repo: https://github.com/keegoid-nr/check-for-keys
-    rev: v1.6
+    rev: v1.8
     hooks:
       - id: check-for-keys-pre-commit
       - id: check-for-keys-pre-push
