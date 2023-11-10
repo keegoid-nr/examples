@@ -1,20 +1,15 @@
 {
-  "name": "kmullaney-nodejs16x-example",
-  "version": "0.2",
-  "esversion": 6,
+  "name": "kmullaney-esm-example",
+  "version": "0.1",
   "description": "",
-  "main": "function.js",
+  "type": "module",
+  "main": "function.mjs",
   "scripts": {
-    "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
-    "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
-    "buildPlugin": "cd ../../ && npm run build && mkdir -p examples/nodejs/.serverless_plugins && cp -rf dist examples/nodejs/.serverless_plugins/serverless-newrelic-lambda-layers",
-    "clean": "rm -rf .serverless_plugins",
-    "deploy": "yarn build && sls deploy"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3"
+    "serverless": "^3.36.0",
+    "serverless-newrelic-lambda-layers": "^4.2.0"
   }
 }

@@ -1,21 +1,28 @@
-import fs from 'fs'
+import newrelic from "newrelic"
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
 // of the module occurs once, during cold start.
 console.log("Lambda Handler starting up")
 
-const lambda_handler = async (event, context) => {
-  var files = fs.readdirSync("/opt/nodejs/")
-  var packageLock = fs.readFileSync("/opt/nodejs/package-lock.json").toString()
+export async function handler(event, context) {
+  const wrappedHandler = newrelic.setLambdaHandler(async (event, context) => {
+    // At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
 
-  // do work
-  console.log("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
-  console.info("EVENT\n" + JSON.stringify(event, null, 2))
-  console.warn("Event not processed.")
-  console.log(files)
-  console.log("***package-lock.json***\n", packageLock)
+    // This is an example of a custom event. `FROM MyNodeEvent SELECT *` in New Relic will find this event.
+    newrelic.recordCustomEvent("MyNodeEvent", {
+      zip: "zap",
+    })
 
-  return context.logStreamName
+    // This attribute gets added to the normal AwsLambdaInvocation event
+    newrelic.addCustomAttributes({
+      customAttribute: "customAttributeValue",
+    })
+
+    // As normal, anything you write to stdout ends up in CloudWatch
+    console.log("Hello, world")
+
+    return "Success!"
+  })
+
+  return wrappedHandler(event, context)
 }
-
-export { lambda_handler }
