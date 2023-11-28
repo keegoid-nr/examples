@@ -1,4 +1,4 @@
-// const dns = require('node:dns')
+const dns = require('node:dns')
 const something = require('aws-sdk')
 const axios = require('axios')
 

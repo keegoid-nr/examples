@@ -19,6 +19,8 @@ Resources:
       # The handler for your function needs to be the one provided by the instrumentation layer, below.
       Handler: newrelic-lambda-wrapper.handler
       Runtime: nodejs16.x
+      MemorySize: 256
+      Timeout: 20
       # Currently, we don't support Image based PackageType
       PackageType: Zip
       Environment:
@@ -33,7 +35,7 @@ Resources:
           NEW_RELIC_LOG_LEVEL: trace
       Layers:
         # layers 56-73 are broken if aws-sdk is a dependency
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS16X:55
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS16X:56
       Policies:
         # This policy allows the lambda to know the value of the New Relic licence key. We need this so
         # that we can send telemetry back to New Relic
