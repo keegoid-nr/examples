@@ -20,7 +20,7 @@ Resources:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       CodeUri: src/
       Description: A simple Lambda, with New Relic telemetry
-      FunctionName: kmullaney-nodejs18
+      FunctionName: kmullaney-nodejs18-esm
       # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
       # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
       Handler: function.handler

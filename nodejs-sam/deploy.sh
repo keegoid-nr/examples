@@ -6,12 +6,16 @@ trustedAccountKey=$3
 
 [ -z "$trustedAccountKey" ] && trustedAccountKey="$accountId"
 
+echo
+echo "accountId set to ${accountId}"
 echo "region set to ${region}"
+echo "trustedAccountKey set to ${trustedAccountKey}"
+echo
 
 sam build --use-container
 # sam build
 
-bucket="kmullaney-sam-${region}-${accountId}"
+bucket="kmullaney-sam-esm-${region}-${accountId}"
 
 aws s3 mb --region "${region}" "s3://${bucket}"
 
@@ -22,4 +26,4 @@ aws cloudformation deploy \
 	--template-file packaged.yaml \
   --stack-name "${bucket}" \
 	--capabilities CAPABILITY_IAM \
-	--parameter-overrides "NRAccountId=${accountId} NRTrustedAccountKey=${trustedAccountKey}"
+	--parameter-overrides "NRAccountId=${accountId}" "NRTrustedAccountKey=${trustedAccountKey}"
