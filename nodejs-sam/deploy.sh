@@ -2,6 +2,9 @@
 
 accountId=$1
 region=$2
+trustedAccountKey=$3
+
+[ -z "$trustedAccountKey" ] && trustedAccountKey="$accountId"
 
 echo "region set to ${region}"
 
@@ -19,4 +22,4 @@ aws cloudformation deploy \
 	--template-file packaged.yaml \
   --stack-name "${bucket}" \
 	--capabilities CAPABILITY_IAM \
-	--parameter-overrides "NRAccountId=${accountId}"
+	--parameter-overrides "NRAccountId=${accountId} NRTrustedAccountKey=${trustedAccountKey}"
