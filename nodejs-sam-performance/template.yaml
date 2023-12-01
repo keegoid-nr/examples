@@ -1,0 +1,188 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: And example of a simple instrumented NodeJS Lambda
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+
+Resources:
+  KmullaneySlowPerformanceNodejs16:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: kmullaney-slow-performance-nodejs16/
+      Description: A simple Lambda, with New Relic telemetry
+      FunctionName: kmullaney-slow-performance-nodejs16
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs16.x
+      MemorySize: 256
+      Timeout: 20
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          # For the instrumentation handler to invoke your real handler, we need this value
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG: stdout
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: trace
+      Layers:
+        # Layer 56 includes release 10.3.2.2 - https://github.com/newrelic/newrelic-lambda-layers/releases/tag/v10.3.2.2_nodejs
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS16X:56
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  KmullaneySlowPerformanceNodejs18:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: kmullaney-slow-performance-nodejs18
+      Description: A simple Lambda, with New Relic telemetry
+      FunctionName: kmullaney-slow-performance-nodejs18
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs18.x
+      MemorySize: 256
+      Timeout: 20
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          # For the instrumentation handler to invoke your real handler, we need this value
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG: stdout
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: trace
+      Layers:
+        # Layer 31 includes release 10.3.2.2 - https://github.com/newrelic/newrelic-lambda-layers/releases/tag/v10.3.2.2_nodejs
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:31
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  KmullaneyFastPerformanceNodejs16:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: kmullaney-fast-performance-nodejs16/
+      Description: A simple Lambda, with New Relic telemetry
+      FunctionName: kmullaney-fast-performance-nodejs16
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs16.x
+      MemorySize: 256
+      Timeout: 20
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          # For the instrumentation handler to invoke your real handler, we need this value
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG: stdout
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: trace
+      Layers:
+        # This layer fixes the performance issue with the New Relic wrapper
+        - !Ref NodeJS16FAST
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  KmullaneyFastPerformanceNodejs18:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: kmullaney-fast-performance-nodejs18
+      Description: A simple Lambda, with New Relic telemetry
+      FunctionName: kmullaney-fast-performance-nodejs18
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs18.x
+      MemorySize: 256
+      Timeout: 20
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          # For the instrumentation handler to invoke your real handler, we need this value
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG: stdout
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: trace
+      Layers:
+        # This layer fixes the performance issue with the New Relic wrapper
+        - !Ref NodeJS18FAST
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  KmullaneySlowPerformanceNodejs16LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySlowPerformanceNodejs16}'
+      RetentionInDays: 3
+
+  KmullaneySlowPerformanceNodejs18LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySlowPerformanceNodejs18}'
+      RetentionInDays: 3
+
+  KmullaneyFastPerformanceNodejs16LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneyFastPerformanceNodejs16}'
+      RetentionInDays: 3
+
+  KmullaneyFastPerformanceNodejs18LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneyFastPerformanceNodejs18}'
+      RetentionInDays: 3
+
+  NodeJS16FAST:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: NodeJS16FAST
+      Description: Fix for performance issue
+      ContentUri: nodejs16x.x86_64.zip
+      CompatibleRuntimes:
+        - nodejs16.x
+      LicenseInfo: Apache 2.0
+      RetentionPolicy: Retain
+
+  NodeJS18FAST:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: NodeJS18FAST
+      Description: Fix for performance issue
+      ContentUri: nodejs18x.x86_64.zip
+      CompatibleRuntimes:
+        - nodejs18.x
+      LicenseInfo: Apache 2.0
+      RetentionPolicy: Retain
