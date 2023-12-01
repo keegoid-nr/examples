@@ -1,0 +1,52 @@
+service: kmullaney
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: ${env:AWS_DEFAULT_REGION}
+  stage: "00090588"
+  runtime: nodejs18.x
+  timeout: 4
+  logRetentionInDays: 14
+  tags:
+    owner: kmullaney
+    reason: ticket
+    description: "00090588"
+  stackTags:
+    owner: kmullaney
+    reason: ticket
+    description: "00090588"
+  # layers:
+  #   - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
+  # environment:
+    # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    # NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+
+# plugins:
+  # - serverless-newrelic-lambda-layers
+
+# custom:
+#   newRelic:
+#     accountId: ${env:NEW_RELIC_ACCOUNT_ID}
+#     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
+#     disableLicenseKeySecret: true
+#     logEnabled: true
+#     logLevel: trace
+#     debug: true
+
+package:
+  individually: true
+
+functions:
+  nodejs18:
+    description: Test tags
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      exclude:
+        - ./**
+      include:
+        - ./function.js
+    provisionedConcurrency: 0
