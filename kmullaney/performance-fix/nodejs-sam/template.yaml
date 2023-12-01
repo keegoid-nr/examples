@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: And example of a simple instrumented NodeJS Lambda
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+
+Resources:
+  KmullaneyNodejs18:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: kmullaney-nodejs18
+      Description: A simple Lambda, with New Relic telemetry
+      FunctionName: kmullaney-nodejs18
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs18.x
+      MemorySize: 256
+      Timeout: 20
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          # For the instrumentation handler to invoke your real handler, we need this value
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG: stdout
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: trace
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:51
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  KmullaneyNodejs18LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneyNodejs18}'
+      RetentionInDays: 3
