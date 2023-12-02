@@ -1,0 +1,48 @@
+service: kmullaney
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-west-2
+  stage: go-demo
+  timeout: 4
+  runtime: provided.al2
+  logRetentionInDays: 3
+  tags:
+    owner: kmullaney
+    reason: example
+    description: instrumentation with Go agent
+  stackTags:
+    owner: kmullaney
+    reason: example
+    description: instrumentation with Go agent
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-q7CPhW"
+
+  environment:
+    NEW_RELIC_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
+    NEW_RELIC_TRUSTED_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
+    NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+    NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+    NEW_RELIC_PRIMARY_APPLICATION_ID: kmullaney-go-demo-main
+
+package:
+  individually: true
+
+functions:
+  main:
+    description: demo Go instrumentation
+    handler: handler
+    memorySize: 256
+    provisionedConcurrency: 0
+    package:
+      patterns:
+        - '!**'
+        - 'bootstrap'
+    layers:
+      - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:34

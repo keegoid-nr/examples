@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: And example of a simple instrumented NodeJS Lambda
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+  NRLicenseKey:
+    Type: String
+    Description: Your New Relic ingest license key.
+
+Resources:
+  kmullaneyextensiononlylayersam:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: demo-sam/
+      Description: A simple Lambda, with New Relic telemetry
+      Tags:
+        owner: kmullaney
+        reason: demo
+        description: demo a Lambda using SAM deploy
+      FunctionName: kmullaneyextensiononlylayersam
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      # Handler: newrelic-lambda-wrapper.handler
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      # Currently, we don't support Image based PackageType
+      PackageType: Zip
+      Environment:
+        Variables:
+          NEW_RELIC_LICENSE_KEY: !Sub ${NRLicenseKey}            # setting the license key here avoids time spent checking in Secrets Manager and SSM Parameter Store
+          NEW_RELIC_NO_CONFIG_FILE: true                         # Lambda uses environment variables instead
+          NEW_RELIC_APP_NAME: kmullaneyextensiononlylayersam     # the function will be named the same as in AWS
+          NEW_RELIC_LAMBDA_HANDLER: app.lambdaHandler            # so the instrumentation handler can invoke your real handler
+          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}              # your New Relic account ID
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Sub ${NRAccountId}     # your parent New Relic account ID or New Relic account ID if no parent
+          NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true            # enable for distributed tracing
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true               # alternative to the newrelic-log-ingestion function, bypasses CloudWatch
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true           # send agent logs + some CloudWatch logs
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                   # prints out agent telemetry bytes among other things
+          NEW_RELIC_LOG_ENABLED: true                            # agent logging
+          NEW_RELIC_LOG_LEVEL: debug                             # agent log level
+          NEW_RELIC_LOG: stdout                                  # agent log path
+      Layers:
+        # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry,
+        # as well as the New Relic Agent for Node.js, and a handler wrapper that makes integration easy.
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:33
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+  Logs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: {"Fn::Join": ["", ["/aws/lambda/", {"Ref": "kmullaneyextensiononlylayersam"}]]}
+      # Lambda functions will auto-create their log group on first execution, but it retains logs forever, which can get expensive.
+      RetentionInDays: 3

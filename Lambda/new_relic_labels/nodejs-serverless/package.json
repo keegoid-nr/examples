@@ -1,0 +1,13 @@
+{
+  "name": "kmullaney-esm-example",
+  "version": "0.1",
+  "description": "",
+  "type": "module",
+  "main": "function.mjs",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.36.0",
+    "serverless-newrelic-lambda-layers": "^4.2.0"
+  }
+}

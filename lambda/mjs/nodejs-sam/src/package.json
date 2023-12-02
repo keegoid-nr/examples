@@ -1,0 +1,12 @@
+{
+  "name": "kmullaney-sam",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "function.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keegan Mullaney",
+  "license": "ISC"
+}
