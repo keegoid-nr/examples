@@ -18,6 +18,6 @@
     "serverless-newrelic-lambda-layers": "~3"
   },
   "dependencies": {
-    "aws-sdk": "^2.1289.0"
+    "aws-sdk": "^2.1513.0"
   }
 }
