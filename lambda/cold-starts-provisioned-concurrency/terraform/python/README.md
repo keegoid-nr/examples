@@ -34,7 +34,7 @@ Now is also a good time to look at the structure of the example code.
 
 This function is deployed using this Terraform script. In it, we tell Terraform where to find lambda function code, what layers to use, and what IAM policies to add to the Lambda function's execution role. We also set environment variables that are available to the handler function and extension.
 
-Provisioned concurrency is used to test cold starts. It's important to note that cold starts will still happen for the first invocation on a provisioned instance. This is because the agent still need to initialize some things before it can be ready. The benefit of the provisioned instance is that it avoids the majority of init duration due to registering/loading of modules by the agent.
+Provisioned concurrency is used to test cold starts. It's important to note that cold starts will still happen for the first invocation on a provisioned instance. This is because the agent still need to initialize some things before it can be ready. The benefit of the provisioned instance is that it avoids the majority of init duration due to registering/instrumenting of modules by the agent.
 
 ### app.py
 
