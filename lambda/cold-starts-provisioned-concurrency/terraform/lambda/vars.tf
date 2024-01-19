@@ -18,10 +18,6 @@ variable "lambda_runtime" {
   type = string
 }
 
-variable "lambda_zip_filename" {
-  type = string
-}
-
 variable "newrelic_account_id" {
   type = string
 }
@@ -32,6 +28,16 @@ variable "newrelic_trusted_account_key" {
 
 variable "newrelic_layer" {
   type = string
+}
+
+variable "log_level" {
+  type = string
+  default = "trace"
+}
+
+variable "log_path" {
+  type = string
+  default = "stdout"
 }
 
 variable "newrelic_license_key_secret" {

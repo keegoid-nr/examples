@@ -14,7 +14,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_policy" "newrelic_license_key_policy" {
-  name        = "lambda-policy"
+  name        = "${var.lambda_function_name}-lambda-policy"
   description = "A policy to allow Lambda to get secret values from Secrets Manager"
 
   policy = jsonencode({
@@ -32,12 +32,12 @@ resource "aws_iam_policy" "newrelic_license_key_policy" {
 }
 
 resource "aws_iam_role" "newrelic_terraform_example_role" {
-  name               = "${var.lambda_function_name}_example_role"
+  name               = "${var.lambda_function_name}-example-role"
   assume_role_policy = file("./lambda-assume-role-policy.json")
 }
 
 resource "aws_iam_role_policy" "newrelic_terraform_example_role_policy" {
-  name   = "${var.lambda_function_name}_example_role_policy"
+  name   = "${var.lambda_function_name}-example-role-policy"
   role   = aws_iam_role.newrelic_terraform_example_role.id
   policy = file("./lambda-policy.json")
 }
@@ -57,8 +57,12 @@ resource "aws_lambda_function" "newrelic_terraform_example_function" {
   memory_size   = 128
   timeout = 6
   reserved_concurrent_executions = 3
-  filename      = var.lambda_zip_filename
   function_name = var.lambda_function_name
+  filename      = "function.zip"
+
+  # Calculate the source code hash to trigger redeployment on changes
+  source_code_hash = filebase64sha256("function.zip")
+
   # The handler for your function needs to be the one provided by the instrumentation layer, below.
   handler = var.wrapper_handler
   role    = aws_iam_role.newrelic_terraform_example_role.arn
@@ -79,8 +83,9 @@ resource "aws_lambda_function" "newrelic_terraform_example_function" {
       # Enable Distributed tracing for in-depth monitoring of transactions in lambda (Optional)
       NEW_RELIC_DISTRIBUTED_TRACING_ENABLED = true
       # Set agent trace level logging
-      NEW_RELIC_LOG_LEVEL = "debug"
-      NEW_RELIC_LOG       = "stderr"
+      NEW_RELIC_LOG_ENABLED = true
+      NEW_RELIC_LOG_LEVEL = var.log_level
+      NEW_RELIC_LOG       = var.log_path
     }
   }
   # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry,
@@ -91,7 +96,7 @@ resource "aws_lambda_function" "newrelic_terraform_example_function" {
 }
 
 resource "aws_lambda_alias" "newrelic_terraform_example_function_alias" {
-  name             = "${var.lambda_function_name}_alias"
+  name             = "${var.lambda_function_name}-alias"
   function_name    = aws_lambda_function.newrelic_terraform_example_function.function_name
   function_version = aws_lambda_function.newrelic_terraform_example_function.version
 }

@@ -1,6 +1,6 @@
 # File created using '.gitignore Generator' for Visual Studio Code: https://bit.ly/vscode-gig
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,dotenv,dotnetcore,go,java,macos,node,python,sam,sam+config,serverless,terraform
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,linux,dotenv,dotnetcore,go,java,macos,node,python,sam,sam+config,serverless,terraform
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,terraform,serverless,sam+config,sam,python,node,macos,linux,java,go,dotnetcore,dotenv
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,terraform,serverless,sam+config,sam,python,node,macos,linux,java,go,dotnetcore,dotenv
 
 ### dotenv ###
 .env
@@ -493,7 +493,7 @@ terraform.rc
 .history
 .ionide
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,linux,dotenv,dotnetcore,go,java,macos,node,python,sam,sam+config,serverless,terraform
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,terraform,serverless,sam+config,sam,python,node,macos,linux,java,go,dotnetcore,dotenv
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
 
