@@ -30,8 +30,8 @@ custom:
     enableExtension: false                            # Enable/disable Extension for sending telemetry directly to New Relic
     enableFunctionLogs: true                          # Send logs
     enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Node agent logs
-    logLevel: debug                                   # Node agent log level
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
     debug: true                                       # Serverless Framework debug
     # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicJava17:2   # uncomment if you want to pin a layer version
 
