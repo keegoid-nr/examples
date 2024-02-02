@@ -1,0 +1,557 @@
+**CloudWatch Logs Insights**    
+region: us-west-2    
+log-group-names: /aws/lambda/kmullaney-no-outbound-vpc-nodejs18x    
+start-time: -3600s    
+end-time: 0s    
+query-string:
+  ```
+  filter @logStream = '2024/02/02/[$LATEST]f743ae2e9ce5480eb03e618867f89b3f'
+ | fields @timestamp, @message
+ | sort desc
+  ```
+---
+| @timestamp | @message |
+| --- | --- |
+| 2024-02-02 18:03:32.063 | INIT_START Runtime Version: nodejs:18.v20 Runtime Version ARN: arn:aws:lambda:us-west-2::runtime:a993d90ea43647b82f490a45d7ddd96b557b916a30128d9dcab5f4972911ec0f |
+| 2024-02-02 18:03:32.146 | [NR_EXT] New Relic Lambda Extension starting up |
+| 2024-02-02 18:03:32.152 | [NR_EXT] Registration response: {"functionName":"kmullaney-no-outbound-vpc-nodejs18x","functionVersion":"$LATEST","handler":"newrelic-lambda-wrapper.handler"} |
+| 2024-02-02 18:03:32.152 | [NR_EXT] No configured license key found, attempting fallbacks |
+| 2024-02-02 18:03:32.152 | [NR_EXT] fetching 'NEW_RELIC_LICENSE_KEY' from Secrets Manager |
+| 2024-02-02 18:03:32.272 | [NR_EXT] Log registration with request  {"buffering":{"maxBytes":1048576,"maxItems":10000,"timeoutMs":500},"destination":{"URI":"http://sandbox:44273","protocol":"HTTP"},"types":["platform","function"]} |
+| 2024-02-02 18:03:32.273 | [NR_EXT] Starting log server. |
+| 2024-02-02 18:03:32.274 | LOGS Name: newrelic-lambda-extension State: Subscribed Types: [Platform, Function] |
+| 2024-02-02 18:03:32.274 | [NR_EXT] Registered for logs. Got response code  200 "OK" |
+| 2024-02-02 18:03:32.275 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
+| 2024-02-02 18:03:32.361 | [NR_EXT] fetching 'NEW_RELIC_LICENSE_KEY' from SSM Parameter Store |
+| 2024-02-02 18:03:32.665 | 2024-02-02T18:03:32.665Z undefined INFO Lambda Handler starting up |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.417Z","msg":"The native-metrics module is disabled by default when serverless_mode is enabled.  If desired, enable the native-metrics module via config file or environment variable."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.417Z","msg":"NEW_RELIC_NO_CONFIG_FILE set, deferring to environment variables."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.422Z","msg":"Using New Relic for Node.js. Agent version: 11.10.2; Node version: v18.19.0."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.423Z","msg":"Loading agent from /opt/nodejs/node_modules/newrelic"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.423Z","msg":"Process was running 0.12276759 seconds before agent was loaded."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.424Z","msg":"Current working directory at module load is /var/task."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.424Z","msg":"Process title is /var/lang/bin/node."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.424Z","msg":"Application was invoked as /var/lang/bin/node --expose-gc --max-http-header-size 81920 --max-semi-space-size=51 --max-old-space-size=922 /var/runtime/index.mjs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.597Z","msg":"No new metric mappings from server.","component":"mapper"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.597Z","msg":"Creating standard span event aggregator."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.598Z","msg":"Using AsyncLocalContextManager"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.601Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"Replacing \"_fatalException\" with wrapped version","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"Replacing \"emit\" with wrapped version","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"Replacing \"setUncaughtExceptionCaptureCallback\" with wrapped version","component":"Shim","module":"globals"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.602Z","msg":"New AsyncLocalStorage context enabled. Not enabling manual async_hooks or promise instrumentation","component":"async_hooks"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Wrapping \"exec\" with metric recording.","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Replacing \"exec\" with wrapped version","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Wrapping \"execFile\" with metric recording.","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Replacing \"execFile\" with wrapped version","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.603Z","msg":"Replacing \"on\" with wrapped version","component":"Shim","module":"child_process"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping 5 properties on nodule.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping \"pbkdf2\" with metric recording.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Replacing \"pbkdf2\" with wrapped version","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping \"randomBytes\" with metric recording.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Replacing \"randomBytes\" with wrapped version","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping \"pseudoRandomBytes\" with metric recording.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Replacing \"pseudoRandomBytes\" with wrapped version","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping \"randomFill\" with metric recording.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Replacing \"randomFill\" with wrapped version","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Wrapping \"scrypt\" with metric recording.","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.604Z","msg":"Replacing \"scrypt\" with wrapped version","component":"Shim","module":"crypto"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.606Z","msg":"Wrapping 12 properties on nodule.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.606Z","msg":"Wrapping \"lookup\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.606Z","msg":"Replacing \"lookup\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolve\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolve\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolve4\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolve4\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolve6\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolve6\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveCname\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveCname\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveMx\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveMx\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveNaptr\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveNaptr\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveNs\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveNs\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolvePtr\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolvePtr\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveSrv\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveSrv\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"resolveTxt\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"resolveTxt\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Wrapping \"reverse\" with metric recording.","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.607Z","msg":"Replacing \"reverse\" with wrapped version","component":"Shim","module":"dns"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping 30 properties on nodule.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"rename\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"rename\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"truncate\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"truncate\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"chown\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"chown\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"lchown\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"lchown\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"fchown\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"fchown\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"chmod\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"chmod\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Not wrapping missing property \"lchmod\"","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"fchmod\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"fchmod\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"stat\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"stat\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"lstat\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"lstat\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"fstat\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"fstat\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"link\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"link\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"symlink\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"symlink\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"readlink\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"readlink\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"realpath\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"realpath\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"unlink\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"unlink\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"rmdir\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"rmdir\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"mkdir\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"mkdir\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"mkdtemp\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"mkdtemp\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"readdir\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"readdir\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"close\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Replacing \"close\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.608Z","msg":"Wrapping \"open\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"open\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"utimes\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"utimes\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"futimes\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"futimes\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"fsync\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"fsync\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"readFile\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"readFile\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"writeFile\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"writeFile\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"appendFile\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"appendFile\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"exists\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"exists\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"ftruncate\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"ftruncate\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping \"native\" with metric recording.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"native\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"write\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.609Z","msg":"Replacing \"read\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.610Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.610Z","msg":"Replacing \"watch\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.610Z","msg":"Replacing \"watchFile\" with wrapped version","component":"Shim","module":"fs"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.createServer.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.Server.prototype.emit.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented Response.prototype.end.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.request.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.get.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.Agent.prototype.createConnection.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.createServer.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.Server.prototype.emit.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Can't wrap Response.prototype.end from nonexistent object.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.request.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.get.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.618Z","msg":"Instrumented http.Agent.prototype.createConnection.","component":"shimmer"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"inspector"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Replacing \"post\" with wrapped version","component":"Shim","module":"inspector"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Replacing \"connect\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Replacing \"createConnection\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.619Z","msg":"Replacing \"listen\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"close\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"_listen2\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"connect\" with wrapped version","component":"Shim","module":"net"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping \"setTimeout\" with metric recording.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"setTimeout\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping \"setInterval\" with metric recording.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"setInterval\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.620Z","msg":"Replacing \"clearTimeout\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping 2 properties on nodule.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"setTimeout\" with metric recording.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"setTimeout\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"setInterval\" with metric recording.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"setInterval\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"clearTimeout\" with wrapped version","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping 7 properties on nodule.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"deflate\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"deflate\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"deflateRaw\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"deflateRaw\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"gzip\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"gzip\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Wrapping \"gunzip\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.621Z","msg":"Replacing \"gunzip\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Wrapping \"inflate\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Replacing \"inflate\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Wrapping \"inflateRaw\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Replacing \"inflateRaw\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Wrapping \"unzip\" with metric recording.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Replacing \"unzip\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Wrapping 1 properties on nodule.","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.622Z","msg":"Replacing \"_transform\" with wrapped version","component":"Shim","module":"zlib"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.651Z","msg":"Agent state changed from stopped to starting."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.651Z","msg":"Not recording function setInterval, not in a transaction.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.652Z","msg":"Not recording function setInterval, not in a transaction.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.652Z","msg":"Not recording function setInterval, not in a transaction.","component":"Shim","module":"timers"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.652Z","msg":"New Relic for Node.js starting in serverless mode -- skipping connection process."} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.665Z","msg":"Wrapping 1 properties on nodule.","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.665Z","msg":"Replacing \"emit\" with wrapped version","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.665Z","msg":"Wrapping 1 properties on nodule.","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.666Z","msg":"Replacing \"_fatalException\" with wrapped version","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.667 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.666Z","msg":"Wrapping nodule itself (wrappedHandler).","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.670 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.670Z","msg":"New Relic for Node.js is connected to New Relic."} |
+| 2024-02-02 18:03:32.672 | EXTENSION Name: newrelic-lambda-extension State: Ready Events: [INVOKE, SHUTDOWN] |
+| 2024-02-02 18:03:32.673 | START RequestId: 4cb4ccfd-2856-411e-87f7-58a2a40ec212 Version: $LATEST |
+| 2024-02-02 18:03:32.673 | [NR_EXT] Aggressive harvest yielded 0 invocations |
+| 2024-02-02 18:03:32.674 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.674Z","msg":"Creating new bg transaction for wrappedHandler","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.675 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.675Z","msg":"Reset called on name state, path stack was undefined","component":"name-state"} |
+| 2024-02-02 18:03:32.678 | 2024-02-02T18:03:32.678Z 4cb4ccfd-2856-411e-87f7-58a2a40ec212 INFO Hello world! |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.675Z","msg":"setName called on name state, path stack now \"[]\"","component":"name-state"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.675Z","msg":"Applying segment ROOT","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.676Z","msg":"Adding segment kmullaney-no-outbound-vpc-nodejs18x to ROOT in 3e4ddd0f88ba0bea","component":"segment"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"kmullaney-no-outbound-vpc-nodejs18x","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.676Z","msg":"Created segment","component":"TransactionShim","module":"aws-lambda","inContext":null,"parent":[0,2.100743,"ROOT",{},[[-1706897012674,-1706897012674,"kmullaney-no-outbound-vpc-nodejs18x",{},[]]]],"parameters":null,"internal":false,"opaque":false} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.677Z","msg":"Wrapping 1 properties on nodule.","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.677Z","msg":"Replacing \"succeed\" with wrapped version","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.677Z","msg":"Unable to determine ARN for event type. {\"key1\":\"value1\",\"key2\":\"value2\",\"key3\":\"value3\"}","component":"aws-lambda"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.678Z","msg":"Applying segment kmullaney-no-outbound-vpc-nodejs18x","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.679Z","msg":"Span context not available, not adding transaction.name attribute for OtherTransaction/Function/kmullaney-no-outbound-vpc-nodejs18x","component":"transaction"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.679Z","msg":"Finished setting transaction name from string","component":"transaction","transactionId":"3e4ddd0f88ba0bea","transactionName":"OtherTransaction/Function/kmullaney-no-outbound-vpc-nodejs18x","ignore":false} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.680Z","msg":"Not adding attribute host.displayName with undefined value type. This is expected for undefinedattributes and only an issue if an attribute is not expected to be undefinedor not of the type expected.","component":"attributes"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.682Z","msg":"Peparing to harvest."} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.682Z","msg":"Harvest started."} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.682Z","msg":"metric_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.682 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.682Z","msg":"Entity stats on metric harvest","segmentTotal":0,"harvestCreated":2,"harvestCleared":2,"activeTransactions":0} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"error_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"No error traces to send.","component":"error_tracer"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"error_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"No error events to send.","component":"error_tracer"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"transaction_sample_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"No transaction traces to send.","component":"Transaction Trace Aggregator"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"sql_trace_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"No query traces to send.","component":"query_tracer"} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"Entity stats on span harvest","component":"span_aggregator","spansCollected":1,"spansSeen":1} |
+| 2024-02-02 18:03:32.683 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.683Z","msg":"span_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"analytic_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"custom_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
+| 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"No log events to send.","component":"logs_aggregator"} |
+| 2024-02-02 18:03:32.686 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.686Z","msg":"Harvest finished."} |
+| 2024-02-02 18:03:32.686 | [NR_EXT] Agent telemetry bytes: [REDACTED]
+| 2024-02-02 18:03:32.686 | [NR_EXT] Aggressive harvest yielded 1 invocations |
+| 2024-02-02 18:03:32.686 | [NR_EXT] shipHarvest: harvesting agent telemetry |
+| 2024-02-02 18:03:32.686 | [NR_EXT] shipHarveset: 1 telemetry payloads harvested |
+| 2024-02-02 18:03:32.686 | [NR_EXT] SendTelemetry: sending telemetry to New Relic... |
+| 2024-02-02 18:03:32.686 | [NR_EXT] SendTelemetry: compressing telemetry payloads... |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.778 | [NR_EXT] Sending function logs for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.855 | [NR_EXT] attemptSend: data sent to New Relic succesfully |
+| 2024-02-02 18:03:32.855 | [NR_EXT] sendPayloads: took 168.359524ms to finish sending all payloads |
+| 2024-02-02 18:03:32.855 | [NR_EXT] Sent 1/1 New Relic payload batches with 1 log events successfully with certainty in 169.425ms (168ms to transmit 1.2kB). |
+| 2024-02-02 18:03:32.855 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
+| 2024-02-02 18:03:32.858 | END RequestId: 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:32.858 | REPORT RequestId: 4cb4ccfd-2856-411e-87f7-58a2a40ec212 Duration: 183.06 ms Billed Duration: 184 ms Memory Size: 1024 MB Max Memory Used: 114 MB Init Duration: 609.16 ms |
+| 2024-02-02 18:03:45.236 | [NR_EXT] Telemetry client error: failed to send data within user defined timeout period: 10s |
+| 2024-02-02 18:03:45.236 | [NR_EXT] sendPayloads: took 12.43739277s to finish sending all payloads |
+| 2024-02-02 18:03:45.236 | [NR_EXT] Sent 0/1 New Relic function log batches successfully with certainty in 12440.432ms (12437ms to transmit 0.0kB). |
+| 2024-02-02 18:03:45.236 | [NR_EXT] attemptSend: timeout error, retrying after 200.000114ms: Post "https://log-api.newrelic.com/log/v1": context deadline exceeded (Client.Timeout exceeded while awaiting headers) |
+| 2024-02-02 18:03:45.236 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.236Z","msg":"Recorded memory","component":"sampler","rss":70586368,"heapTotal":20553728,"heapUsed":12199720,"external":1322146,"arrayBuffers":50122} |
+| 2024-02-02 18:03:45.237 | START RequestId: c390c8be-123e-47cf-bcc3-3f4b9046f55e Version: $LATEST |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.238Z","msg":"Creating new bg transaction for wrappedHandler","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.241Z","msg":"Reset called on name state, path stack was undefined","component":"name-state"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.241Z","msg":"setName called on name state, path stack now \"[]\"","component":"name-state"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.241Z","msg":"Applying segment ROOT","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.242Z","msg":"Adding segment kmullaney-no-outbound-vpc-nodejs18x to ROOT in 07586dcdf3594483","component":"segment"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"kmullaney-no-outbound-vpc-nodejs18x","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.242Z","msg":"Created segment","component":"TransactionShim","module":"aws-lambda","inContext":null,"parent":[0,0.390057,"ROOT",{},[[-1706897025241,-1706897025241,"kmullaney-no-outbound-vpc-nodejs18x",{},[]]]],"parameters":null,"internal":false,"opaque":false} |
+| 2024-02-02 18:03:45.254 | [NR_EXT] Skipping platform log for request 4cb4ccfd-2856-411e-87f7-58a2a40ec212 |
+| 2024-02-02 18:03:45.254 | [NR_EXT] Aggressive harvest yielded 0 invocations |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.254Z","msg":"Wrapping 1 properties on nodule.","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.254Z","msg":"Replacing \"succeed\" with wrapped version","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:45.254 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.254Z","msg":"Unable to determine ARN for event type. {\"key1\":\"value1\",\"key2\":\"value2\",\"key3\":\"value3\"}","component":"aws-lambda"} |
+| 2024-02-02 18:03:45.255 | 2024-02-02T18:03:45.255Z c390c8be-123e-47cf-bcc3-3f4b9046f55e INFO Hello world! |
+| 2024-02-02 18:03:45.255 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.255Z","msg":"Applying segment kmullaney-no-outbound-vpc-nodejs18x","component":"TransactionShim","module":"aws-lambda"} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"Span context not available, not adding transaction.name attribute for OtherTransaction/Function/kmullaney-no-outbound-vpc-nodejs18x","component":"transaction"} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"Finished setting transaction name from string","component":"transaction","transactionId":"07586dcdf3594483","transactionName":"OtherTransaction/Function/kmullaney-no-outbound-vpc-nodejs18x","ignore":false} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"Not adding attribute host.displayName with undefined value type. This is expected for undefinedattributes and only an issue if an attribute is not expected to be undefinedor not of the type expected.","component":"attributes"} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"Peparing to harvest."} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"Harvest started."} |
+| 2024-02-02 18:03:45.277 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.277Z","msg":"metric_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"Entity stats on metric harvest","segmentTotal":0,"harvestCreated":2,"harvestCleared":2,"activeTransactions":0} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"error_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No error traces to send.","component":"error_tracer"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"error_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No error events to send.","component":"error_tracer"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"transaction_sample_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No transaction traces to send.","component":"Transaction Trace Aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"sql_trace_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No query traces to send.","component":"query_tracer"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"Entity stats on span harvest","component":"span_aggregator","spansCollected":1,"spansSeen":1} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"span_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"analytic_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"custom_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
+| 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No log events to send.","component":"logs_aggregator"} |
+| 2024-02-02 18:03:45.279 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.279Z","msg":"Harvest finished."} |
+| 2024-02-02 18:03:45.279 | [NR_EXT] Agent telemetry bytes: [REDACTED]
+| 2024-02-02 18:03:45.279 | [NR_EXT] Aggressive harvest yielded 1 invocations |
+| 2024-02-02 18:03:45.279 | [NR_EXT] shipHarvest: harvesting agent telemetry |
+| 2024-02-02 18:03:45.279 | [NR_EXT] shipHarveset: 1 telemetry payloads harvested |
+| 2024-02-02 18:03:45.279 | [NR_EXT] SendTelemetry: sending telemetry to New Relic... |
+| 2024-02-02 18:03:45.279 | [NR_EXT] SendTelemetry: compressing telemetry payloads... |
+| 2024-02-02 18:03:45.354 | [NR_EXT] attemptSend: data sent to New Relic succesfully |
+| 2024-02-02 18:03:45.354 | [NR_EXT] sendPayloads: took 74.274729ms to finish sending all payloads |
+| 2024-02-02 18:03:45.354 | [NR_EXT] Sent 1/1 New Relic payload batches with 1 log events successfully with certainty in 75.059ms (74ms to transmit 1.3kB). |
+| 2024-02-02 18:03:45.354 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
+| 2024-02-02 18:03:45.355 | END RequestId: c390c8be-123e-47cf-bcc3-3f4b9046f55e |
+| 2024-02-02 18:03:45.355 | REPORT RequestId: c390c8be-123e-47cf-bcc3-3f4b9046f55e Duration: 117.73 ms Billed Duration: 118 ms Memory Size: 1024 MB Max Memory Used: 114 MB |
+---
