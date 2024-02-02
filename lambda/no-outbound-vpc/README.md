@@ -8,11 +8,11 @@
     - [Layer](#layer)
   - [Test scenarios](#test-scenarios)
     - [With outbound rule in Security Group](#with-outbound-rule-in-security-group)
-      - [no NR layer](#no-nr-layer)
-      - [with NR layer](#with-nr-layer)
+      - [1. NO NR LAYER](#1-no-nr-layer)
+      - [2. WITH NR LAYER](#2-with-nr-layer)
     - [Without outbound rule in Security Group](#without-outbound-rule-in-security-group)
-      - [no NR layer](#no-nr-layer-1)
-      - [with NR layer](#with-nr-layer-1)
+      - [1. NO NR LAYER](#1-no-nr-layer-1)
+      - [2. WITH NR LAYER](#2-with-nr-layer-1)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -61,7 +61,7 @@ Add function to a VPC.
 
 ### With outbound rule in Security Group
 
-#### no NR layer
+#### 1. NO NR LAYER
 
 ```log
 | 2024-02-02 21:05:08.976 | INIT_START Runtime Version: nodejs:18.v20 Runtime Version ARN: arn:aws:lambda:us-west-2::runtime:a993d90ea43647b82f490a45d7ddd96b557b916a30128d9dcab5f4972911ec0f |
@@ -72,7 +72,7 @@ Add function to a VPC.
 | 2024-02-02 21:05:09.123 | REPORT RequestId: 83102360-9799-4ba5-923a-7b677143228d Duration: 2.41 ms Billed Duration: 3 ms Memory Size: 1024 MB Max Memory Used: 66 MB Init Duration: 141.87 ms |
 ```
 
-#### with NR layer
+#### 2. WITH NR LAYER
 
 See [with-outbound-vpc.log](./log-results/with-outbound-vpc.log)
 
@@ -110,7 +110,7 @@ This appears to happen pretty often but doesn't impact billed durations. When we
 
 ### Without outbound rule in Security Group
 
-#### no NR layer
+#### 1. NO NR LAYER
 
 Without connectivity, no errors are reported. I initiated 1 cold start and it produced 1 cold start.
 
@@ -123,7 +123,7 @@ Without connectivity, no errors are reported. I initiated 1 cold start and it pr
 | 2024-02-02 20:44:52.811 | REPORT RequestId: 18e67f9e-b345-4285-a9bf-ded8fb18bd7a Duration: 2.11 ms Billed Duration: 3 ms Memory Size: 1024 MB Max Memory Used: 66 MB Init Duration: 168.21 ms |
 ```
 
-#### with NR layer
+#### 2. WITH NR LAYER
 
 See [no-outbound-vpc.log](./log-results/no-outbound-vpc.log) file.
 
