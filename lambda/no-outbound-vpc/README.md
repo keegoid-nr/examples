@@ -3,16 +3,21 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [no-outbound-vpc](#no-outbound-vpc)
-  - [Setup](#setup)
-    - [Environment variables](#environment-variables)
+  - [Setup with Extension Enabled NodeJS18X Layer](#setup-with-extension-enabled-nodejs18x-layer)
     - [Layer](#layer)
-  - [Test scenarios](#test-scenarios)
-    - [With outbound rule in Security Group](#with-outbound-rule-in-security-group)
+    - [Environment variables](#environment-variables)
+    - [VPC](#vpc)
+    - [With Outbound Rule in Security Group](#with-outbound-rule-in-security-group)
       - [1. NO NR LAYER](#1-no-nr-layer)
       - [2. WITH NR LAYER](#2-with-nr-layer)
-    - [Without outbound rule in Security Group](#without-outbound-rule-in-security-group)
+    - [Without Outbound Rule in Security Group](#without-outbound-rule-in-security-group)
       - [1. NO NR LAYER](#1-no-nr-layer-1)
       - [2. WITH NR LAYER](#2-with-nr-layer-1)
+  - [Setup with Extension Disabled NodeJS18X Layer](#setup-with-extension-disabled-nodejs18x-layer)
+    - [Layer](#layer-1)
+    - [Environment Variables](#environment-variables)
+    - [NR Layer With Outbound Rule in Security Group](#nr-layer-with-outbound-rule-in-security-group)
+    - [NR Layer Without Outbound Rule in Security Group](#nr-layer-without-outbound-rule-in-security-group)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -20,7 +25,7 @@
 
 Reproduction for https://github.com/newrelic/newrelic-lambda-layers/issues/202
 
-## Setup
+## Setup with Extension Enabled NodeJS18X Layer
 
 I used the SAM deployment, which works similarly to the Serverless Framework but removes the serverless-newrelic-lambda-layers plugin from the equation.
 
@@ -33,6 +38,12 @@ version = 0.1
 region = "us-west-2"
 capabilities = "CAPABILITY_IAM"
 parameter_overrides = "NRAccountId=1234567 SecurityGroupIds=sg-15e44bc2831259619 SubnetIds=subnet-ffe5fb9254e5533e9,subnet-b38b3e8d28805c14a"
+```
+
+### Layer
+
+```sh
+arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:58
 ```
 
 ### Environment variables
@@ -49,17 +60,11 @@ NEW_RELIC_LOG_ENABLED true
 NEW_RELIC_LOG_LEVEL trace
 ```
 
-### Layer
+### VPC
 
-```sh
-arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:58
-```
+Add function to a VPC. I've connected two private subnets to a NAT Gateway, which is connected to two public subnets and an Internet Gateway.
 
-## Test scenarios
-
-Add function to a VPC.
-
-### With outbound rule in Security Group
+### With Outbound Rule in Security Group
 
 #### 1. NO NR LAYER
 
@@ -74,9 +79,9 @@ Add function to a VPC.
 
 #### 2. WITH NR LAYER
 
-See [with-outbound-vpc.log](./log-results/with-outbound-vpc.log)
+To test outbound VPC with layer, I performed 1 cold start and 1 warm invocation. See [with-outbound-vpc-nr-ext-enabled.log](./log-results/with-outbound-vpc-nr-ext-enabled.log)
 
-I initiated 1 cold start and several warm invocations. Of note but not related to the VPC issue, the extension tried to send for 10s in between invocations and failed.
+As an additional test to reproduce the `Telemetry client error` common to the extension, I initiated 1 cold start and several warm invocations. Of note but not related to the VPC issue, the extension tried to send for 10s in between invocations and failed.
 
 ```log
 | 2024-02-02 18:03:32.858 | REPORT RequestId: 4cb4ccfd-2856-411e-87f7-58a2a40ec212 Duration: 183.06 ms Billed Duration: 184 ms Memory Size: 1024 MB Max Memory Used: 114 MB Init Duration: 609.16 ms |
@@ -103,12 +108,12 @@ It succeeded later, and didn't impact the duration of the warm invocation which 
 | 2024-02-02 18:03:45.355 | REPORT RequestId: c390c8be-123e-47cf-bcc3-3f4b9046f55e Duration: 117.73 ms Billed Duration: 118 ms Memory Size: 1024 MB Max Memory Used: 114 MB |
 ```
 
-This appears to happen pretty often but doesn't impact billed durations. When we hit the `Telemetry client error: failed to send data within user defined timeout period: 10s`, it indicates that all retries have failed and we dropped that payload. Since it doesn't appear to ever recover, it's a good idea to set a 1 second timeout instead of 10 seconds to fail faster. It should be able to retry at least 5 times (200 ms each).
+This appears to happen pretty often but doesn't impact billed durations. The send appears to run asynchronously in the runtime environment. When we see the `Telemetry client error: failed to send data within user defined timeout period: 10s`, it indicates that all retries have failed and we dropped that payload. Since it doesn't appear to ever recover, it's a good idea to set a 1 second timeout instead of 10 seconds in order to fail faster. It should be able to retry at least 5 times (200 ms each) within 1 second.
 
-- See [nr-ext-10s-timeout.log](./log-results/nr-ext-10s-timeout.log) for 10 second timeouts.
-- See [nr-ext-1s-timeout.log](./log-results/nr-ext-1s-timeout.log) for 1 second timeouts.
+- See [with-outbound-vpc-nr-ext-10s-timeout.log](./log-results/with-outbound-vpc-nr-ext-10s-timeout.log) for 10 second timeouts.
+- See [with-outbound-vpc-nr-ext-1s-timeout.log](./log-results/with-outbound-vpc-nr-ext-1s-timeout.log) for 1 second timeouts.
 
-### Without outbound rule in Security Group
+### Without Outbound Rule in Security Group
 
 #### 1. NO NR LAYER
 
@@ -125,7 +130,7 @@ Without connectivity, no errors are reported. I initiated 1 cold start and it pr
 
 #### 2. WITH NR LAYER
 
-See [no-outbound-vpc.log](./log-results/no-outbound-vpc.log) file.
+See [no-outbound-vpc-nr-ext-enabled.log](./log-results/no-outbound-vpc-nr-ext-enabled.log) file.
 
 Without connectivity, there were several serious errors and timeouts. I initiated 1 cold start and it produced 1 cold start plus 2 retries for a total of 3 cold starts.
 
@@ -178,4 +183,52 @@ Finally, it ends at the start of the 2nd retry INVOKE, SHUTDOWN phase and anothe
 ```log
 | 2024-02-02 20:11:14.953 | EXTENSION Name: newrelic-lambda-extension State: Registered Events: [SHUTDOWN, INVOKE] |
 | 2024-02-02 20:11:14.953 | INIT_REPORT Init Duration: 9999.72 ms Phase: init Status: timeout |
+```
+
+## Setup with Extension Disabled NodeJS18X Layer
+
+Same as before except for environment variables.
+
+### Layer
+
+```sh
+arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:58
+```
+
+### Environment Variables
+
+```sh
+NEW_RELIC_ACCOUNT_ID 1234567
+NEW_RELIC_LAMBDA_EXTENSION_ENABLED false
+NEW_RELIC_LAMBDA_HANDLER function.handler
+NEW_RELIC_LOG stdout
+NEW_RELIC_LOG_ENABLED true
+NEW_RELIC_LOG_LEVEL trace
+```
+
+### NR Layer With Outbound Rule in Security Group
+
+I performed 1 cold start and 1 warm invocation. No errors or timeouts. See [with-outbound-vpc-nr-ext-disabled.log](./log-results/with-outbound-vpc-nr-ext-disabled.log).
+
+### NR Layer Without Outbound Rule in Security Group
+
+I performed 1 cold start and 1 warm invocation. No errors or timeouts. See [no-outbound-vpc-nr-ext-disabled.log](./log-results/no-outbound-vpc-nr-ext-disabled.log).
+
+```log
+| 2024-02-02 23:55:37.506 | INIT_START Runtime Version: nodejs:18.v20 Runtime Version ARN: arn:aws:lambda:us-west-2::runtime:a993d90ea43647b82f490a45d7ddd96b557b916a30128d9dcab5f4972911ec0f |
+| 2024-02-02 23:55:37.582 | [NR_EXT] New Relic Lambda Extension starting up |
+| 2024-02-02 23:55:37.584 | [NR_EXT] Extension telemetry processing disabled |
+| 2024-02-02 23:55:37.584 | [NR_EXT] Starting no-op mode, no telemetry will be sent |
+| 2024-02-02 23:55:38.019 | 2024-02-02T23:55:38.019Z undefined INFO Lambda Handler starting up |
+| 2024-02-02 23:55:38.041 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:38.041Z","msg":"Peparing to harvest."} |
+| 2024-02-02 23:55:38.041 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:38.041Z","msg":"Harvest started."} |
+| 2024-02-02 23:55:38.045 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:38.045Z","msg":"Harvest finished."} |
+| 2024-02-02 23:55:38.049 | END RequestId: 82992c55-e607-4ee4-8300-366f8d0f0bcd |
+| 2024-02-02 23:55:38.049 | REPORT RequestId: 82992c55-e607-4ee4-8300-366f8d0f0bcd Duration: 20.30 ms Billed Duration: 21 ms Memory Size: 1024 MB Max Memory Used: 104 MB Init Duration: 519.89 ms |
+| 2024-02-02 23:55:46.676 | START RequestId: ed7b6ea2-63f5-427d-9280-9acfd82ee1a9 Version: $LATEST |
+| 2024-02-02 23:55:46.721 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:46.721Z","msg":"Peparing to harvest."} |
+| 2024-02-02 23:55:46.721 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:46.721Z","msg":"Harvest started."} |
+| 2024-02-02 23:55:46.723 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.29.105","pid":14,"time":"2024-02-02T23:55:46.723Z","msg":"Harvest finished."} |
+| 2024-02-02 23:55:46.725 | END RequestId: ed7b6ea2-63f5-427d-9280-9acfd82ee1a9 |
+| 2024-02-02 23:55:46.725 | REPORT RequestId: ed7b6ea2-63f5-427d-9280-9acfd82ee1a9 Duration: 48.34 ms Billed Duration: 49 ms Memory Size: 1024 MB Max Memory Used: 105 MB |
 ```
