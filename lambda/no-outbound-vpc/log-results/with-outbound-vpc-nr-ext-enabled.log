@@ -257,7 +257,7 @@ query-string:
 | 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 18:03:32.684 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.684Z","msg":"No log events to send.","component":"logs_aggregator"} |
 | 2024-02-02 18:03:32.686 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:32.686Z","msg":"Harvest finished."} |
-| 2024-02-02 18:03:32.686 | [NR_EXT] Agent telemetry bytes: [REDACTED]
+| 2024-02-02 18:03:32.686 | [NR_EXT] Agent telemetry bytes[REDACTED]
 | 2024-02-02 18:03:32.686 | [NR_EXT] Aggressive harvest yielded 1 invocations |
 | 2024-02-02 18:03:32.686 | [NR_EXT] shipHarvest: harvesting agent telemetry |
 | 2024-02-02 18:03:32.686 | [NR_EXT] shipHarveset: 1 telemetry payloads harvested |
@@ -542,7 +542,7 @@ query-string:
 | 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 18:03:45.278 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.278Z","msg":"No log events to send.","component":"logs_aggregator"} |
 | 2024-02-02 18:03:45.279 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.17.165","pid":16,"time":"2024-02-02T18:03:45.279Z","msg":"Harvest finished."} |
-| 2024-02-02 18:03:45.279 | [NR_EXT] Agent telemetry bytes: [REDACTED]
+| 2024-02-02 18:03:45.279 | [NR_EXT] Agent telemetry bytes[REDACTED]
 | 2024-02-02 18:03:45.279 | [NR_EXT] Aggressive harvest yielded 1 invocations |
 | 2024-02-02 18:03:45.279 | [NR_EXT] shipHarvest: harvesting agent telemetry |
 | 2024-02-02 18:03:45.279 | [NR_EXT] shipHarveset: 1 telemetry payloads harvested |

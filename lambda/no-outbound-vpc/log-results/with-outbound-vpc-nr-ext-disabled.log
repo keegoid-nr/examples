@@ -250,7 +250,7 @@ query-string:
 | 2024-02-02 21:41:11.055 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:11.055Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
 | 2024-02-02 21:41:11.055 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:11.055Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 21:41:11.055 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:11.055Z","msg":"No log events to send.","component":"logs_aggregator"} |
-| 2024-02-02 21:41:11.057 | [1,"NR_LAMBDA_MONITORING","[REDACTED]"
+| 2024-02-02 21:41:11.057 | [1,"NR_LAMBDA_MONITORING[REDACTED]"
 | 2024-02-02 21:41:11.057 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:11.057Z","msg":"Harvest finished."} |
 | 2024-02-02 21:41:11.060 | END RequestId: e9aa08eb-196b-491e-b1ff-06831edd1032 |
 | 2024-02-02 21:41:11.060 | REPORT RequestId: e9aa08eb-196b-491e-b1ff-06831edd1032 Duration: 20.31 ms Billed Duration: 21 ms Memory Size: 1024 MB Max Memory Used: 106 MB Init Duration: 594.22 ms |
@@ -289,7 +289,7 @@ query-string:
 | 2024-02-02 21:41:18.660 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:18.660Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
 | 2024-02-02 21:41:18.660 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:18.660Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 21:41:18.660 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:18.660Z","msg":"No log events to send.","component":"logs_aggregator"} |
-| 2024-02-02 21:41:18.661 | [1,"NR_LAMBDA_MONITORING","[REDACTED]"
+| 2024-02-02 21:41:18.661 | [1,"NR_LAMBDA_MONITORING[REDACTED]"
 | 2024-02-02 21:41:18.661 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.80.85","pid":17,"time":"2024-02-02T21:41:18.661Z","msg":"Harvest finished."} |
 | 2024-02-02 21:41:18.662 | END RequestId: 304a62cd-4f16-4b6a-90bb-1ee1572396a5 |
 | 2024-02-02 21:41:18.662 | REPORT RequestId: 304a62cd-4f16-4b6a-90bb-1ee1572396a5 Duration: 5.15 ms Billed Duration: 6 ms Memory Size: 1024 MB Max Memory Used: 106 MB |
