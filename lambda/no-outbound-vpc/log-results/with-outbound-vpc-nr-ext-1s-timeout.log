@@ -256,7 +256,7 @@ query-string:
 | 2024-02-02 19:54:31.110 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:31.110Z","msg":"analytic_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:31.110 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:31.110Z","msg":"span_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:31.110 | {"v":0,"level":10,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:31.110Z","msg":"Entity stats on span harvest","component":"span_aggregator","spansCollected":1,"spansSeen":1} |
-| 2024-02-02 19:54:31.118 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:31.118 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:31.118 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:31.118Z","msg":"Harvest finished."} |
 | 2024-02-02 19:54:31.119 | [NR_EXT] SendTelemetry: compressing telemetry payloads... |
 | 2024-02-02 19:54:31.119 | [NR_EXT] SendTelemetry: sending telemetry to New Relic... |
@@ -389,7 +389,7 @@ query-string:
 | 2024-02-02 19:54:36.337 | [NR_EXT] Sending function logs for request |
 | 2024-02-02 19:54:36.337 | [NR_EXT] Sending function logs for request |
 | 2024-02-02 19:54:36.338 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
-| 2024-02-02 19:54:36.338 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:36.338 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:36.338 | [NR_EXT] Sending function logs for request |
 | 2024-02-02 19:54:36.338 | [NR_EXT] Sending function logs for request |
 | 2024-02-02 19:54:36.338 | [NR_EXT] Sending function logs for request |
@@ -578,7 +578,7 @@ query-string:
 | 2024-02-02 19:54:38.135 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:38.134Z","msg":"Not adding attribute host.displayName with undefined value type. This is expected for undefinedattributes and only an issue if an attribute is not expected to be undefinedor not of the type expected.","component":"attributes"} |
 | 2024-02-02 19:54:38.136 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:38.136Z","msg":"Harvest finished."} |
 | 2024-02-02 19:54:38.137 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
-| 2024-02-02 19:54:38.137 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:38.137 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:38.139 | REPORT RequestId: 438a31e0-3d16-4d8c-a28b-2b0de5be27f1 Duration: 9.33 ms Billed Duration: 10 ms Memory Size: 1024 MB Max Memory Used: 115 MB |
 | 2024-02-02 19:54:38.139 | END RequestId: 438a31e0-3d16-4d8c-a28b-2b0de5be27f1 |
 | 2024-02-02 19:54:40.425 | START RequestId: a7dcd3a7-97f1-4b2c-bd3d-eba3c1616f13 Version: $LATEST |
@@ -653,7 +653,7 @@ query-string:
 | 2024-02-02 19:54:40.480 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:40.480Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
 | 2024-02-02 19:54:40.480 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:40.480Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:40.480 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:40.480Z","msg":"No log events to send.","component":"logs_aggregator"} |
-| 2024-02-02 19:54:40.481 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:40.481 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:40.481 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
 | 2024-02-02 19:54:40.481 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:40.481Z","msg":"Harvest finished."} |
 | 2024-02-02 19:54:40.483 | END RequestId: a7dcd3a7-97f1-4b2c-bd3d-eba3c1616f13 |
@@ -733,7 +733,7 @@ query-string:
 | 2024-02-02 19:54:42.939 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:42.939Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:42.939 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:42.939Z","msg":"No log events to send.","component":"logs_aggregator"} |
 | 2024-02-02 19:54:42.940 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:42.940Z","msg":"Harvest finished."} |
-| 2024-02-02 19:54:42.941 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:42.941 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:42.941 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
 | 2024-02-02 19:54:42.942 | END RequestId: 81ddb93f-8975-4f1c-9c48-13df5ed97a7d |
 | 2024-02-02 19:54:42.942 | REPORT RequestId: 81ddb93f-8975-4f1c-9c48-13df5ed97a7d Duration: 52.73 ms Billed Duration: 53 ms Memory Size: 1024 MB Max Memory Used: 115 MB |
@@ -819,7 +819,7 @@ query-string:
 | 2024-02-02 19:54:45.416 | [NR_EXT] attemptSend: data sent to New Relic succesfully |
 | 2024-02-02 19:54:45.417 | [NR_EXT] sendPayloads: took 75.233981ms to finish sending all payloads |
 | 2024-02-02 19:54:45.417 | [NR_EXT] Sent 1/1 New Relic payload batches with 7 log events successfully with certainty in 76.392ms (75ms to transmit 4.0kB). |
-| 2024-02-02 19:54:45.417 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:45.417 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:45.417 | [NR_EXT] Skipping platform log for request 81ddb93f-8975-4f1c-9c48-13df5ed97a7d |
 | 2024-02-02 19:54:45.417 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
 | 2024-02-02 19:54:45.418 | END RequestId: 3e9e7d61-42c5-498f-a3c2-04a742f03b39 |
@@ -907,7 +907,7 @@ query-string:
 | 2024-02-02 19:54:47.912 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:47.912Z","msg":"No custom events to send.","component":"custom-event-aggregator"} |
 | 2024-02-02 19:54:47.912 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:47.912Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:47.912 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:47.912Z","msg":"No log events to send.","component":"logs_aggregator"} |
-| 2024-02-02 19:54:47.917 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:47.917 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:47.917 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
 | 2024-02-02 19:54:47.917 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:47.917Z","msg":"Harvest finished."} |
 | 2024-02-02 19:54:47.920 | END RequestId: cab36744-2d1b-4bcf-8698-1bfe087ffc1e |
@@ -987,7 +987,7 @@ query-string:
 | 2024-02-02 19:54:50.091 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:50.091Z","msg":"log_event_data Aggregator data send.","component":"base_aggregator"} |
 | 2024-02-02 19:54:50.091 | {"v":0,"level":20,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:50.091Z","msg":"No log events to send.","component":"logs_aggregator"} |
 | 2024-02-02 19:54:50.092 | {"v":0,"level":30,"name":"newrelic","hostname":"169.254.43.181","pid":14,"time":"2024-02-02T19:54:50.092Z","msg":"Harvest finished."} |
-| 2024-02-02 19:54:50.092 | [NR_EXT] Agent telemetry bytes[REDACTED]
+| 2024-02-02 19:54:50.092 | [NR_EXT] Agent telemetry bytes: [REDACTED]
 | 2024-02-02 19:54:50.092 | [NR_EXT] mainLoop: blocking while awaiting next invocation event... |
 | 2024-02-02 19:54:50.094 | END RequestId: 3e98d4fa-b85c-4557-be2d-445d8c437896 |
 | 2024-02-02 19:54:50.094 | REPORT RequestId: 3e98d4fa-b85c-4557-be2d-445d8c437896 Duration: 5.60 ms Billed Duration: 6 ms Memory Size: 1024 MB Max Memory Used: 115 MB |
