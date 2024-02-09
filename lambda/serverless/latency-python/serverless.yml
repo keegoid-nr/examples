@@ -6,7 +6,7 @@ provider:
   name: aws
   region: ${env:AWS_DEFAULT_REGION}
   stage: "00059605"
-  timeout: 30
+  timeout: 4
   logRetentionInDays: 14
   tags:
     owner: kmullaney
@@ -18,9 +18,11 @@ provider:
     description: "00059605"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    # NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
     NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
     NEW_RELIC_LOG_LEVEL: info
     NEW_RELIC_LOG: stderr
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements
@@ -31,7 +33,10 @@ custom:
     accountId: ${env:NEW_RELIC_ACCOUNT_ID}
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
     disableLicenseKeySecret: false
+    # logEnabled: true
+    # logLevel: debug
     debug: true
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:97
   pythonRequirements:
     fileName: ./requirements.txt
 

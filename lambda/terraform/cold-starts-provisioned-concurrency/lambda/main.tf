@@ -86,6 +86,7 @@ resource "aws_lambda_function" "newrelic_terraform_example_function" {
       NEW_RELIC_LOG_ENABLED = true
       NEW_RELIC_LOG_LEVEL = var.log_level
       NEW_RELIC_LOG       = var.log_path
+      NEW_RELIC_PACKAGE_REPORTING_ENABLED = false # disable package reporting feature to improve cold start times for Python
     }
   }
   # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry,

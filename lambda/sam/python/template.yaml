@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Testing Python 3.9 instrumentation
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+
+Resources:
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: testing
+        - Key: description
+          Value: "python3.9 instrumentation"
+      Policies:
+        - PolicyName: LambdaSecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:NEW_RELIC_LICENSE_KEY-*'
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - 'cloudwatch:PutMetricData'
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    'cloudwatch:namespace':
+                      - 'AWS/Lambda'
+
+  KmullaneyPython39:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      Description: Testing instrumentation for Python 3.9
+      FunctionName: kmullaney-python-39
+      CodeUri: kmullaney-python-39/
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.9
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      MemorySize: 256
+      Timeout: 6
+      PackageType: Zip
+      Environment:
+        Variables:
+          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_LOG: stderr
+          NEW_RELIC_LOG_LEVEL: info
+          NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:57
+      Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "python3.9 instrumentation"
+
+  KmullaneyPython39LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneyPython39}'
+      RetentionInDays: 3

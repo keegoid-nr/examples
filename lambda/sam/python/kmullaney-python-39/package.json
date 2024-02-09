@@ -1,0 +1,11 @@
+{
+  "name": "kmullaney-python-39",
+  "version": "1.0.0",
+  "description": "",
+  "main": "function.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keegan Mullaney",
+  "license": "ISC"
+}
