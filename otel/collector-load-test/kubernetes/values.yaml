@@ -1,0 +1,26 @@
+mode: daemonset
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 250m
+    memory: 128Mi
+
+ports:
+  pprof:
+    enabled: true
+    containerPort: 1777
+    servicePort: 1777
+    protocol: TCP
+  zpages:
+    enabled: true
+    containerPort: 25679
+    servicePort: 25679
+    protocol: TCP
+  health_check:
+    enabled: true
+    containerPort: 13133
+    servicePort: 13133
+    protocol: TCP
