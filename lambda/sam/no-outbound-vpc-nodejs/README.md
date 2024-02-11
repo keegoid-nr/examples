@@ -15,7 +15,7 @@
       - [2. WITH NR LAYER](#2-with-nr-layer-1)
   - [Setup with Extension Disabled NodeJS18X Layer](#setup-with-extension-disabled-nodejs18x-layer)
     - [Layer](#layer-1)
-    - [Environment Variables](#environment-variables)
+    - [Environment Variables](#environment-variables-1)
     - [NR Layer With Outbound Rule in Security Group](#nr-layer-with-outbound-rule-in-security-group)
     - [NR Layer Without Outbound Rule in Security Group](#nr-layer-without-outbound-rule-in-security-group)
 
@@ -37,7 +37,7 @@ version = 0.1
 [default.deploy.parameters]
 region = "us-west-2"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "NRAccountId=1234567 SecurityGroupIds=sg-15e44bc2831259619 SubnetIds=subnet-ffe5fb9254e5533e9,subnet-b38b3e8d28805c14a"
+parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567 SecurityGroupIds=sg-15e44bc2831259619 SubnetIds=subnet-ffe5fb9254e5533e9,subnet-b38b3e8d28805c14a"
 ```
 
 ### Layer

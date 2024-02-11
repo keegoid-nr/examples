@@ -4,6 +4,7 @@
 
 - [kmullaney-python-39](#kmullaney-python-39)
   - [Setup](#setup)
+  - [Deployment Steps](#deployment-steps)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -21,5 +22,13 @@ version = 0.1
 [default.deploy.parameters]
 region = "us-west-2"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "NRAccountId=1234567"
+parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567"
 ```
+
+## Deployment Steps
+
+1. Modify values in a `template.yaml` to suite your needs.
+1. Modify `samconfig.toml` with your values.
+1. Run the [deploy.sh](./deploy.sh) script to deploy an example.
+
+The `deploy.sh` script takes the AWS region as an argument.

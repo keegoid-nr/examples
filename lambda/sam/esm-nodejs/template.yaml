@@ -7,7 +7,6 @@ Parameters:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
-
   NRTrustedAccountKey:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
@@ -20,7 +19,7 @@ Resources:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       CodeUri: src/
       Description: A simple Lambda, with New Relic telemetry
-      FunctionName: kmullaney-nodejs18
+      FunctionName: kmullaney-nodejs18-esm
       # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
       # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
       Handler: function.handler
@@ -31,15 +30,17 @@ Resources:
       PackageType: Zip
       Environment:
         Variables:
-          NEW_RELIC_NO_CONFIG_FILE: true                               # Node agent uses environment variables in Lambda
+          NEW_RELIC_NO_CONFIG_FILE: true                               # Agent uses environment variables in Lambda
           NEW_RELIC_APP_NAME: kmullaney-nodejs18-esm                   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}                    # New Relic account ID
-          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Sub ${NRTrustedAccountKey}   # New Relic account ID or parent ID
+          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                       # New Relic account ID
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey      # New Relic account ID or parent ID
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true                       # Enable/disable NR_EXT log lines
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                 # Send logs via [NR_EXT]
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                         # Extension log level
-          NEW_RELIC_LOG_ENABLED: true                                  # Node agent logs
-          NEW_RELIC_LOG: stdout                                        # Node agent log path
-          NEW_RELIC_LOG_LEVEL: trace                                   # Node agent log level
+          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                        # Reduce timeout duration when for "Telemetry client error"
+          NEW_RELIC_LOG_ENABLED: true                                  # Agent logs
+          NEW_RELIC_LOG: stdout                                        # Agent log path
+          NEW_RELIC_LOG_LEVEL: trace                                   # Agent log level
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:51
       Policies:
