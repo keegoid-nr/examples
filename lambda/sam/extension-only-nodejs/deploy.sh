@@ -21,3 +21,4 @@ aws cloudformation deploy \
 	--capabilities CAPABILITY_IAM \
 	--parameter-overrides "NRAccountId=${accountId}" \
   --parameter-overrides "NRLicenseKey=${licenseKey}"
+

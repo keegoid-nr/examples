@@ -3,7 +3,7 @@
 //
 // Author : Keegan Mullaney
 // Company: New Relic
-// Website: github.com/keegoid-nr/collector-load-test
+// Website: github.com/keegoid-nr/examples/otel/collector-load-test
 // License: Apache 2.0
 // ------------------------------------------------------
 
@@ -28,7 +28,7 @@ import (
   api "go.opentelemetry.io/otel/metric"
 )
 
-const meterName = "github.com/keegoid-nr/collector-load-test"
+const meterName = "github.com/keegoid-nr/examples/otel/collector-load-test"
 const meterVersion = "0.1.0"
 
 // Declare a global variable for the total number of data points generated

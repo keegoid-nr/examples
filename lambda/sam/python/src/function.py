@@ -16,7 +16,7 @@ def get_pass():
     print("getting DB password")
     return "123456"
 
-def lambda_handler(event, context):
+def handler(event, context):
     # At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
     requests.get("https://newrelic.com")
 

@@ -19,9 +19,9 @@ exporters:
   debug:
     verbosity: basic
   otlphttp:
-    endpoint: ${NEW_RELIC_OTLP_ENDPOINT}
+    endpoint: $NEW_RELIC_OTLP_ENDPOINT
     headers:
-      "api-key": ${NEW_RELIC_LICENSE_KEY}
+      "api-key": $NEW_RELIC_LICENSE_KEY
     compression: gzip
     # retry_on_failure:
     #   enabled: true

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-region="${1}"
+region="$1"
 bucket="$USER-$(basename "$PWD")-$region"
 
 echo "region set to ${region}"
