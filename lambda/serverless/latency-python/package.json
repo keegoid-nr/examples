@@ -1,20 +1,13 @@
 {
-  "name": "kmullaney-npm",
+  "name": "kmullaney-latency-python",
   "version": "0.0.0-test",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
-    "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
-    "buildPlugin": "cd ../../ && npm run build && mkdir -p examples/python/.serverless_plugins/templates && cp -rf dist examples/python/.serverless_plugins/serverless-newrelic-lambda-layers && cp templates/nr-license-key-secret.yaml examples/python/.serverless_plugins/templates/",
-    "clean": "rm -rf .serverless_plugins",
-    "deploy": "yarn build && sls deploy"
-  },
+  "main": "function.py",
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3",
-    "serverless-python-requirements": "~5"
+    "serverless": "^3.38.0",
+    "serverless-newrelic-lambda-layers": "^5.0.1",
+    "serverless-python-requirements": "^6.0.1"
   }
 }

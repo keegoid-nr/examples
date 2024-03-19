@@ -9,9 +9,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: ${env:MY_POD_IP}:4317
+        endpoint: "$${env:MY_POD_IP}:4317"
       http:
-        endpoint: ${env:MY_POD_IP}:4318
+        endpoint: "$${env:MY_POD_IP}:4318"
 
 processors:
   batch:
@@ -45,7 +45,8 @@ service:
 
 extensions:
   health_check:
+    endpoint: "$${env:MY_POD_IP}:13133"
   pprof:
-    endpoint: :1777
+    endpoint: "$${env:MY_POD_IP}:1777"
   zpages:
-    endpoint: :25679
+    endpoint: "$${env:MY_POD_IP}:25679"

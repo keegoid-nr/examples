@@ -39,11 +39,6 @@ resource "kubernetes_daemonset" "collector_load_test" {
           }
 
           env {
-            name  = "OTEL_EXPERIMENTAL_RESOURCE_DISABLED_KEYS"
-            value = "process.command_line,process.command_args"
-          }
-
-          env {
             name  = "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE"
             value = "delta"
           }
