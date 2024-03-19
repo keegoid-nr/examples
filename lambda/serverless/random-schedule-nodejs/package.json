@@ -1,23 +1,16 @@
 {
-  "name": "kmullaney-random-invocations",
+  "name": "kmullaney-random-schedule-nodejs",
   "version": "0.1",
   "esversion": 8,
   "description": "",
   "main": "function-a.js",
-  "scripts": {
-    "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
-    "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
-    "buildPlugin": "cd ../../ && npm run build && mkdir -p examples/nodejs/.serverless_plugins && cp -rf dist examples/nodejs/.serverless_plugins/serverless-newrelic-lambda-layers",
-    "clean": "rm -rf .serverless_plugins",
-    "deploy": "yarn build && sls deploy"
-  },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "serverless": "~3",
-    "serverless-newrelic-lambda-layers": "~3"
-  },
   "dependencies": {
     "aws-sdk": "^2.1513.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-newrelic-lambda-layers": "^5.0.1"
   }
 }

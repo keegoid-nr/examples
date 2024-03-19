@@ -1,15 +1,15 @@
 {
-  "name": "kmullaney-nodejs16x-load-testing-nrlif",
+  "name": "kmullaney-load-testing-nrlif-nodejs",
   "version": "0.3",
   "esversion": 6,
   "description": "",
-  "main": "function.js",
+  "main": "function.mjs",
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.36.0"
+    "serverless": "^3.38.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.1489.0"
+    "aws-sdk": "^2.1580.0"
   }
 }

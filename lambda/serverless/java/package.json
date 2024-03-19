@@ -1,12 +1,12 @@
 {
-  "name": "kmullaney-java17-test-dev",
+  "name": "kmullaney-java",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/main/java/com.newrelic.lambda.example/App.java",
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "serverless": "^3.38.0",
-    "serverless-newrelic-lambda-layers": "^5.0.0"
+    "serverless-newrelic-lambda-layers": "^5.0.1"
   }
 }

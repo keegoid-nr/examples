@@ -1,26 +1,19 @@
 {
-  "name": "kmullaney-extension-only-layer-serverless",
+  "name": "kmullaney-serverless-offline-nodejs",
   "version": "0.1",
   "esversion": 6,
   "description": "",
   "main": "function.js",
-  "scripts": {
-    "build": "npm run clean && npm run buildPlugin && npm run buildPackage",
-    "buildPackage": "LOCAL_PLUGIN=true SLS_DEBUG=* sls package",
-    "buildPlugin": "cd ../../ && npm run build && mkdir -p examples/nodejs/.serverless_plugins && cp -rf dist examples/nodejs/.serverless_plugins/serverless-newrelic-lambda-layers",
-    "clean": "rm -rf .serverless_plugins",
-    "deploy": "yarn build && sls deploy"
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.35.2",
-    "serverless-newrelic-lambda-layers": "^4.1.0",
-    "serverless-offline": "^13.2.0"
+    "serverless": "^3.38.0",
+    "serverless-newrelic-lambda-layers": "^5.0.1",
+    "serverless-offline": "^13.3.3"
   },
   "dependencies": {
-    "@aws-sdk/client-lambda": "^3.427.0",
-    "axios": "^1.6.0",
-    "newrelic": "^11.1.0"
+    "@aws-sdk/client-lambda": "^3.536.0",
+    "axios": "^1.6.8",
+    "newrelic": "^11.13.0"
   }
 }

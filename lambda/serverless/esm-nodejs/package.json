@@ -1,15 +1,14 @@
 {
-  "name": "kmullaney-esm-example",
+  "name": "kmullaney-esm-nodejs",
   "version": "0.1",
   "description": "",
   "type": "module",
   "main": "function.mjs",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.36.0",
-    "serverless-newrelic-lambda-layers": "^4.2.0"
+    "serverless": "^3.38.0",
+    "serverless-newrelic-lambda-layers": "^5.0.1"
   }
 }
