@@ -41,6 +41,7 @@ Resources:
           NEW_RELIC_LOG_ENABLED: true                                  # Agent logs
           NEW_RELIC_LOG: stdout                                        # Agent log path
           NEW_RELIC_LOG_LEVEL: trace                                   # Agent log level
+          NEW_RELIC_USE_ESM: true                                      # Let the agent know the function uses ESM
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:51
       Policies:
