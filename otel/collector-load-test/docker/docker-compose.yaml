@@ -11,7 +11,7 @@ services:
     environment:
       OTEL_SERVICE_NAME: 'collector-load-test'
       OTEL_LOGS_EXPORTER: 'debug'
-      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector'
+      OTEL_EXPORTER_OTLP_ENDPOINT: 'http://otel-collector:4317'
       OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: 'delta'
       OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT: 4095
       METRICS_PER_SECOND: ${METRICS_PER_SECOND}
@@ -19,7 +19,7 @@ services:
       - otel-collector
 
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.95.0
+    image: otel/opentelemetry-collector-contrib:0.97.0
     networks:
       - otel
     volumes:
@@ -27,6 +27,7 @@ services:
     command: ["--config=/collector.yaml"]
     environment:
       NEW_RELIC_LICENSE_KEY: '${NEW_RELIC_LICENSE_KEY}'
+      NEW_RELIC_OTLP_ENDPOINT: '${NEW_RELIC_OTLP_ENDPOINT}'
     ports:
       - 1777:1777 # pprof extension | https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/pprofextension/README.md
       # - 8888:8888 # Prometheus metrics exposed by the collector

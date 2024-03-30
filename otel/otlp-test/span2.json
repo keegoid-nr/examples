@@ -10,21 +10,21 @@
     },
     "spans": [
       {
-        "trace.id": "544788552145699877",
+        "trace.id": "0123456791abcdef0125556789abcdef",
         "id": "ABC",
         "attributes": {
-          "duration.ms": 12.53,
+          "duration.ms": 153,
           "host": "newrelic.com",
-          "name": "/home"
+          "name": "/home2"
         }
       },
       {
-        "trace.id": "544788552145699877",
+        "trace.id": "0123456791abcdef0125556789abcdef",
         "id": "DEF",
         "attributes": {
           "error.group.name": "permissions",
           "error.message": "not authorized",
-          "duration.ms": 2.97,
+          "duration.ms": 297,
           "host": "newrelic.com",
           "name": "/auth",
           "parent.id": "ABC"

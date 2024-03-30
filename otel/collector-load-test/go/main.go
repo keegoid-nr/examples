@@ -19,12 +19,15 @@ import (
   "math/rand"
   "strconv"
   "sync/atomic"
+  "runtime"
+  "fmt"
+  "github.com/shirou/gopsutil/cpu"
 
   "go.opentelemetry.io/otel/attribute"
   "go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
   "go.opentelemetry.io/otel/sdk/metric"
   "go.opentelemetry.io/otel/sdk/resource"
-  semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+  semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
   api "go.opentelemetry.io/otel/metric"
 )
 
@@ -88,7 +91,7 @@ func generateMetrics(ctx context.Context, meter api.Meter) {
   defer ticker.Stop()
 
   // Initialize metrics
-  durationHistogram, err := meter.Float64Histogram("http.server.duration", api.WithDescription("histogram of HTTP durations"), api.WithUnit("ms"))
+  durationHistogram, err := meter.Float64Histogram("http.server.duration", api.WithDescription("HTTP durations"), api.WithUnit("ms"))
   if err != nil {
     log.Fatalf("failed to create durationHistogram: %v\n", err)
   }
@@ -101,6 +104,31 @@ func generateMetrics(ctx context.Context, meter api.Meter) {
   errorRateGauge, err := meter.Float64ObservableGauge("http.error.rate", api.WithDescription("rate of HTTP errors"))
   if err != nil {
     log.Fatalf("failed to create errorRateGauge: %v\n", err)
+  }
+
+  heapSysGauge, err := meter.Int64ObservableGauge("process.runtime.go.mem.heap_sys", api.WithDescription("memory heap_sys"), api.WithUnit("bytes"))
+  if err != nil {
+    log.Fatalf("failed to create heapSysGauge: %v\n", err)
+  }
+
+  heapAllocGauge, err := meter.Int64ObservableGauge("process.runtime.go.mem.heap_alloc", api.WithDescription("memory heap_alloc"), api.WithUnit("bytes"))
+  if err != nil {
+    log.Fatalf("failed to create heapAllocGauge: %v\n", err)
+  }
+
+  gcHistogram, err := meter.Int64Histogram("process.runtime.go.gc.pause_ns", api.WithDescription("GC pause durations"), api.WithUnit("ns"))
+  if err != nil {
+    log.Fatalf("failed to create durationHistogram: %v\n", err)
+  }
+
+  goRoutinesGauge, err := meter.Int64ObservableGauge("process.runtime.go.goroutines", api.WithDescription("number of go routines"))
+  if err != nil {
+    log.Fatalf("failed to create goRoutinesGauge: %v\n", err)
+  }
+
+  cpuUtilizationGauge, err := meter.Float64ObservableGauge("system.cpu.utilization", api.WithDescription("cpu utilization"), api.WithUnit("percent"))
+  if err != nil {
+    log.Fatalf("failed to create cpuUtilizationGauge: %v\n", err)
   }
 
   // Initialize HTTP methods and status codes
@@ -151,6 +179,54 @@ func generateMetrics(ctx context.Context, meter api.Meter) {
       }
     }
 
+    var m runtime.MemStats
+    runtime.ReadMemStats(&m)
+    fmt.Printf("Alloc = %v MiB", bToMb(m.Alloc))
+    fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
+    fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+    fmt.Printf("\tNumGC = %v\n", m.NumGC)
+    _, err = meter.RegisterCallback(func(_ context.Context, o api.Observer) error {
+      o.ObserveInt64(heapSysGauge, int64(m.Sys), labels)
+      return nil
+    }, heapSysGauge)
+    if err != nil {
+      log.Fatalf("failed to observe m.Sys: %v\n", err)
+    }
+    _, err = meter.RegisterCallback(func(_ context.Context, o api.Observer) error {
+      o.ObserveInt64(heapAllocGauge, int64(m.Alloc), labels)
+      return nil
+    }, heapAllocGauge)
+    if err != nil {
+      log.Fatalf("failed to observe m.Alloc: %v\n", err)
+    }
+
+    // Record the last GC pause duration
+    if len(m.PauseNs) > 0 {
+      lastPauseNs := m.PauseNs[(m.NumGC+255)%256] // Most recent pause
+      gcHistogram.Record(ctx, int64(lastPauseNs), labels)
+    }
+
+    // Get the number of goroutines that currently exist.
+    numGoroutines := runtime.NumGoroutine()
+    log.Printf("number of goroutines: %d\n", numGoroutines)
+    _, err = meter.RegisterCallback(func(_ context.Context, o api.Observer) error {
+      o.ObserveInt64(goRoutinesGauge, int64(numGoroutines), labels)
+      return nil
+    }, goRoutinesGauge)
+    if err != nil {
+      log.Fatalf("failed to observe numGoroutines: %v\n", err)
+    }
+
+    cpuUtilization, _ := cpu.Percent(time.Second, false)
+    log.Printf("cpu utilization: %.2f%%\n", cpuUtilization[0])
+    _, err = meter.RegisterCallback(func(_ context.Context, o api.Observer) error {
+      o.ObserveFloat64(cpuUtilizationGauge, cpuUtilization[0]/100, labels)
+      return nil
+    }, cpuUtilizationGauge)
+    if err != nil {
+      log.Fatalf("failed to observe cpuUtilization[0]: %v\n", err)
+    }
+
     // Update the global count of data points generated
     atomic.AddInt64(&globalDataPointsGenerated, int64(dataPointsGenerated))
 
@@ -177,6 +253,11 @@ func generateMetrics(ctx context.Context, meter api.Meter) {
     // Sleep for the calculated duration
     time.Sleep(sleepDuration)
   }
+}
+
+
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
 }
 
 func generateStatusCodeWeights(statusCodes []int) []float64 {
