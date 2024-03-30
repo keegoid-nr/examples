@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [OTel Load Test](#collector-load-test)
+- [OTel Load Test](#otel-load-test)
   - [main.go](#maingo)
   - [Prerequisites:](#prerequisites)
   - [Setup](#setup)
@@ -28,8 +28,8 @@ Each metric has attributes:
 
 ## Prerequisites:
 
-- Go 1.21
-- Docker 24.0.7
+- Go 1.22
+- Docker 25.03
 
 ## Setup
 
