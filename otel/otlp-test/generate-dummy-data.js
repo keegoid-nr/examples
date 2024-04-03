@@ -4,7 +4,7 @@ const fs = require("fs")
 // Function to generate a large payload with dummy data
 function generateLargePayload() {
   const dummyMetric = {
-    name: "dummy_metric",
+    name: "my.metric",
     intSum: {
       dataPoints: [],
     },
@@ -23,17 +23,17 @@ function generateLargePayload() {
       {
         resource: {
           attributes: [
-            { key: "service.name", value: { stringValue: "dummy_service" } },
+            { key: "service.name", value: { stringValue: "my.service" } },
             {
               key: "service.instance.id",
-              value: { stringValue: "instance-1" },
+              value: { stringValue: "1234" },
             },
           ],
         },
         instrumentationLibraryMetrics: [
           {
             instrumentationLibrary: {
-              name: "dummy_lib",
+              name: "my.library",
               version: "1.0.0",
             },
             metrics: [dummyMetric],

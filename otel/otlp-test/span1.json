@@ -1,57 +1,63 @@
-[
-  {
-    "resourceMetrics": [
-      {
-        "resource": {
-          "attributes": [
-            {
-              "key": "service.name",
-              "value": {
-                "stringValue": "dummy_service"
-              }
-            },
-            {
-              "key": "service.instance.id",
-              "value": {
-                "stringValue": "instance-1"
-              }
-            }
-          ]
-        },
-        "instrumentationLibraryMetrics": [
+{
+  "resourceMetrics": [
+    {
+      "resource": {
+        "attributes": [
           {
-            "instrumentationLibrary": {
-              "name": "dummy_lib",
-              "version": "1.0.0"
-            },
-            "metrics": [
+            "key": "service.name",
+            "value": {
+              "stringValue": "my.service"
+            }
+          },
+          {
+            "key": "service.instance.id",
+            "value": {
+              "stringValue": "1234"
+            }
+          }
+        ]
+      },
+      "instrumentationLibraryMetrics": [
+        {
+          "instrumentationLibrary": {
+            "name": "my.library",
+            "version": "1.0.0",
+            "attributes": [
               {
-                "name": "dummy_metric",
-                "intSum": {
-                  "dataPoints": [
-                    {
-                      "timeUnixNano": 1697760123001000000,
-                      "asInt": 454
-                    },
-                    {
-                      "timeUnixNano": 1697760123001000000,
-                      "asInt": 524
-                    },
-                    {
-                      "timeUnixNano": 1697760123001000000,
-                      "asInt": 399
-                    },
-                    {
-                      "timeUnixNano": 1697760123030000000,
-                      "asInt": 287
-                    }
-                  ]
+                "key": "my.scope.attribute",
+                "value": {
+                  "stringValue": "some scope attribute"
                 }
               }
             ]
-          }
-        ]
-      }
-    ]
-  }
-]
+          },
+          "metrics": [
+            {
+              "name": "my.metric",
+              "intSum": {
+                "dataPoints": [
+                  {
+                    "timeUnixNano": 1712181442000000000,
+                    "asInt": 454
+                  },
+                  {
+                    "timeUnixNano": 1712181442000000000,
+                    "asInt": 524
+                  },
+                  {
+                    "timeUnixNano": 1712181442000000000,
+                    "asInt": 399
+                  },
+                  {
+                    "timeUnixNano": 1712181442000000000,
+                    "asInt": 287
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
