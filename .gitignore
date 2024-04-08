@@ -499,3 +499,4 @@ terraform.rc
 
 **/packaged.yaml
 parameters.yaml
+.local
