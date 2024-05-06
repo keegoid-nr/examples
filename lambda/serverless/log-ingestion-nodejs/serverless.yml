@@ -1,0 +1,41 @@
+service: kmullaney
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-west-2
+  stage: dev
+  timeout: 4
+  logRetentionInDays: 3
+  tags:
+    owner: kmullaney
+    reason: example
+    description: send only logs via newrelic-log-ingestion function
+  stackTags:
+    owner: kmullaney
+    reason: example
+    description: send only logs via newrelic-log-ingestion function
+
+plugins:
+  - serverless-newrelic-lambda-layers
+
+custom:
+  newRelic:
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
+    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}         # User api key
+    enableExtension: false                            # enable/disable extension
+    cloudWatchFilter: '*'                             # send all logs to newrelic-log-ingestion function
+
+package:
+  individually: true
+
+functions:
+  log-ingestion-example:
+    description: demo log ingestion
+    handler: function.handler
+    runtime: nodejs20.x
+    package:
+      patterns:
+        # - 'node_modules/**'
+        - 'function.js'
