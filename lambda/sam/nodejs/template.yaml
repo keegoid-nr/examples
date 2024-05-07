@@ -1,0 +1,232 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: And example of a simple instrumented NodeJS Lambda
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+  NRTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: '[0-9]+'
+  SecretsManagerSecretName:
+    Type: String
+    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    AllowedPattern: '[0-9A-Z_-]+'
+  # SecurityGroupIds:
+  #   Type: List<AWS::EC2::SecurityGroup::Id>
+  #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
+  # SubnetIds:
+  #   Type: List<AWS::EC2::Subnet::Id>
+  #   Description: The list of Subnet IDs for the Lambda function's VPC configuration.
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 20
+    Runtime: nodejs18.x
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true                                 # Agent uses environment variables in Lambda
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false                        # Reduce cold start duration by not collecting VM metrics
+        NEW_RELIC_LOG_ENABLED: true                                    # Agent logs
+        NEW_RELIC_LOG: stdout                                          # Agent log path
+        NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
+
+        # extension config
+        NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+
+Resources:
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: demo
+        - Key: description
+          Value: "Secrets Manager access"
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # - Sid: AWSLambdaVPCAccess
+              #   Effect: Allow
+              #   Action:
+              #     - 'ec2:CreateNetworkInterface'
+              #     - 'ec2:DescribeNetworkInterfaces'
+              #     - 'ec2:DescribeSubnets'
+              #     - 'ec2:DeleteNetworkInterface'
+              #     - 'ec2:AssignPrivateIpAddresses'
+              #     - 'ec2:UnassignPrivateIpAddresses'
+              #   Resource: '*'
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: 'secretsmanager:GetSecretValue'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsManagerSecretName}-*'
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - 'cloudwatch:PutMetricData'
+                Resource: '*'
+                Condition:
+                  StringEquals:
+                    'cloudwatch:namespace':
+                      - 'AWS/Lambda'
+
+############################
+
+  KmullaneySamEsmNodejs18x:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: src/esm/
+      Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
+      # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
+      Handler: function.handler
+      PackageType: Zip
+      FunctionName: kmullaney-sam-esm-nodejs18x
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs18x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:68
+      # Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        # - AWSSecretsManagerGetSecretValuePolicy:
+        #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Tags:
+        owner: kmullaney
+        reason: "ESM manual wrapping"
+        description: "nodejs18 ESM manual handler wrapping for improved cold start performance"
+
+  KmullaneySamNodejsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs18x}'
+      RetentionInDays: 3
+
+############################
+
+  KmullaneySamExtensionOnlyNodejs18x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/extension-only/
+      Description: An extension-only layer with layerless instrumentation
+      # If using the extension-only layer, there is no handler wrapper
+      Handler: function.handler
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-extension-only-nodejs18x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:37
+      Tags:
+        owner: kmullaney
+        reason: "test extension-only layer"
+        description: "nodejs18 extension-only layer with vendored agent"
+
+  KmullaneySamExtensionOnlyNodejs18xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamExtensionOnlyNodejs18x}'
+      RetentionInDays: 3
+
+
+############################
+
+  KmullaneySamAwsSdkIssueNodejs18x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/aws-sdk-issue/
+      Description: An extension-only layer with layerless instrumentation
+      Handler: newrelic-lambda-wrapper.handler
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-aws-sdk-issue-nodejs18x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-aws-sdk-issue-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:68
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "test aws sdk issue with node.js agent"
+
+  KmullaneySamAwsSdkIssueNodejs18xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsSdkIssueNodejs18x}'
+      RetentionInDays: 3
+
+############################
+
+  # KmullaneySamNoOutboundVpcNodejs18x:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: src/no-outbound-vpc/
+  #     Description: Test agent and extension with no outbound access
+  #     Handler: newrelic-lambda-wrapper.handler
+  #     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+  #     PackageType: Zip
+  #     FunctionName: kmullaney-sam-no-outbound-vpc-nodejs18x
+  #     Environment:
+  #       Variables:
+  #         NEW_RELIC_APP_NAME: kmullaney-sam-no-outbound-vpc-nodejs18x   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+  #         NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+  #     Layers:
+  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:68
+  #     VpcConfig:
+  #       SubnetIds: !Ref SubnetIds
+  #       SecurityGroupIds: !Ref SecurityGroupIds
+  #       Ipv6AllowedForDualStack: false
+  #     Tags:
+  #       owner: kmullaney
+  #       reason: case
+  #       description: 00182486
+
+  # KmullaneySamNoOutboundVpcNodejs18xLogGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamNoOutboundVpcNodejs18x}'
+  #     RetentionInDays: 3
