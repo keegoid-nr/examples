@@ -83,6 +83,7 @@ Resources:
           NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName  # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
           NEW_RELIC_NO_CONFIG_FILE: true                               # Node agent uses environment variables in Lambda
           NEW_RELIC_APP_NAME: kmullaney-sam-manual-wrapping-nodejs18x  # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_EXTENSION_LOGS_ENABLED: true                       # Enable/disable NR_EXT log lines
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                 # Send logs via [NR_EXT]
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                         # Extension log level

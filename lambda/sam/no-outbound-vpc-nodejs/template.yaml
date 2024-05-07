@@ -93,6 +93,7 @@ Resources:
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey      # New Relic account ID or parent ID
           NEW_RELIC_NO_CONFIG_FILE: true                               # Agent uses environment variables in Lambda
           NEW_RELIC_APP_NAME: kmullaney-sam-no-outbound-vpc-nodejs18x  # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_LAMBDA_HANDLER: function.handler                   # The actual function handler
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                 # Send logs via [NR_EXT]
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                         # Extension log level

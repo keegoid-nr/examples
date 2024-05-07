@@ -35,6 +35,7 @@ Resources:
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId              # your parent New Relic account ID or New Relic account ID if no parent
           NEW_RELIC_NO_CONFIG_FILE: true                               # Lambda uses environment variables instead
           NEW_RELIC_APP_NAME: kmullaney-sam-local-invoke-nodejs18x     # the function will be named the same as in AWS
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_LAMBDA_HANDLER: app.lambdaHandler                  # so the instrumentation handler can invoke your real handler
           NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                  # enable for distributed tracing
           NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                     # alternative to the newrelic-log-ingestion function, bypasses CloudWatch

@@ -28,6 +28,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
           NEW_RELIC_LOG: stdout
           NEW_RELIC_LOG_ENABLED: true
@@ -60,6 +61,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
           NEW_RELIC_LOG: stdout
           NEW_RELIC_LOG_ENABLED: true
@@ -92,6 +94,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
           NEW_RELIC_LOG: stdout
           NEW_RELIC_LOG_ENABLED: true
@@ -124,6 +127,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
           NEW_RELIC_LOG: stdout
           NEW_RELIC_LOG_ENABLED: true

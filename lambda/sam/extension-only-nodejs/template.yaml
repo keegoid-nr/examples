@@ -80,18 +80,29 @@ Resources:
       PackageType: Zip
       Environment:
         Variables:
-          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # your New Relic account ID
-          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # your parent New Relic account ID or New Relic account ID if no parent
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-          NEW_RELIC_NO_CONFIG_FILE: true                                 # Lambda uses environment variables instead
+          # agent distributed tracing config
+          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
+          NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
+
+          # agent serverless config
+          NEW_RELIC_NO_CONFIG_FILE: true                                 # Agent uses environment variables in Lambda
           NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x     # the function will be named the same as in AWS
-          NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # enable for distributed tracing
-          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # alternative to the newrelic-log-ingestion function, bypasses CloudWatch
-          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # send agent logs + some CloudWatch logs
-          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # prints out agent telemetry bytes among other things
-          NEW_RELIC_LOG_ENABLED: true                                    # agent logging
-          NEW_RELIC_LOG_LEVEL: info                                      # agent log level
-          NEW_RELIC_LOG: stdout                                          # agent log path
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false                        # Reduce cold start duration by not collecting VM metrics
+          NEW_RELIC_LOG_ENABLED: true                                    # Agent logs
+          NEW_RELIC_LOG: stdout                                          # Agent log path
+          NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
+          NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
+
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
+          # NEW_RELIC_LAMBDA_HANDLER: function.handler                     # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
+          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
       Layers:
         # This layer includes the New Relic Lambda Extension, a sidecar process that sends telemetry,
         # as well as the New Relic Agent for Node.js, and a handler wrapper that makes integration easy.
