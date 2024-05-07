@@ -1,13 +1,13 @@
-service: kmullaney-new-ip-ranges
+service: kmullaney-sls-new-ips
 
 useDotenv: true
 
 provider:
   name: aws
-  region: ${env:AWS_DEFAULT_REGION}
-  stage: "dev"
+  region: us-west-2
+  stage: dev
   timeout: 10
-  logRetentionInDays: 7
+  logRetentionInDays: 3
   tags:
     owner: kmullaney
     reason: case

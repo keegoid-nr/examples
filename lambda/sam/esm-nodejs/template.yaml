@@ -13,20 +13,19 @@ Parameters:
     AllowedPattern: '[0-9]+'
 
 Resources:
-  KmullaneyNodejs18ESM:
+  KmullaneySamEsmNodejs18x:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       CodeUri: src/
       Description: A simple Lambda, with New Relic telemetry
-      FunctionName: kmullaney-nodejs18-esm
+      FunctionName: kmullaney-sam-esm-nodejs18x
       # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
       # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
       Handler: function.handler
       Runtime: nodejs18.x
       MemorySize: 256
       Timeout: 20
-      # Currently, we don't support Image based PackageType
       PackageType: Zip
       Environment:
         Variables:
@@ -37,7 +36,7 @@ Resources:
 
           # agent serverless config
           NEW_RELIC_NO_CONFIG_FILE: true                               # Agent uses environment variables in Lambda
-          NEW_RELIC_APP_NAME: kmullaney-nodejs18-esm                   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs18x              # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
           NEW_RELIC_LOG_ENABLED: true                                  # Agent logs
           NEW_RELIC_LOG: stdout                                        # Agent log path
@@ -64,5 +63,5 @@ Resources:
   KmullaneyNodejs18LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneyNodejs18ESM}'
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs18x}'
       RetentionInDays: 3

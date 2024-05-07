@@ -6,7 +6,7 @@ const newrelic = require('newrelic');
 console.log("Lambda Handler starting up");
 
 // exports.lambdaHandler = async (event, context) => {
-module.exports.lambdaHandler = newrelic.setLambdaHandler((event, context, callback) => {
+exports.handler = newrelic.setLambdaHandler((event, context, callback) => {
     // At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
 
     // This is an example of a custom event. `FROM MyNodeEvent SELECT *` in New Relic will find this event.

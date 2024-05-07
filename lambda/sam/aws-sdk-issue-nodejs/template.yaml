@@ -9,26 +9,25 @@ Parameters:
     AllowedPattern: '[0-9]+'
 
 Resources:
-  kmullaney00164723:
+  KmullaneySam00164723Nodejs16x:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       CodeUri: src/
       Description: A simple Lambda, with New Relic telemetry
-      FunctionName: kmullaney-00164723
+      FunctionName: kmullaney-sam-00164723-nodejs16x
       # The handler for your function needs to be the one provided by the instrumentation layer, below.
       Handler: newrelic-lambda-wrapper.handler
       Runtime: nodejs16.x
       MemorySize: 256
       Timeout: 20
-      # Currently, we don't support Image based PackageType
       PackageType: Zip
       Environment:
         Variables:
-          # For the instrumentation handler to invoke your real handler, we need this value
-          NEW_RELIC_LAMBDA_HANDLER: function.handler
-          NEW_RELIC_ACCOUNT_ID: !Sub ${NRAccountId}
+          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                        # For the instrumentation handler to invoke your real handler, we need this value
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_APP_NAME: kmullaney-sam-00164723-nodejs16x              # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
           NEW_RELIC_LOG: stdout
           NEW_RELIC_LOG_ENABLED: true
@@ -44,6 +43,6 @@ Resources:
   Logs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "/aws/lambda/kmullaney-00164723"
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySam00164723Nodejs16x}'
       # Lambda functions will auto-create their log group on first execution, but it retains logs forever, which can get expensive.
       RetentionInDays: 3

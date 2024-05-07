@@ -1,11 +1,11 @@
-service: kmullaney-java17
+service: kmullaney-sls-java
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: test
+  stage: dev
   timeout: 10
   logRetentionInDays: 3
   tags:
@@ -39,7 +39,7 @@ package:
   artifact: 'target/${self:service}-${self:provider.stage}-1.0.jar'
 
 functions:
-  case-00181732:
+  java17:
     description: test Java17 instrumentation
     handler: com.newrelic.lambda.example.App::handleRequest
     runtime: java17

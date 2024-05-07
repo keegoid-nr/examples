@@ -1,4 +1,4 @@
-service: kmullaney
+service: kmullaney-sls-random-schedule
 
 useDotenv: true
 
@@ -10,11 +10,11 @@ provider:
         - Effect: Allow
           Action: 'events:PutRule'
           Resource: '*'
-  region: ${env:AWS_DEFAULT_REGION}
+  region: us-west-2
   stage: "00082952"
   timeout: 4
   runtime: nodejs18.x
-  logRetentionInDays: 14
+  logRetentionInDays: 3
   tags:
     owner: kmullaney
     reason: ticket
@@ -26,7 +26,7 @@ provider:
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
 
 plugins:
   - serverless-newrelic-lambda-layers

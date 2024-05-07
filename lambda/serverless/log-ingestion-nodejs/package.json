@@ -1,5 +1,5 @@
 {
-  "name": "kmullaney-nodejs",
+  "name": "kmullaney-log-ingestion-dev-nodejs",
   "version": "0.1",
   "description": "",
   "main": "function.js",

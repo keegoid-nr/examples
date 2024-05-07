@@ -1,24 +1,24 @@
-service: kmullaney-ext-only
+service: kmullaney-sls-ext-only
 
 useDotenv: true
 
 provider:
   name: aws
-  region: ${env:AWS_DEFAULT_REGION}
-  stage: "dev"
+  region: us-west-2
+  stage: dev
   timeout: 4
   logRetentionInDays: 3
   tags:
     owner: kmullaney
     reason: demo
-    description: "demo a Lambda using SLS deploy"
+    description: "extension-only layer example"
   stackTags:
     owner: kmullaney
     reason: demo
-    description: "demo a Lambda using SLS deploy"
+    description: "extension-only layer example"
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     NEW_RELIC_APP_NAME: kmullaney-extension-only-layer-serverless-nodejs16x
     NEW_RELIC_NO_CONFIG_FILE: true
 

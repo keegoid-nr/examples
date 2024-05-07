@@ -1,13 +1,13 @@
-service: kmullaney-dt-headers
+service: kmullaney-sls-dt-headers
 
 useDotenv: true
 
 provider:
   name: aws
-  region: ${env:AWS_DEFAULT_REGION}
-  stage: "dev"
+  region: us-west-2
+  stage: dev
   timeout: 10
-  logRetentionInDays: 14
+  logRetentionInDays: 3
   tags:
     owner: kmullaney
     reason: case
@@ -18,7 +18,7 @@ provider:
     description: "123456"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: ${env:NEW_RELIC_EXTENSION_LOG_LEVEL}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
 
 plugins:

@@ -61,13 +61,13 @@ Resources:
                     'cloudwatch:namespace':
                       - 'AWS/Lambda'
 
-  KmullaneyNodejs18ManualWrapping:
+  KmullaneySamManualWrappingNodejs18x:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       CodeUri: src/
       Description: instrumentation with ESM bypassing dynamic wrapper for better performance
-      FunctionName: kmullaney-nodejs18-manual-wrapping
+      FunctionName: kmullaney-sam-manual-wrapping-nodejs18x
       # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
       # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
       Handler: function.handler
@@ -75,18 +75,17 @@ Resources:
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       MemorySize: 256
       Timeout: 20
-      # Currently, we don't support Image based PackageType
       PackageType: Zip
       Environment:
         Variables:
           NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                       # New Relic account ID
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey      # New Relic account ID or parent ID
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName  # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
           NEW_RELIC_NO_CONFIG_FILE: true                               # Node agent uses environment variables in Lambda
-          NEW_RELIC_APP_NAME: kmullaney-nodejs18-manual-wrapping       # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_APP_NAME: kmullaney-sam-manual-wrapping-nodejs18x  # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_EXTENSION_LOGS_ENABLED: true                       # Enable/disable NR_EXT log lines
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                 # Send logs via [NR_EXT]
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                         # Extension log level
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName  # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
           NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                        # Reduce timeout duration when for "Telemetry client error"
           NEW_RELIC_LOG_ENABLED: true                                  # Agent logs
           NEW_RELIC_LOG: stdout                                        # Agent log path
@@ -107,5 +106,5 @@ Resources:
   KmullaneyNodejs18LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneyNodejs18ManualWrapping}'
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamManualWrappingNodejs18x}'
       RetentionInDays: 3

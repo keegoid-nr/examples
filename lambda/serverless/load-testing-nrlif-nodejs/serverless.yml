@@ -1,4 +1,4 @@
-service: kmullaney-load-test
+service: kmullaney-sls-load-test
 
 useDotenv: true
 

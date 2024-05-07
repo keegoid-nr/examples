@@ -1,11 +1,11 @@
-service: kmullaney
+service: kmullaney-sls-go
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: go-demo
+  stage: dev
   timeout: 4
   runtime: provided.al2
   logRetentionInDays: 3
