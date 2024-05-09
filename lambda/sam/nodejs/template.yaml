@@ -136,10 +136,41 @@ Resources:
         reason: "ESM manual wrapping"
         description: "nodejs18 ESM manual handler wrapping for improved cold start performance"
 
-  KmullaneySamNodejsLogGroup:
+  KmullaneySamEsmNodejs18xLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs18x}'
+      RetentionInDays: 3
+
+############################
+
+  KmullaneySamEsm2Nodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: src/esm2/
+      Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      Handler: function.handler
+      Runtime: nodejs20.x
+      PackageType: Zip
+      FunctionName: kmullaney-sam-esm2-nodejs20x
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:18
+      Tags:
+        owner: kmullaney
+        reason: "ESM manual wrapping"
+        description: "nodejs20 ESM manual handler wrapping for improved cold start performance"
+
+  KmullaneySamEsm2Nodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsm2Nodejs20x}'
       RetentionInDays: 3
 
 ############################
