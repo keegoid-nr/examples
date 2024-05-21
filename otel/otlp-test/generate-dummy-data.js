@@ -48,10 +48,10 @@ const largePayload = generateLargePayload()
 const payloadString = JSON.stringify(largePayload, null, 2) // Convert to JSON with indentation
 
 // Write the large payload to a file
-fs.writeFile("too-large-payload.json", payloadString, (err) => {
+fs.writeFile("samples/too-large-payload.json", payloadString, (err) => {
   if (err) {
     console.error("Error writing to file:", err)
   } else {
-    console.log("Large payload saved to too-large-payload.json")
+    console.log("Large payload saved to samples/too-large-payload.json")
   }
 })
