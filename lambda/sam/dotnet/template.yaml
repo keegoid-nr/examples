@@ -22,7 +22,7 @@ Parameters:
 Globals:
   Function:
     MemorySize: 256
-    Timeout: 10
+    Timeout: 6
     Runtime: dotnet6
     LoggingConfig:
       LogFormat: JSON
@@ -35,13 +35,13 @@ Globals:
         NEW_RELIC_PRIMARY_APPLICATION_ID: unknown                      # Set this to identify the primary application ID. By default the value is "unknown"
 
         # agent serverless config
-        CORECLR_ENABLE_PROFILING: 1                                    # For .NET Core
-        CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'     # For .NET Core
-        CORECLR_NEWRELIC_HOME: newrelic                                # This should be the relative path to the directory containing the New Relic .NET Agent. By default, the NuGet package will place the agent in a folder named "newrelic" in your build output directory
-        CORECLR_PROFILER_PATH: newrelic/libNewRelicProfiler.so         # This is the relative path to the profiler used by the .NET agent. There is a different profiler for x64 and arm64. Be sure to use the correct one for your function.
-        NEW_RELIC_LOG_CONSOLE: 1                                       # Send log messages to the console (CloudWatch)
-        NEW_RELIC_LOG_ENABLED: 1                                       # Agent logs
-        NEWRELIC_LOG_LEVEL: finest                                     # off|error|warn|info|debug|finest|all
+        CORECLR_ENABLE_PROFILING: 1                                                    # For .NET Core
+        CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'                     # For .NET Core
+        CORECLR_NEWRELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
+        CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
+        NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (CloudWatch)
+        NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs
+        NEWRELIC_LOG_LEVEL: finest                                                     # off|error|warn|info|debug|finest|all
 
         # extension config
         NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
@@ -113,21 +113,21 @@ Resources:
 
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-  KmullaneySamDotnet6:
+  KmullaneySamDotnet6HelloWorld:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/MyDotnetLambda/src/ScratchLambda/
-      Description: A basic Dotnet 6 Lambda function that returns a string.
-      Handler: ScratchLambda::ScratchLambda.Function::FunctionHandler
+      CodeUri: ./src/HelloWorld/src/HelloWorld/
+      Description: A basic Dotnet 6 Hello World Lambda function using APIGatewayProxyRequest.
+      Handler: HelloWorld::HelloWorld.Function::FunctionHandler
       Architectures:
       - x86_64
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
-      FunctionName: kmullaney-sam-dotnet6
+      FunctionName: kmullaney-sam-dotnet6-helloworld
       Environment:
         Variables:
           # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6                      # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6-helloworld         # Should be set but not used in the New Relic UI, entity names come from the AWS integration
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:3
       # Policies:
@@ -135,14 +135,63 @@ Resources:
         # that we can send telemetry back to New Relic
         # - AWSSecretsManagerGetSecretValuePolicy:
         #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Events:
+        KmullaneySamDotnet6HelloWorld:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /hello
+            Method: get
       Tags:
         owner: kmullaney
         reason: "demo"
         description: "Demo new Dotnet layer"
 
-  KmullaneySamDotnet6LogGroup:
+  KmullaneySamDotnet6HelloWorldLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet6}'
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet6HelloWorld}'
       RetentionInDays: 3
 
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  KmullaneySamDotnet6Standalone:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/Standalone/src/ScratchLambda/
+      Description: A Lambda function that returns a static string.
+      Handler: ScratchLambda::ScratchLambda.Function::FunctionHandler
+      Architectures:
+      - x86_64
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-dotnet6-standalone
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6-standalone         # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:3
+      Tags:
+        owner: kmullaney
+        reason: "demo"
+        description: "Demo new Dotnet layer"
+
+  KmullaneySamDotnet6StandaloneLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet6Standalone}'
+      RetentionInDays: 3
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  KmullaneySamDotnet6HelloWorldApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+  KmullaneySamDotnet6HelloWorldFunction:
+    Description: Hello World Lambda Function ARN
+    Value: !GetAtt KmullaneySamDotnet6HelloWorld.Arn
+  KmullaneySamDotnet6HelloWorldFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value: !GetAtt KmullaneyLambdaExecutionRole.Arn

@@ -1,4 +1,4 @@
-# MyDotnetLambda
+# Standalone
 
 This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
 
@@ -55,7 +55,7 @@ The first command will build the source of your application. The second command 
 Build your application by using the `sam build` command.
 
 ```bash
-MyDotnetLambda$ sam build
+Standalone$ sam build
 ```
 
 The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
@@ -65,7 +65,7 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-MyDotnetLambda$ sam local invoke helloFromLambdaFunction --no-event
+Standalone$ sam local invoke helloFromLambdaFunction --no-event
 ```
 
 ## Add a resource to your application
@@ -99,7 +99,7 @@ The dead-letter queue is a location for Lambda to send events that could not be 
 Deploy the updated application.
 
 ```bash
-MyDotnetLambda$ sam deploy
+Standalone$ sam deploy
 ```
 
 Open the [**Applications**](https://console.aws.amazon.com/lambda/home#/applications) page of the Lambda console, and choose your application. When the deployment completes, view the application resources on the **Overview** tab to see the new resource. Then, choose the function to see the updated configuration that specifies the dead-letter queue.
@@ -111,7 +111,7 @@ To simplify troubleshooting, the AWS SAM CLI has a command called `sam logs`. `s
 **NOTE:** This command works for all Lambda functions, not just the ones you deploy using AWS SAM.
 
 ```bash
-MyDotnetLambda$ sam logs -n helloFromLambdaFunction --stack-name sam-app --tail
+Standalone$ sam logs -n helloFromLambdaFunction --stack-name sam-app --tail
 ```
 
 **NOTE:** This uses the logical name of the function within the stack. This is the correct name to use when searching logs inside an AWS Lambda function within a CloudFormation stack, even if the deployed function name varies due to CloudFormation's unique resource name generation.
@@ -123,7 +123,7 @@ You can find more information and examples about filtering Lambda function logs 
 Tests for the Lambda functions are defined in the `test` folder in this project.
 
 ```bash
-MyDotnetLambda$ dotnet test test/MyDotnetLambda.Tests/MyDotnetLambda.Tests.csproj 
+Standalone$ dotnet test test/Standalone.Tests/Standalone.Tests.csproj 
 ```
 
 ## Cleanup
@@ -131,7 +131,7 @@ MyDotnetLambda$ dotnet test test/MyDotnetLambda.Tests/MyDotnetLambda.Tests.cspro
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
-sam delete --stack-name MyDotnetLambda
+sam delete --stack-name Standalone
 ```
 
 ## Resources
