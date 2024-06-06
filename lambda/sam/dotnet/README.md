@@ -1,4 +1,4 @@
-# nodejs-sam
+# dotnet-sam
 
 These examples detail how to configure New Relic Lambda layers which includes the .NET agent + Extension for shipping telemetry to New Relic.
 
