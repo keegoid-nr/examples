@@ -67,7 +67,7 @@ Resources:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       Description: Testing instrumentation for Python 3.9
       FunctionName: kmullaney-sam-python-39
-      CodeUri: src/
+      CodeUri: ./src/
       # The handler for your function needs to be the one provided by the instrumentation layer, below.
       Handler: newrelic_lambda_wrapper.handler
       Runtime: python3.9
