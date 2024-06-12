@@ -15,6 +15,10 @@ Create a `samconfig.toml` for parameter overrides:
 ```toml
 version = 0.1
 
+[default.package.parameters]
+image_repository = "your-repository-uri"
+
 [default.deploy.parameters]
+image_repository = "your-repository-uri"
 parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567 SecretsManagerSecretName=YOUR_SECRET_NAME"
 ```
