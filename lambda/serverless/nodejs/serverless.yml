@@ -8,6 +8,12 @@ provider:
   stage: dev
   timeout: 4
   logRetentionInDays: 3
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+      Resource:
+        - arn:aws:secretsmanager:us-west-2:368927449855:secret:KMULLANEY_LICENSE_KEY*
   tags:
     owner: kmullaney
     reason: example

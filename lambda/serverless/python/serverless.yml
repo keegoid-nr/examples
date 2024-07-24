@@ -1,27 +1,37 @@
 service: kmullaney-sls-python
-
+frameworkVersion: "3"
+deprecationNotificationMode: warn:summary
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: "00059605"
+  stage: "00213301"
+  deploymentMethod: direct
+  deploymentPrefix: serverless
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "secretsmanager:GetSecretValue"
+      Resource:
+        - arn:aws:secretsmanager:us-west-2:368927449855:secret:KMULLANEY_LICENSE_KEY*
   timeout: 30
+  memorySize: 1024 #512
   logRetentionInDays: 3
   tags:
     owner: kmullaney
     reason: ticket
-    description: "00059605"
+    description: "00213301"
   stackTags:
     owner: kmullaney
     reason: ticket
-    description: "00059605"
+    description: "00213301"
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_LOG_LEVEL: info
-    NEW_RELIC_LOG: stderr
-    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+    # NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+    # NEW_RELIC_LOG_LEVEL: info
+    # NEW_RELIC_LOG: stderr
+    # NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements
@@ -31,25 +41,24 @@ custom:
   newRelic:
     accountId: ${env:NEW_RELIC_ACCOUNT_ID}
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}
-    disableLicenseKeySecret: false
-    debug: true
+    enableFunctionLogs: true
+    enableExtension: true
   pythonRequirements:
     fileName: ./requirements.txt
 
 package:
+  # artifact: deployment_package.zip
   individually: true
 
 functions:
-  python39:
+  python38:
     description: Test with cURL to endpoint.
     # events:
     #   - schedule: rate(5 minutes)
-    handler: function.lambda_handler
+    handler: function.handler
     package:
-      exclude:
-        - ./**
-      include:
-        - ./function.py
-    # cURL is removed from Lambda runtimes > python3.7
-    runtime: python3.9
+      patterns:
+        - 'node_modules/**'
+        - 'function.js'
+    runtime: python3.8
     provisionedConcurrency: 0
