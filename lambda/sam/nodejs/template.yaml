@@ -26,7 +26,6 @@ Globals:
   Function:
     MemorySize: 256
     Timeout: 20
-    Runtime: nodejs18.x
     Environment:
       Variables:
         # agent distributed tracing config
@@ -111,14 +110,15 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      FunctionName: kmullaney-sam-esm-nodejs18x
       CodeUri: ./src/esm/
       Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
       # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
       Handler: function.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
-      FunctionName: kmullaney-sam-esm-nodejs18x
       Environment:
         Variables:
           # agent serverless config
@@ -182,6 +182,7 @@ Resources:
       Description: An extension-only layer with layerless instrumentation
       # If using the extension-only layer, there is no handler wrapper
       Handler: function.handler
+      Runtime: nodejs18.x
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       FunctionName: kmullaney-sam-extension-only-nodejs18x
@@ -210,6 +211,7 @@ Resources:
       CodeUri: ./src/aws-sdk-issue/
       Description: An extension-only layer with layerless instrumentation
       Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs18.x
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       FunctionName: kmullaney-sam-aws-sdk-issue-nodejs18x
@@ -238,6 +240,7 @@ Resources:
   #     CodeUri: ./src/no-outbound-vpc/
   #     Description: Test agent and extension with no outbound access
   #     Handler: newrelic-lambda-wrapper.handler
+  #     Runtime: nodejs18.x
   #     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
   #     PackageType: Zip
   #     FunctionName: kmullaney-sam-no-outbound-vpc-nodejs18x

@@ -15,7 +15,7 @@ provider:
         - "secretsmanager:GetSecretValue"
       Resource:
         - arn:aws:secretsmanager:us-west-2:368927449855:secret:KMULLANEY_LICENSE_KEY*
-  timeout: 30
+  timeout: 20
   memorySize: 1024 #512
   logRetentionInDays: 3
   tags:
@@ -51,8 +51,8 @@ package:
   individually: true
 
 functions:
-  python38:
-    description: Test with cURL to endpoint.
+  example:
+    description: profile trace, custom attribute, custom event
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.handler
