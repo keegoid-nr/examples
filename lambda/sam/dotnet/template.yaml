@@ -32,14 +32,16 @@ Globals:
         NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
         NEW_RELIC_PRIMARY_APPLICATION_ID: unknown                      # Set this to identify the primary application ID. By default the value is "unknown"
 
-        # agent serverless config
+        # required agent serverless config
         CORECLR_ENABLE_PROFILING: 1                                                    # For .NET Core
         CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'                     # For .NET Core
-        CORECLR_NEWRELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
         CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
+        CORECLR_NEWRELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
+        NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (stdout/CloudWatch)
+
+        # optional agent serverless config
         NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs
-        NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (CloudWatch)
-        NEWRELIC_LOG_LEVEL: finest                                                     # off|error|warn|info|debug|finest|all
+        NEWRELIC_LOG_LEVEL: finest                                                     # info|debug|finest
 
         # extension config
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                         # Enable/disable extension
@@ -126,7 +128,8 @@ Resources:
   #     # Environment:
   #     #   Variables:
   #         # agent serverless config
-  #         # NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6-helloworld         # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+  #         # NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6-helloworld                               # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+  #         # NEW_RELIC_LAMBDA_HANDLER: HelloWorld::HelloWorld.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
   #     Layers:
   #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:6
   #     # Policies:
