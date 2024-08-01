@@ -40,7 +40,7 @@ Globals:
         NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (stdout/CloudWatch)
 
         # optional agent serverless config
-        NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs
+        NEW_RELIC_LOG_ENABLED: 0                                                       # Agent logs
         NEWRELIC_LOG_LEVEL: finest                                                     # info|debug|finest
 
         # extension config
@@ -48,8 +48,8 @@ Globals:
         NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
-        NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
-        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: false                  # Send function logs
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: false                        # Enable/disable [NR_EXT] log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
 
 # Resources declares the AWS resources that you want to include in the stack

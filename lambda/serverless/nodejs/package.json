@@ -1,14 +1,14 @@
 {
   "name": "kmullaney-nodejs",
-  "version": "0.1",
+  "version": "0.2",
   "description": "",
-  "type": "module",
-  "main": "function.mjs",
+  "type": "commonjs",
+  "main": "function.js",
   "scripts": {},
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.38.0",
-    "serverless-newrelic-lambda-layers": "^5.1.0"
+    "serverless": "^3.39.0",
+    "serverless-newrelic-lambda-layers": "^5.4.0"
   }
 }
