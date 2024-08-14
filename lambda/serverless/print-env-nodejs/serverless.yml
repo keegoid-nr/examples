@@ -1,4 +1,4 @@
-service: kmullaney-sls-print-env
+service: kmullaney-sls
 
 useDotenv: true
 
@@ -16,8 +16,6 @@ provider:
     owner: kmullaney
     reason: ticket
     description: "00082952"
-  # layers:
-  #   - "arn:aws:lambda:us-west-2:533243300146:layer:AwsLambdaExtension:22"
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG

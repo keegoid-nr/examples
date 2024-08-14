@@ -9,11 +9,10 @@ provider:
   timeout: 4
   logRetentionInDays: 3
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: Allow
       Action:
-        - "secretsmanager:GetSecretValue"
-      Resource:
-        - arn:aws:secretsmanager:us-west-2:368927449855:secret:KMULLANEY_LICENSE_KEY*
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   tags:
     owner: kmullaney
     reason: example
@@ -42,8 +41,8 @@ custom:
     disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
     enableFunctionLogs: true                          # Send logs via [NR_EXT]
     enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Node agent logs
-    logLevel: debug                                   # Node agent log level
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
     debug: true                                       # Serverless Framework debug
     manualWrapping: false                             # use legacy wrapper for better ESM performance
     # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:29   # uncomment if you want to pin a layer version

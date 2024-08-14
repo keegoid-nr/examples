@@ -1,10 +1,10 @@
-service: kmullaney-sls-dt-headers
+service: kmullaney-sls
 
 provider:
   name: aws
   runtime: java11
   region: us-west-1
-  stage: dev
+  stage: dt-headers
 
 package:
   artifact: 'target/${self:service}-${self:provider.stage}.jar'

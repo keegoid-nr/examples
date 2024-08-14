@@ -1,4 +1,4 @@
-service: kmullaney-sls-latency
+service: kmullaney-sls
 
 useDotenv: true
 

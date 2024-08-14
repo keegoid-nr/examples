@@ -1,4 +1,4 @@
-service: kmullaney-sls-python
+service: kmullaney-sls
 frameworkVersion: "3"
 deprecationNotificationMode: warn:summary
 useDotenv: true
@@ -10,11 +10,10 @@ provider:
   deploymentMethod: direct
   deploymentPrefix: serverless
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: Allow
       Action:
-        - "secretsmanager:GetSecretValue"
-      Resource:
-        - arn:aws:secretsmanager:us-west-2:368927449855:secret:KMULLANEY_LICENSE_KEY*
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   timeout: 20
   memorySize: 1024 #512
   logRetentionInDays: 3

@@ -1,11 +1,11 @@
-service: kmullaney-sls-esm
+service: kmullaney-sls
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: dev
+  stage: esm
   timeout: 4
   logRetentionInDays: 3
   tags:
@@ -19,7 +19,7 @@ provider:
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_APP_NAME: kmullaney-dev-esm-example
+    NEW_RELIC_APP_NAME: kmullaney-sls-esm-nodejs18x
     NEW_RELIC_NO_CONFIG_FILE: true
     NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
 
@@ -35,8 +35,8 @@ custom:
     disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
     enableFunctionLogs: true                          # Send logs via [NR_EXT]
     enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Node agent logs
-    logLevel: debug                                   # Node agent log level
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
     debug: true                                       # Serverless Framework debug
     manualWrapping: true                              # use legacy wrapper for better ESM performance
     # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:48   # uncomment if you want to pin a layer version

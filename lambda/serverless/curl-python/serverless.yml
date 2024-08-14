@@ -1,11 +1,11 @@
-service: kmullaney-sls-curl
+service: kmullaney-sls
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: dev
+  stage: curl
   timeout: 10
   logRetentionInDays: 3
   tags:

@@ -1,11 +1,11 @@
-service: kmullaney-sls-dt-headers
+service: kmullaney-sls
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: dev
+  stage: dt-headers
   timeout: 4
   logRetentionInDays: 3
   tags:
@@ -30,8 +30,8 @@ custom:
     apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY} # User api key
     disableAutoSubscription: true             # Don't create a subscription filter to the newrelic-log-ingestion function
     enableFunctionLogs: true                  # Send logs via [NR_EXT]
-    logEnabled: true                          # Node agent logs
-    logLevel: info                            # Node agent log level
+    logEnabled: true                          # Agent logs
+    logLevel: info                            # Agent log level
     debug: true                               # Serverless Framework debug
 
 # package:

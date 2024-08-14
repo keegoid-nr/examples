@@ -1,13 +1,13 @@
-service: kmullaney-sls-go
+service: kmullaney-sls
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: dev
-  timeout: 4
-  runtime: provided.al2
+  stage: "00217664"
+  timeout: 10
+  runtime: provided.al2023
   logRetentionInDays: 3
   tags:
     owner: kmullaney
@@ -21,28 +21,47 @@ provider:
     - Effect: Allow
       Action:
         - secretsmanager:GetSecretValue
-      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-q7CPhW"
-
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   environment:
-    NEW_RELIC_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
-    NEW_RELIC_TRUSTED_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
+    # NEW_RELIC_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
+    # NEW_RELIC_TRUSTED_ACCOUNT_ID: ${env:NEW_RELIC_ACCOUNT_ID}
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
-    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
-    NEW_RELIC_PRIMARY_APPLICATION_ID: kmullaney-go-demo-main
+
+plugins:
+  - serverless-newrelic-lambda-layers
+
+custom:
+  newRelic:
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}         # User api key
+    disableAutoSubscription: true                     # Don't create a subscription filter to the newrelic-log-ingestion function
+    disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
+    enableFunctionLogs: true                          # Send logs via [NR_EXT]
+    enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
+    debug: true                                       # Serverless Framework debug
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42
 
 package:
   individually: true
 
 functions:
-  main:
+  goal2023:
     description: demo Go instrumentation
     handler: handler
     memorySize: 256
     provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_PRIMARY_APPLICATION_ID: kmullaney-sls-00217664-goal2023
+      NEW_RELIC_LOG: stdout
+      NEW_RELIC_LOG_LEVEL: debug
+      NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+      NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
     package:
       patterns:
         - '!**'
         - 'bootstrap'
     layers:
-      - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:34
+      - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42

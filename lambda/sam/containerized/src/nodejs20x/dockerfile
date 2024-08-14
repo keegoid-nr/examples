@@ -13,5 +13,5 @@ COPY function.js package.json ./
 # Install any additional dependencies
 RUN npm install
 
-# Set the CMD to your handler
+# Set the CMD override to use New Relic's handler wrapper
 CMD [ "newrelic-lambda-wrapper.handler" ]
