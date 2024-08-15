@@ -1,5 +1,5 @@
-const axios = require("axios")
 const newrelic = require("newrelic")
+const axios = require("axios")
 const fs = require("fs")
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
@@ -56,7 +56,7 @@ module.exports.lambda_handler = async function (event, context) {
   }
 
   // Make an external HTTP request and inject distributed trace headers
-  let response = await axios.get("https://example.com", { headers })
+  let response = await axios.get("https://newrelic.com", { headers })
 
   // additional function processes
   let files = fs.readdirSync("/opt/nodejs/")
