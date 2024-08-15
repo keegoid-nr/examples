@@ -3,7 +3,6 @@ import { Construct } from "constructs"
 import * as lambda from "aws-cdk-lib/aws-lambda"
 import * as iam from "aws-cdk-lib/aws-iam"
 import * as logs from "aws-cdk-lib/aws-logs"
-import * as path from "path"
 
 export class KmullaneyCdkLambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -40,8 +39,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Create a Node.js Lambda function
     const myNodejsFunction = new lambda.Function(this, nodejsAppName, {
       runtime: lambda.Runtime.NODEJS_20_X,
-      // code: lambda.Code.fromAsset("nodejs"),
-      code: lambda.Code.fromAsset(path.join(__dirname, "../nodejs")),
+      code: lambda.Code.fromAsset("nodejs"),
       handler: "newrelic-lambda-wrapper.handler",
       layers: [newRelicNodejsLayer],
       environment: {
@@ -115,8 +113,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Create a Python Lambda function
     const myPythonFunction = new lambda.Function(this, pythonAppName, {
       runtime: lambda.Runtime.PYTHON_3_12,
-      // code: lambda.Code.fromAsset("python"),
-      code: lambda.Code.fromAsset(path.join(__dirname, "../python")),
+      code: lambda.Code.fromAsset("python"),
       handler: "newrelic_lambda_wrapper.handler",
       layers: [newRelicPythonLayer],
       environment: {
