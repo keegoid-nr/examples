@@ -5,7 +5,7 @@ useDotenv: true
 provider:
   name: aws
   region: us-west-2
-  stage: "00216103"
+  stage: cjs
   timeout: 4
   logRetentionInDays: 3
   iamRoleStatements:
@@ -24,12 +24,10 @@ provider:
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_APP_NAME: kmullaney-sls-00216103-nodejs20x
     NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
-    # NEW_RELIC_NO_CONFIG_FILE: true
-    # NEW_RELIC_LABELS: customLabel:customValue;customLabel2:customValue2
 
 plugins:
+  # - serverless-offline
   - serverless-newrelic-lambda-layers
 
 custom:
@@ -57,6 +55,106 @@ functions:
     runtime: nodejs20.x
     package:
       patterns:
-        - 'node_modules/**'
-        - 'function.js'
+        - 'src/default/**'
     provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-nodejs20x
+
+  dt-headers-nodejs18x:
+    description: accept or insert dt headers
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    runtime: nodejs18.x
+    package:
+      patterns:
+        - '!src/dt-headers/node_modules/**'
+        - 'src/dt-headers/node_modules/axios/**'
+        - 'src/dt-headers/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-dt-headers-nodejs18x
+
+  print-env-nodejs16x:
+    description: print environment
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    runtime: nodejs16.x
+    package:
+      patterns:
+        - 'src/print-env/**'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-print-env-nodejs16x
+
+  serverless-offline-nodejs20x:
+    description: test serverless-offline
+    handler: function.handler
+    runtime: nodejs20.x
+    package:
+      patterns:
+        - 'src/serverless-offline/**'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-serverless-offline-nodejs20x
+
+  latency-node18-a:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-a
+
+  latency-node18-b:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-b
+
+  latency-node18-c:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-c
+
+  latency-node18-d:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-d
+
+  latency-node18-e:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-e
