@@ -1,17 +1,16 @@
+# Examples
+
+This is a repository for examples, testing, and reproduction work. The focus is mostly AWS Lambda, but also some OpenTelemetry.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Examples](#examples)
-  - [Lambda Deployment methods](#lambda-deployment-methods)
-  - [Lambda Runtimes](#lambda-runtimes)
-  - [Otel](#otel)
+- [Lambda Deployment methods](#lambda-deployment-methods)
+- [Lambda Runtimes](#lambda-runtimes)
+- [Otel](#otel)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# Examples
-
-This is a repository for examples, testing, and reproduction work. The focus is mostly AWS Lambda, but also some OpenTelemetry.
 
 ## Lambda Deployment methods
 

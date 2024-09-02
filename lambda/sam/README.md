@@ -1,16 +1,15 @@
+# SAM CLI
+
+Testing SAM CLI deployments with New Relic instrumentation
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [SAM CLI](#sam-cli)
-  - [Setup](#setup)
-  - [Deployment Steps](#deployment-steps)
+- [Setup](#setup)
+- [Deployment Steps](#deployment-steps)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-# SAM CLI
-
-Testing SAM CLI deployments with New Relic instrumentation
 
 ## Setup
 

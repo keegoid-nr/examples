@@ -1,22 +1,21 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Instrumented Python Lambda](#instrumented-python-lambda)
-  - [Building and deploying](#building-and-deploying)
-    - [Prerequisites](#prerequisites)
-    - [Plan script](#plan-script)
-  - [Code Structure](#code-structure)
-    - [main.tf](#maintf)
-    - [app.py](#apppy)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Instrumented Python Lambda
 
 This is a "Hello, World" style Lambda function in Python, instrumented with the New Relic Agent.
 
 This example is both instructive, and a diagnostic tool: if you can deploy this Lambda function, and see its events in NR One, you'll know that all the telemetry plumbing is connected correctly.
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Building and deploying](#building-and-deploying)
+  - [Prerequisites](#prerequisites)
+  - [Plan script](#plan-script)
+- [Code Structure](#code-structure)
+  - [main.tf](#maintf)
+  - [app.py](#apppy)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Building and deploying
 
