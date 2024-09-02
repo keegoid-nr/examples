@@ -2,19 +2,19 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [kmullaney-python-39](#kmullaney-python-39)
+- [SAM CLI](#sam-cli)
   - [Setup](#setup)
   - [Deployment Steps](#deployment-steps)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# kmullaney-python-39
+# SAM CLI
 
-Testing Python 3.9 instrumentation
+Testing SAM CLI deployments with New Relic instrumentation
 
 ## Setup
 
-Create a `samconfig.toml` for parameter overrides:
+Create a `samconfig.toml` for parameter overrides in your project:
 
 ```toml
 version = 0.1

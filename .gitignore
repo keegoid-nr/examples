@@ -499,8 +499,5 @@ terraform.rc
 **/packaged.yaml
 parameters.yaml
 .local-config
-**/python/*
-!**/python/function.py
-!**/python/requirements.txt
 **/lib/*
 !**/lib/cdk-stack.ts

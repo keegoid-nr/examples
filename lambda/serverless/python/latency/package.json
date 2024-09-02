@@ -1,0 +1,13 @@
+{
+  "name": "kmullaney-latency-python",
+  "version": "0.0.0-test",
+  "description": "",
+  "main": "function.py",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-newrelic-lambda-layers": "^5.0.1",
+    "serverless-python-requirements": "^6.0.1"
+  }
+}

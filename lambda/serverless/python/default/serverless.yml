@@ -1,0 +1,63 @@
+service: kmullaney-sls
+frameworkVersion: "3"
+deprecationNotificationMode: warn:summary
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-west-2
+  stage: "00213301"
+  deploymentMethod: direct
+  deploymentPrefix: serverless
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
+  timeout: 20
+  memorySize: 1024 #512
+  logRetentionInDays: 3
+  tags:
+    owner: kmullaney
+    reason: ticket
+    description: "00213301"
+  stackTags:
+    owner: kmullaney
+    reason: ticket
+    description: "00213301"
+  environment:
+    NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    # NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+    # NEW_RELIC_LOG_LEVEL: info
+    # NEW_RELIC_LOG: stderr
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+
+plugins:
+  - serverless-python-requirements
+  - serverless-newrelic-lambda-layers
+
+custom:
+  newRelic:
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}
+    apiKey: ${env:NEW_RELIC_USER_API_KEY}
+    enableFunctionLogs: true
+    enableExtension: true
+  pythonRequirements:
+    fileName: ./requirements.txt
+
+package:
+  # artifact: deployment_package.zip
+  individually: true
+
+functions:
+  example:
+    description: profile trace, custom attribute, custom event
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.handler
+    package:
+      patterns:
+        - 'node_modules/**'
+        - 'function.js'
+    runtime: python3.8
+    provisionedConcurrency: 0

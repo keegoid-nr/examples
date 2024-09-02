@@ -1,0 +1,12 @@
+{
+  "name": "kmullaney-new-ips-python",
+  "version": "0.0.0-test",
+  "description": "",
+  "main": "function.py",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-python-requirements": "^6.0.0"
+  }
+}

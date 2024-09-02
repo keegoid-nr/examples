@@ -25,7 +25,7 @@ plugins:
 custom:
   newRelic:
     accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
-    apiKey: ${env:NEW_RELIC_PERSONAL_API_KEY}         # User api key
+    apiKey: ${env:NEW_RELIC_USER_API_KEY}             # User api key
     enableExtension: false                            # enable/disable extension
     cloudWatchFilter: '*'                             # send all logs to newrelic-log-ingestion function
 
