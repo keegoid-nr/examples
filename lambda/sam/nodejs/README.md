@@ -16,7 +16,5 @@ Create a `samconfig.toml` for parameter overrides:
 version = 0.1
 
 [default.deploy.parameters]
-region = "us-west-2"
-capabilities = "CAPABILITY_IAM"
 parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567 SecretsManagerSecretName=YOUR_SECRET_NAME"
 ```

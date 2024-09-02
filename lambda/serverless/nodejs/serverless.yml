@@ -1,13 +1,18 @@
-service: kmullaney-sls-nodejs
+service: kmullaney-sls
 
 useDotenv: true
 
 provider:
   name: aws
   region: us-west-2
-  stage: dev
+  stage: cjs
   timeout: 4
   logRetentionInDays: 3
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   tags:
     owner: kmullaney
     reason: example
@@ -17,14 +22,12 @@ provider:
     reason: example
     description: instrumentation with ESM bypassing dynamic wrapper for better performance
   environment:
-    # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_APP_NAME: kmullaney-dev-esm-example
-    NEW_RELIC_NO_CONFIG_FILE: true
     NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
-    NEW_RELIC_LABELS: customLabel:customValue;customLabel2:customValue2
 
 plugins:
+  # - serverless-offline
   - serverless-newrelic-lambda-layers
 
 custom:
@@ -36,22 +39,122 @@ custom:
     disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
     enableFunctionLogs: true                          # Send logs via [NR_EXT]
     enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Node agent logs
-    logLevel: debug                                   # Node agent log level
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
     debug: true                                       # Serverless Framework debug
-    manualWrapping: true                              # use legacy wrapper for better ESM performance
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:48   # uncomment if you want to pin a layer version
+    manualWrapping: false                             # use legacy wrapper for better ESM performance
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:29   # uncomment if you want to pin a layer version
 
 package:
   individually: true
 
 functions:
-  nodejs18x:
-    description: demo ESM instrumentation
+  nodejs20x:
+    description: demo commonjs instrumentation
     handler: function.handler
+    runtime: nodejs20.x
+    package:
+      patterns:
+        - 'src/default/**'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-nodejs20x
+
+  dt-headers-nodejs18x:
+    description: accept or insert dt headers
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
     runtime: nodejs18.x
     package:
       patterns:
-        - 'node_modules/**'
-        - 'function.js'
+        - '!src/dt-headers/node_modules/**'
+        - 'src/dt-headers/node_modules/axios/**'
+        - 'src/dt-headers/function.js'
     provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-dt-headers-nodejs18x
+
+  print-env-nodejs16x:
+    description: print environment
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    runtime: nodejs16.x
+    package:
+      patterns:
+        - 'src/print-env/**'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-print-env-nodejs16x
+
+  serverless-offline-nodejs20x:
+    description: test serverless-offline
+    handler: function.handler
+    runtime: nodejs20.x
+    package:
+      patterns:
+        - 'src/serverless-offline/**'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-serverless-offline-nodejs20x
+
+  latency-node18-a:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-a
+
+  latency-node18-b:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-b
+
+  latency-node18-c:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-c
+
+  latency-node18-d:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-d
+
+  latency-node18-e:
+    description: Random invocations to generate interesting traffic
+    # events:
+    #   - schedule: rate(5 minutes)
+    handler: function.lambda_handler
+    package:
+      patterns:
+        - 'src/latency/function.js'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-latency-nodejs18-e

@@ -1,5 +1,6 @@
 import newrelic.agent
-import requests
+import logging
+import httpx
 
 # In a python Lambda, the runtime loads the handler code as a module; so code in the top level
 # of the module occurs once, during cold start.
@@ -18,7 +19,48 @@ def get_pass():
 
 def handler(event, context):
     # At this point, we're handling an invocation. Cold start is over; this code runs for each invocation.
-    requests.get("https://newrelic.com")
+
+    # Create and configure a logger
+    logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s")
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+
+    # Get the transaction object for this function
+    transaction = newrelic.agent.current_transaction()
+
+    # Accept distributed tracing headers
+    headers = event.get("headers", {})
+    if headers:
+        try:
+            transaction.accept_distributed_trace_headers(headers)
+        except Exception as e:
+            logging.error(
+                "An exception occurred accepting dt headers: %s", e, exc_info=True
+            )
+    else:
+        try:
+            # Generate distributed tracing headers if headers are not provided
+            headers_list = []
+            transaction.insert_distributed_trace_headers(headers_list)
+            headers = {k: v for k, v in headers_list}
+        except Exception as e:
+            logging.error(
+                "An exception occurred inserting dt headers: %s", e, exc_info=True
+            )
+
+    # Print out the distributed tracing headers
+    print("Distributed tracing headers:")
+    logging.info(
+        "The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`"
+    )
+    try:
+        for key, value in headers.items():
+            print(f"{key}: {value}")
+    except Exception as e:
+        logging.error("An exception occurred printing dt headers: %s", e, exc_info=True)
+
+    with httpx.Client() as client:
+        resp = client.get("https://newrelic.com")
 
     # This is an example of a custom event. `FROM MyPythonEvent SELECT *` in New Relic will find this event.
     newrelic.agent.record_custom_event("MyPythonEvent", {
@@ -32,8 +74,10 @@ def handler(event, context):
     password = get_pass()
 
     # As normal, anything you write to stdout ends up in CloudWatch
-    print("Hello, world")
-    print("username: ",username)
-    print("password: ",password)
+    print("username: ", username)
+    print("password: ", password)
 
-    return "Success!"
+    return {
+        "statusCode": resp.status_code,
+        "body": "Hello from Lambda!"
+    }

@@ -9,6 +9,7 @@
   "author": "Keegan Mullaney",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.38.0"
+    "serverless": "^3.39.0",
+    "serverless-newrelic-lambda-layers": "^5.4.0"
   }
 }
