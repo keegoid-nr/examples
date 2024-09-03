@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk")
 const lambda = new AWS.Lambda()
 
-const targetFunctionName = "kmullaney-load-test-dev-nodejs18x"
+const targetFunctionName = "kmullaney-sls-load-test-nodejs18x"
 
 async function invokeTargetLambda() {
   const params = {

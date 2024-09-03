@@ -31,13 +31,13 @@ functions:
     package:
       patterns:
         - 'function.mjs'
-    provisionedConcurrency: 2
+    # provisionedConcurrency: 2
     # reservedConcurrency: 1
 
   invoker:
     description: a nodejs18x function to invoke our pumpkin function
     events:
-      - schedule: rate(1 minute)
+      - schedule: rate(5 minutes)
     handler: invoker.handler
     memorySize: 128
     timeout: 65
@@ -45,5 +45,5 @@ functions:
       patterns:
         - 'node_modules/**'
         - 'invoker.js'
-    provisionedConcurrency: 0
+    # provisionedConcurrency: 0
     # reservedConcurrency: 1

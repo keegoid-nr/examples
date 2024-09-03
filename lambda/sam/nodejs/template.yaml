@@ -106,49 +106,11 @@ Resources:
 
 ############################
 
-  KmullaneySamEsmNodejs18x:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-esm-nodejs18x
-      CodeUri: ./src/esm/
-      Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
-      # If not using ESM, this should be newrelic-lambda-wrapper.handler provided by the instrumentation layer.
-      # If using ESM, bypass newrelic-lambda-wrapper.handler to avoid RITM slow dependency loading by setting the actual function handler here.
-      Handler: function.handler
-      Runtime: nodejs18.x
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs18x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:68
-      # Policies:
-        # This policy allows the lambda to know the value of the New Relic license key. We need this so
-        # that we can send telemetry back to New Relic
-        # - AWSSecretsManagerGetSecretValuePolicy:
-        #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-      Tags:
-        owner: kmullaney
-        reason: "ESM manual wrapping"
-        description: "nodejs18 ESM manual handler wrapping for improved cold start performance"
-
-  KmullaneySamEsmNodejs18xLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs18x}'
-      RetentionInDays: 3
-
-############################
-
   KmullaneySamEsm2Nodejs20x:
     Type: AWS::Serverless::Function
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      CodeUri: ./src/esm2/
+      CodeUri: ./src/esm/
       Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       Handler: function.handler
