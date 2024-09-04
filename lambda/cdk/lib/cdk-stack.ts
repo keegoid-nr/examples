@@ -11,6 +11,8 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Global variables
     const awsRegion = this.region
     const awsAccountId = this.account
+    const myMemory = 256
+    const myTimeout = cdk.Duration.seconds(6)
     const licenseKeySecretName = "KMULLANEY_LICENSE_KEY" // Replace with your secret name
 
     // Fetch the New Relic account ID from the local environment variable
@@ -33,11 +35,13 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicNodejsLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaNodejsLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:32"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:34"
     )
 
     // Create a Node.js Lambda function
     const myNodejsFunction = new lambda.Function(this, nodejsAppName, {
+      memorySize: myMemory,
+      timeout: myTimeout,
       runtime: lambda.Runtime.NODEJS_20_X,
       code: lambda.Code.fromAsset("nodejs"),
       handler: "newrelic-lambda-wrapper.handler",
@@ -99,22 +103,24 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     cdk.Tags.of(myNodejsFunction).add("reason", "example");
     cdk.Tags.of(myNodejsFunction).add("description", "CDK Node.js example");
 
-    // ******************************************* NODEJS-ESM 20
+    // ******************************************* NODEJS 20 ESM
 
-    const nodejsEsmAppName = "nodejs20x"
+    const nodejsEsmAppName = "nodejs20x-esm"
 
     // Define the New Relic layer ARN
     const newRelicNodejsEsmLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
-      "NewRelicLambdaNodejsLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:32"
+      "NewRelicLambdaNodejsEsmLayer",
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:34"
     )
 
     // Create a Node.js Lambda function
     const myNodejsEsmFunction = new lambda.Function(this, nodejsEsmAppName, {
+      memorySize: myMemory,
+      timeout: myTimeout,
       runtime: lambda.Runtime.NODEJS_20_X,
-      code: lambda.Code.fromAsset("nodejs"),
-      handler: "newrelic-lambda-wrapper.handler",
+      code: lambda.Code.fromAsset("nodejs-esm"),
+      handler: "function.handler",
       layers: [newRelicNodejsEsmLayer],
       environment: {
         // distributed tracing config
@@ -124,7 +130,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
         // agent config
         NEW_RELIC_APP_NAME: nodejsEsmAppName,                          // Should be set but not used in the New Relic UI, entity names come from the AWS integration
-        NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
+        // NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
         NEW_RELIC_NO_CONFIG_FILE: "true",                              // Agent uses environment variables in Lambda
         NEW_RELIC_NATIVE_METRICS_ENABLED: "false",                     // Reduce cold start duration by not collecting VM metrics
         NEW_RELIC_LOG_ENABLED: "true",                                 // Agent logs
@@ -171,7 +177,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Add tags to the Lambda function
     cdk.Tags.of(myNodejsEsmFunction).add("owner", "kmullaney");
     cdk.Tags.of(myNodejsEsmFunction).add("reason", "example");
-    cdk.Tags.of(myNodejsEsmFunction).add("description", "CDK Node.js example");
+    cdk.Tags.of(myNodejsEsmFunction).add("description", "CDK Node.js ESM example");
 
     // ******************************************* PYTHON 3.12
 
@@ -186,6 +192,8 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
     // Create a Python Lambda function
     const myPythonFunction = new lambda.Function(this, pythonAppName, {
+      memorySize: myMemory,
+      timeout: myTimeout,
       runtime: lambda.Runtime.PYTHON_3_12,
       code: lambda.Code.fromAsset("python"),
       handler: "newrelic_lambda_wrapper.handler",
