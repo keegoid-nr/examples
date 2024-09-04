@@ -99,6 +99,80 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     cdk.Tags.of(myNodejsFunction).add("reason", "example");
     cdk.Tags.of(myNodejsFunction).add("description", "CDK Node.js example");
 
+    // ******************************************* NODEJS-ESM 20
+
+    const nodejsEsmAppName = "nodejs20x"
+
+    // Define the New Relic layer ARN
+    const newRelicNodejsEsmLayer = lambda.LayerVersion.fromLayerVersionArn(
+      this,
+      "NewRelicLambdaNodejsLayer",
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:32"
+    )
+
+    // Create a Node.js Lambda function
+    const myNodejsEsmFunction = new lambda.Function(this, nodejsEsmAppName, {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset("nodejs"),
+      handler: "newrelic-lambda-wrapper.handler",
+      layers: [newRelicNodejsEsmLayer],
+      environment: {
+        // distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: newRelicAccountId,                       // New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: newRelicTrustedAccountKey,      // New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: "true",                 // DT
+
+        // agent config
+        NEW_RELIC_APP_NAME: nodejsEsmAppName,                          // Should be set but not used in the New Relic UI, entity names come from the AWS integration
+        NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
+        NEW_RELIC_NO_CONFIG_FILE: "true",                              // Agent uses environment variables in Lambda
+        NEW_RELIC_NATIVE_METRICS_ENABLED: "false",                     // Reduce cold start duration by not collecting VM metrics
+        NEW_RELIC_LOG_ENABLED: "true",                                 // Agent logs
+        NEW_RELIC_LOG: "stdout",                                       // Agent log path
+        NEW_RELIC_LOG_LEVEL: "info",                                   // Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_USE_ESM: "true",                                     // ESM functions that use async/await and not callbacks
+
+        // extension config
+        // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
+        NEW_RELIC_LICENSE_KEY_SECRET: licenseKeySecretName,            // Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "true",                    // Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG"                         // INFO or DEBUG
+      },
+    })
+
+    // Set log retention policy to 3 days
+    new logs.LogGroup(this, "MyNodejsEsmFunctionLogGroup", {
+      logGroupName: `/aws/lambda/${myNodejsEsmFunction.functionName}`,
+      retention: logs.RetentionDays.THREE_DAYS,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // Optional: to clean up log group on stack deletion
+    })
+
+    // Attach necessary IAM policies to the Lambda function
+    myNodejsEsmFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["logs:*"],
+        resources: ["*"],
+      })
+    )
+
+    // Attach policy to access the secret
+    myNodejsEsmFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["secretsmanager:GetSecretValue"],
+        resources: [
+          `arn:aws:secretsmanager:${awsRegion}:${awsAccountId}:secret:${licenseKeySecretName}*`,
+        ],
+      })
+    )
+
+    // Add tags to the Lambda function
+    cdk.Tags.of(myNodejsEsmFunction).add("owner", "kmullaney");
+    cdk.Tags.of(myNodejsEsmFunction).add("reason", "example");
+    cdk.Tags.of(myNodejsEsmFunction).add("description", "CDK Node.js example");
+
     // ******************************************* PYTHON 3.12
 
     const pythonAppName = "python312"

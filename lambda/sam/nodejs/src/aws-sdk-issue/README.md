@@ -1,6 +1,6 @@
 # nodejs-sam
 
-## Testing aws-sdk with two layers:
+## Testing aws-sdk with two layers
 
 - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS16X:55
 - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS16X:56
