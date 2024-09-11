@@ -39,6 +39,6 @@ functions:
     runtime: nodejs20.x
     package:
       patterns:
-        - 'src/log-ingestion/**'
+        - 'function.js'
     environment:
       NEW_RELIC_APP_NAME: kmullaney-sls-cw-nodejs20x

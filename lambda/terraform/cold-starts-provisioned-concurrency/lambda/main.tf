@@ -2,7 +2,6 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.8"
     }
   }
 }
@@ -104,7 +103,7 @@ resource "aws_lambda_alias" "newrelic_terraform_example_function_alias" {
 
 resource "aws_lambda_provisioned_concurrency_config" "provisioned_concurrency" {
   function_name                     = aws_lambda_function.newrelic_terraform_example_function.function_name
-  provisioned_concurrent_executions = 3
+  provisioned_concurrent_executions = 1
   qualifier                         = aws_lambda_alias.newrelic_terraform_example_function_alias.name
 }
 

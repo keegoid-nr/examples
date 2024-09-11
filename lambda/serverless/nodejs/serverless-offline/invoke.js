@@ -13,7 +13,7 @@ const event = JSON.parse(fs.readFileSync("event.json", "utf8"))
 
 // Define the parameters for invoking the Lambda function
 const params = {
-  FunctionName: "kmullaney-ext-only-dev-nodejs16x", // Use the function name provided
+  FunctionName: "kmullaney-ext-only-dev-nodejs20x", // Use the function name provided
   Payload: JSON.stringify(event), // Use the parsed event as the payload
 }
 

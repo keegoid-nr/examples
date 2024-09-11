@@ -1,0 +1,63 @@
+service: kmullaney-sls
+
+useDotenv: true
+
+provider:
+  name: aws
+  region: us-west-2
+  stage: esm
+  timeout: 4
+  logRetentionInDays: 3
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - secretsmanager:GetSecretValue
+      Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
+  tags:
+    owner: kmullaney
+    reason: example
+    description: instrumentation with ESM bypassing dynamic wrapper for better performance
+  stackTags:
+    owner: kmullaney
+    reason: example
+    description: instrumentation with ESM bypassing dynamic wrapper for better performance
+  environment:
+    NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
+    NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+    NEW_RELIC_NO_CONFIG_FILE: true
+    NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
+
+plugins:
+  - serverless-newrelic-lambda-layers
+
+custom:
+  newRelic:
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY}             # User api key
+    disableAutoSubscription: true                     # Don't create a subscription filter to the newrelic-log-ingestion function
+    disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
+    enableFunctionLogs: true                          # Send logs via [NR_EXT]
+    enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
+    logEnabled: true                                  # Agent logs
+    logLevel: debug                                   # Agent log level
+    debug: true                                       # Serverless Framework debug
+    manualWrapping: true                              # use legacy wrapper for better ESM performance
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:48   # uncomment if you want to pin a layer version
+
+package:
+  individually: true
+
+functions:
+  manual-wrapping-nodejs18x:
+    description: demo manual wrapping for ESM
+    handler: function.handler
+    runtime: nodejs18.x
+    package:
+      patterns:
+        - 'function.mjs'
+    provisionedConcurrency: 0
+    environment:
+      NEW_RELIC_APP_NAME: kmullaney-sls-esm-manual-wrapping-nodejs18x
+
+

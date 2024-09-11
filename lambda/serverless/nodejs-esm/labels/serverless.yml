@@ -55,21 +55,8 @@ functions:
     runtime: nodejs18.x
     package:
       patterns:
-        - 'src/labels/**'
+        - 'function.mjs'
     provisionedConcurrency: 0
     environment:
       NEW_RELIC_LABELS: customLabel:customValue;customLabel2:customValue2
       NEW_RELIC_APP_NAME: kmullaney-sls-esm-labels-nodejs18x
-
-  manual-wrapping-nodejs18x:
-    description: demo manual wrapping for ESM
-    handler: function.handler
-    runtime: nodejs18.x
-    package:
-      patterns:
-        - 'src/manual-wrapping/**'
-    provisionedConcurrency: 0
-    environment:
-      NEW_RELIC_APP_NAME: kmullaney-sls-esm-manual-wrapping-nodejs18x
-
-
