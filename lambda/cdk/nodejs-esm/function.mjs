@@ -44,6 +44,10 @@ export async function handler(event, context) {
       }
     }
 
+    // add custom attribute
+    console.log("NR: adding custom attribute")
+    newrelic.addCustomAttribute("customAttribute","1234")
+
     // Print out the distributed tracing headers
     console.log("Distributed tracing headers:")
     console.info("The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`")

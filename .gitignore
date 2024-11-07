@@ -42,7 +42,7 @@ go.work
 *.class
 
 # Log file
-# *.log
+*.log
 
 # BlueJ files
 *.ctxt
@@ -265,6 +265,7 @@ dist/
 downloads/
 eggs/
 .eggs/
+lib/
 lib64/
 parts/
 sdist/

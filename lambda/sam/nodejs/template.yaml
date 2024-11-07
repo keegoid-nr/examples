@@ -182,7 +182,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-aws-sdk-issue-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:84
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:85
       Tags:
         owner: kmullaney
         reason: "reproduction"

@@ -3,6 +3,7 @@ import { Construct } from "constructs"
 import * as lambda from "aws-cdk-lib/aws-lambda"
 import * as iam from "aws-cdk-lib/aws-iam"
 import * as logs from "aws-cdk-lib/aws-logs"
+import * as destinations from 'aws-cdk-lib/aws-logs-destinations';
 
 export class KmullaneyCdkLambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -14,6 +15,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const myMemory = 256
     const myTimeout = cdk.Duration.seconds(6)
     const licenseKeySecretName = "KMULLANEY_LICENSE_KEY" // Replace with your secret name
+    const logIngestionFunctionName = "newrelic-log-ingestion-02aeffb53869"
 
     // Fetch the New Relic account ID from the local environment variable
     const newRelicAccountId = process.env.NEW_RELIC_ACCOUNT_ID;
@@ -35,7 +37,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicNodejsLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaNodejsLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:34"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:42"
     )
 
     // Create a Node.js Lambda function
@@ -55,12 +57,10 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         // agent config
         NEW_RELIC_APP_NAME: nodejsAppName,                             // Should be set but not used in the New Relic UI, entity names come from the AWS integration
         NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
-        NEW_RELIC_NO_CONFIG_FILE: "true",                              // Agent uses environment variables in Lambda
         NEW_RELIC_NATIVE_METRICS_ENABLED: "false",                     // Reduce cold start duration by not collecting VM metrics
         NEW_RELIC_LOG_ENABLED: "true",                                 // Agent logs
         NEW_RELIC_LOG: "stdout",                                       // Agent log path
         NEW_RELIC_LOG_LEVEL: "info",                                   // Agent log level: fatal, error, warn, info, debug, or trace
-        NEW_RELIC_USE_ESM: "false",                                    // ESM functions that use async/await and not callbacks
 
         // extension config
         // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
@@ -69,7 +69,9 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
-        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG"                         // INFO or DEBUG
+        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
+        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Node.js example"   // Add tags to log events
       },
     })
 
@@ -111,7 +113,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicNodejsEsmLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaNodejsEsmLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:34"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:42"
     )
 
     // Create a Node.js Lambda function
@@ -130,31 +132,46 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
         // agent config
         NEW_RELIC_APP_NAME: nodejsEsmAppName,                          // Should be set but not used in the New Relic UI, entity names come from the AWS integration
-        // NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
         NEW_RELIC_NO_CONFIG_FILE: "true",                              // Agent uses environment variables in Lambda
         NEW_RELIC_NATIVE_METRICS_ENABLED: "false",                     // Reduce cold start duration by not collecting VM metrics
         NEW_RELIC_LOG_ENABLED: "true",                                 // Agent logs
         NEW_RELIC_LOG: "stdout",                                       // Agent log path
         NEW_RELIC_LOG_LEVEL: "info",                                   // Agent log level: fatal, error, warn, info, debug, or trace
-        NEW_RELIC_USE_ESM: "true",                                     // ESM functions that use async/await and not callbacks
+        // NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler, only needed if using the dynamic handler wrapper in layer
+        // NEW_RELIC_USE_ESM: "true",                                     // ESM functions that use async/await and not callbacks, only needed if using ESM and the dynamic handler wrapper in layer
 
         // extension config
         // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LICENSE_KEY_SECRET: licenseKeySecretName,            // Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "true",                    // Enable/disable extension
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "false",                   // Enable/disable extension
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
-        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG"                         // INFO or DEBUG
+        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
+        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Node.js ESM example"   // Add tags to log events
       },
     })
 
     // Set log retention policy to 3 days
-    new logs.LogGroup(this, "MyNodejsEsmFunctionLogGroup", {
+    const logGroup = new logs.LogGroup(this, "MyNodejsEsmFunctionLogGroup", {
       logGroupName: `/aws/lambda/${myNodejsEsmFunction.functionName}`,
       retention: logs.RetentionDays.THREE_DAYS,
       removalPolicy: cdk.RemovalPolicy.DESTROY, // Optional: to clean up log group on stack deletion
     })
+
+    // Define the New Relic log ingestion function
+    const newRelicLogIngestionFunction = lambda.Function.fromFunctionArn(
+      this,
+      'NewRelicLogIngestionFunction',
+      `arn:aws:lambda:${awsRegion}:${awsAccountId}:function:${logIngestionFunctionName}`
+    );
+
+    // Create a subscription filter with a null pattern
+    logGroup.addSubscriptionFilter('NewRelicSubscriptionFilter', {
+      destination: new destinations.LambdaDestination(newRelicLogIngestionFunction),
+      filterPattern: logs.FilterPattern.allEvents(),
+    });
 
     // Attach necessary IAM policies to the Lambda function
     myNodejsEsmFunction.addToRolePolicy(
@@ -187,7 +204,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicPythonLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaPythonLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython312:15"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython312:19"
     )
 
     // Create a Python Lambda function
@@ -206,11 +223,11 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
         // agent config
         NEW_RELIC_APP_NAME: pythonAppName,                          // Should be set but not used in the New Relic UI, entity names come from the AWS integration
-        NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler
         NEW_RELIC_NO_CONFIG_FILE: "true",                              // Agent uses environment variables in Lambda
         NEW_RELIC_PACKAGE_REPORTING_ENABLED: "false",                  // disable Python agent package reporting feature to improve cold start times
         NEW_RELIC_LOG: "stderr",                                       // Agent log path
         NEW_RELIC_LOG_LEVEL: "info",                                   // Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler, only needed if using the dynamic handler wrapper in layer
 
         // extension config
         // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
@@ -219,7 +236,9 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
-        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG"                         // INFO or DEBUG
+        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
+        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Python example"   // Add tags to log events
       },
     })
 
@@ -254,4 +273,3 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     cdk.Tags.of(myPythonFunction).add("description", "CDK Python example");
   }
 }
-
