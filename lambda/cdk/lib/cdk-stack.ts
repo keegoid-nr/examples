@@ -4,6 +4,8 @@ import * as lambda from "aws-cdk-lib/aws-lambda"
 import * as iam from "aws-cdk-lib/aws-iam"
 import * as logs from "aws-cdk-lib/aws-logs"
 import * as destinations from 'aws-cdk-lib/aws-logs-destinations';
+// import * as path from 'path';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 export class KmullaneyCdkLambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -32,6 +34,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // ******************************************* NODEJS 20
 
     const nodejsAppName = "nodejs20x"
+    const nodejs20xDesc = "CDK Node.js example"
 
     // Define the New Relic layer ARN
     const newRelicNodejsLayer = lambda.LayerVersion.fromLayerVersionArn(
@@ -42,6 +45,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
     // Create a Node.js Lambda function
     const myNodejsFunction = new lambda.Function(this, nodejsAppName, {
+      description: "testing CDK deploy with New Relic layer",
       memorySize: myMemory,
       timeout: myTimeout,
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -66,12 +70,12 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LICENSE_KEY_SECRET: licenseKeySecretName,            // Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "true",                    // Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "2s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
-        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Node.js example"   // Add tags to log events
+        NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xDesc}`   // Add tags to log events
       },
     })
 
@@ -103,11 +107,12 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Add tags to the Lambda function
     cdk.Tags.of(myNodejsFunction).add("owner", "kmullaney");
     cdk.Tags.of(myNodejsFunction).add("reason", "example");
-    cdk.Tags.of(myNodejsFunction).add("description", "CDK Node.js example");
+    cdk.Tags.of(myNodejsFunction).add("description", nodejs20xDesc);
 
     // ******************************************* NODEJS 20 ESM
 
     const nodejsEsmAppName = "nodejs20x-esm"
+    const nodejs20xEsmDesc = "CDK Node.js ESM example"
 
     // Define the New Relic layer ARN
     const newRelicNodejsEsmLayer = lambda.LayerVersion.fromLayerVersionArn(
@@ -118,6 +123,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
 
     // Create a Node.js Lambda function
     const myNodejsEsmFunction = new lambda.Function(this, nodejsEsmAppName, {
+      description: "testing CDK deploy with ESM function and New Relic layer",
       memorySize: myMemory,
       timeout: myTimeout,
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -144,12 +150,12 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LICENSE_KEY_SECRET: licenseKeySecretName,            // Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "false",                   // Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "2s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
-        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Node.js ESM example"   // Add tags to log events
+        NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xEsmDesc}`   // Add tags to log events
       },
     })
 
@@ -194,11 +200,87 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Add tags to the Lambda function
     cdk.Tags.of(myNodejsEsmFunction).add("owner", "kmullaney");
     cdk.Tags.of(myNodejsEsmFunction).add("reason", "example");
-    cdk.Tags.of(myNodejsEsmFunction).add("description", "CDK Node.js ESM example");
+    cdk.Tags.of(myNodejsEsmFunction).add("description", nodejs20xEsmDesc);
+
+    // ******************************************* NODEJS 20 LAYERLESS
+
+    const nodejsLayerlessAppName = "nodejs20x-layerless"
+    const nodejs20xLayerlessDesc = "CDK Node.js Layerless example"
+
+    // Create a Node.js Lambda function using NodejsFunction
+    const myNodejsLayerlessFunction = new NodejsFunction(this, nodejsLayerlessAppName, {
+      description: "testing CDK deploy with New Relic layerless method",
+      memorySize: myMemory,
+      timeout: myTimeout,
+      runtime: lambda.Runtime.NODEJS_20_X,
+      code: lambda.Code.fromAsset("nodejs-layerless"),
+      // entry: path.join(__dirname, '../src/index.ts'), // Update this path to your entry file
+      handler: "function.handler",
+      bundling: {
+        // externalModules: ['newrelic'], // Exclude 'newrelic' from the bundle if using ESBuild
+        nodeModules: ['newrelic'], // Include 'newrelic' in the deployment package
+      },
+      environment: {
+        // distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: newRelicAccountId,                       // New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: newRelicTrustedAccountKey,      // New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: "true",                 // DT
+
+        // agent config
+        NEW_RELIC_APP_NAME: nodejsLayerlessAppName,                             // Should be set but not used in the New Relic UI, entity names come from the AWS integration
+        NEW_RELIC_NATIVE_METRICS_ENABLED: "false",                     // Reduce cold start duration by not collecting VM metrics
+        NEW_RELIC_LOG_ENABLED: "true",                                 // Agent logs
+        NEW_RELIC_LOG: "stdout",                                       // Agent log path
+        NEW_RELIC_LOG_LEVEL: "info",                                   // Agent log level: fatal, error, warn, info, debug, or trace
+        // NEW_RELIC_LAMBDA_HANDLER: "function.handler",                  // This points to your original handler, only needed if using the dynamic handler wrapper in layer
+
+        // extension config
+        // NEW_RELIC_LICENSE_KEY: ""                                     // New Relic ingest key, overrides Secrets Manager
+        NEW_RELIC_LICENSE_KEY_SECRET: licenseKeySecretName,            // Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: "true",                    // Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: "2s",                       // Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
+        NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xLayerlessDesc}`   // Add tags to log events
+      },
+    })
+
+    // Set log retention policy to 3 days
+    new logs.LogGroup(this, "MyNodejsFunctionLayerlessLogGroup", {
+      logGroupName: `/aws/lambda/${myNodejsLayerlessFunction.functionName}`,
+      retention: logs.RetentionDays.THREE_DAYS,
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // Optional: to clean up log group on stack deletion
+    })
+
+    // Attach necessary IAM policies to the Lambda function
+    myNodejsLayerlessFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["logs:*"],
+        resources: ["*"],
+      })
+    )
+
+    // Attach policy to access the secret
+    myNodejsLayerlessFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["secretsmanager:GetSecretValue"],
+        resources: [
+          `arn:aws:secretsmanager:${awsRegion}:${awsAccountId}:secret:${licenseKeySecretName}*`,
+        ],
+      })
+    )
+
+    // Add tags to the Lambda function
+    cdk.Tags.of(myNodejsLayerlessFunction).add("owner", "kmullaney");
+    cdk.Tags.of(myNodejsLayerlessFunction).add("reason", "example");
+    cdk.Tags.of(myNodejsLayerlessFunction).add("description", nodejs20xLayerlessDesc);
 
     // ******************************************* PYTHON 3.12
 
     const pythonAppName = "python312"
+    const pythonDesc = "CDK Python example"
 
     // Define the New Relic layer ARN
     const newRelicPythonLayer = lambda.LayerVersion.fromLayerVersionArn(
@@ -238,7 +320,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
-        NR_TAGS: "owner:kmullaney;reason:example;description:CDK Python example"   // Add tags to log events
+        NR_TAGS: `owner:kmullaney;reason:example;description:${pythonDesc}`   // Add tags to log events
       },
     })
 
@@ -270,6 +352,6 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     // Add tags to the Lambda function
     cdk.Tags.of(myPythonFunction).add("owner", "kmullaney");
     cdk.Tags.of(myPythonFunction).add("reason", "example");
-    cdk.Tags.of(myPythonFunction).add("description", "CDK Python example");
+    cdk.Tags.of(myPythonFunction).add("description", pythonDesc);
   }
 }

@@ -20,6 +20,10 @@ export async function handler(event, context) {
     // Call newrelic.getTransaction to retrieve a handle on the current transaction.
     const transaction = newrelic.getTransaction()
 
+    // log out the event object to see details about what triggered the function
+    console.log("stringified event")
+    console.log(JSON.stringify(event))
+
     // Accept distributed tracing headers
     let headers = event.headers || {}
     if (!headers.hasOwnProperty("newrelic")) {
@@ -69,10 +73,11 @@ export async function handler(event, context) {
     console.info("username: ", username)
     console.info("password: ", password)
 
-    return {
+    const response = {
       statusCode: resp.status,
       body: "Hello from Lambda!",
     }
+    return response
   })
 
   return wrappedHandler(event, context)
