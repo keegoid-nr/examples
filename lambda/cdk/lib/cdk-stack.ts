@@ -4,7 +4,6 @@ import * as lambda from "aws-cdk-lib/aws-lambda"
 import * as iam from "aws-cdk-lib/aws-iam"
 import * as logs from "aws-cdk-lib/aws-logs"
 import * as destinations from 'aws-cdk-lib/aws-logs-destinations';
-// import * as path from 'path';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 export class KmullaneyCdkLambdaStack extends cdk.Stack {
@@ -214,7 +213,6 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
       timeout: myTimeout,
       runtime: lambda.Runtime.NODEJS_20_X,
       code: lambda.Code.fromAsset("nodejs-layerless"),
-      // entry: path.join(__dirname, '../src/index.ts'), // Update this path to your entry file
       handler: "function.handler",
       bundling: {
         // externalModules: ['newrelic'], // Exclude 'newrelic' from the bundle if using ESBuild
