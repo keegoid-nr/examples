@@ -74,10 +74,11 @@ resource "aws_lambda_function" "newrelic_terraform_example_function" {
       NEW_RELIC_TRUSTED_ACCOUNT_KEY = var.newrelic_trusted_account_key
       NEW_RELIC_APP_NAME            = var.lambda_function_name
       # Enable NR Lambda extension if the telemetry data are ingested via lambda extension
-      NEW_RELIC_LAMBDA_EXTENSION_ENABLED     = true
-      NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS = true
-      NEW_RELIC_EXTENSION_LOG_LEVEL          = "INFO"
-      NEW_RELIC_LICENSE_KEY_SECRET           = var.newrelic_license_key_secret
+      NEW_RELIC_LAMBDA_EXTENSION_ENABLED      = true
+      NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS  = true
+      NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS = true                # Also send extension logs
+      NEW_RELIC_EXTENSION_LOG_LEVEL           = "INFO"
+      NEW_RELIC_LICENSE_KEY_SECRET            = var.newrelic_license_key_secret
       # NEW_RELIC_LICENSE_KEY = var.newrelic_license_key
       # Enable Distributed tracing for in-depth monitoring of transactions in lambda (Optional)
       NEW_RELIC_DISTRIBUTED_TRACING_ENABLED = true

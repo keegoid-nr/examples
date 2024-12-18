@@ -72,6 +72,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "2s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: "true",               // Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
         NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xDesc}`   // Add tags to log events
@@ -153,6 +154,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: "true",               // Also send extension logs
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
         NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xEsmDesc}`   // Add tags to log events
       },
@@ -239,6 +241,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "2s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: "true",               // Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
         NR_TAGS: `owner:kmullaney;reason:example;description:${nodejs20xLayerlessDesc}`   // Add tags to log events
@@ -316,6 +319,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: "1s",                       // Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: "true",                      // Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: "true",                // Send function logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: "true",               // Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: "DEBUG",                        // INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: "agent",                    // Useful if pinning a known good layer version
         NR_TAGS: `owner:kmullaney;reason:example;description:${pythonDesc}`   // Add tags to log events

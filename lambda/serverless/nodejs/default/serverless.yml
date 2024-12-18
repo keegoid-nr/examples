@@ -25,6 +25,7 @@ provider:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
+    NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true                # Also send extension logs
 
 plugins:
   # - serverless-offline
