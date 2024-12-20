@@ -7,7 +7,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "serverless": "^3.38.0",
-    "serverless-newrelic-lambda-layers": "^5.1.0"
+    "serverless": "^3.40.0",
+    "serverless-newrelic-lambda-layers": "^5.5.0"
   }
 }

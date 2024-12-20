@@ -17,17 +17,20 @@ provider:
     reason: example
     description: send logs and payloads through CloudWatch
   environment:
-    NEW_RELIC_NATIVE_METRICS_ENABLED: false           # Reduce cold start duration by not collecting VM metrics
+    NEW_RELIC_NATIVE_METRICS_ENABLED: false                       # Reduce cold start duration by not collecting VM metrics
 
 plugins:
   - serverless-newrelic-lambda-layers
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
-    apiKey: ${env:NEW_RELIC_USER_API_KEY}             # User api key
-    enableExtension: false                            # enable/disable extension
-    cloudWatchFilter: '*'                             # send all logs to newrelic-log-ingestion function
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID}                        # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_TRUSTED_ACCOUNT_KEY}       # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY}                         # User api key
+    enableDistributedTracing: true                                # enable/disable distributed tracing
+    enableExtension: false                                        # enable/disable extension
+    cloudWatchFilter: '*'                                         # send all logs to newrelic-log-ingestion function
+    logIngestionFunctionName: newrelic-log-ingestion-02aeffb53869 # specify the log ingestion function to use
 
 package:
   individually: true
@@ -37,6 +40,7 @@ functions:
     description: demo log ingestion
     handler: function.handler
     runtime: nodejs20.x
+    memorySize: 256
     package:
       patterns:
         - 'function.js'
