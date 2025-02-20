@@ -21,9 +21,10 @@ This is a repository for examples, testing, and reproduction work. The focus is 
 
 ## Lambda Runtimes
 
-- Node.js
+- Node.js (and containerized Node.js)
 - Python
 - Go
+- .NET
 
 ## Otel
 
