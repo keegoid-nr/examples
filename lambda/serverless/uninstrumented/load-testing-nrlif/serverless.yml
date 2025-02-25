@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: load-test
   runtime: nodejs18.x
-  logRetentionInDays: 3
+  logRetentionInDays: 1
   tags:
     owner: kmullaney
     reason: case 00156124

@@ -70,4 +70,4 @@ Resources:
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamLocalInvokeNodejs18x}'
       # Lambda functions will auto-create their log group on first execution, but it retains logs forever, which can get expensive.
-      RetentionInDays: 3
+      RetentionInDays: 1

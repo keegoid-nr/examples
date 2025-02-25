@@ -127,4 +127,4 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamContainerizedNodejs20x}'
-      RetentionInDays: 3
+      RetentionInDays: 1

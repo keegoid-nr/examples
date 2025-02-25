@@ -8,7 +8,7 @@ provider:
   stage: "00217664"
   timeout: 10
   runtime: provided.al2023
-  logRetentionInDays: 3
+  logRetentionInDays: 1
   tags:
     owner: kmullaney
     reason: example

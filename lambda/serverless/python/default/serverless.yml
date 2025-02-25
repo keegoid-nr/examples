@@ -16,7 +16,7 @@ provider:
       Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   timeout: 20
   memorySize: 1024 #512
-  logRetentionInDays: 3
+  logRetentionInDays: 1
   tags:
     owner: kmullaney
     reason: ticket

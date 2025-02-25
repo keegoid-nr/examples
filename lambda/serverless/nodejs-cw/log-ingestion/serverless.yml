@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: cw
   timeout: 4
-  logRetentionInDays: 3
+  logRetentionInDays: 1
   tags:
     owner: kmullaney
     reason: example

@@ -153,7 +153,7 @@ Resources:
   #   Type: AWS::Logs::LogGroup
   #   Properties:
   #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet6HelloWorld}'
-  #     RetentionInDays: 3
+  #     RetentionInDays: 1
 
 ############################
 
@@ -196,7 +196,7 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8HelloWorld}'
-      RetentionInDays: 3
+      RetentionInDays: 1
 
 ############################
 

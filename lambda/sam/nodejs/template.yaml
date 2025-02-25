@@ -44,7 +44,7 @@ Globals:
         NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
         NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true                  # Also send extension logs
@@ -105,7 +105,7 @@ Resources:
                     'cloudwatch:namespace':
                       - 'AWS/Lambda'
 
-############################
+# -------------------------------------------------
 
   KmullaneySamEsmNodejs20x:
     Type: AWS::Serverless::Function
@@ -124,7 +124,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:34
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:56
       Tags:
         owner: kmullaney
         reason: "ESM manual wrapping"
@@ -134,9 +134,9 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs20x}'
-      RetentionInDays: 3
+      RetentionInDays: 1
 
-############################
+# -------------------------------------------------
 
   KmullaneySamExtensionOnlyNodejs18x:
     Type: AWS::Serverless::Function
@@ -153,7 +153,7 @@ Resources:
         Variables:
           NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:42
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:46
       Tags:
         owner: kmullaney
         reason: "test extension-only layer"
@@ -163,10 +163,10 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamExtensionOnlyNodejs18x}'
-      RetentionInDays: 3
+      RetentionInDays: 1
 
 
-############################
+# -------------------------------------------------
 
   KmullaneySamAwsSdkIssueNodejs18x:
     Type: AWS::Serverless::Function
@@ -183,7 +183,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-aws-sdk-issue-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:85
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
       Tags:
         owner: kmullaney
         reason: "reproduction"
@@ -193,9 +193,38 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsSdkIssueNodejs18x}'
-      RetentionInDays: 3
+      RetentionInDays: 1
 
-############################
+# -------------------------------------------------
+
+  KmullaneySamAwsRecordMetricNodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/record-metric/
+      Description: An extension-only layer with layerless instrumentation that records a custom metric
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-aws-record-metric-nodejs20x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-nodejs20x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                        # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:56
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "test aws record metric with node.js agent"
+
+  KmullaneySamAwsRecordMetricNodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsRecordMetricNodejs20x}'
+      RetentionInDays: 1
+
+# -------------------------------------------------
 
   # KmullaneySamNoOutboundVpcNodejs18x:
   #   Type: AWS::Serverless::Function
@@ -212,7 +241,7 @@ Resources:
   #         NEW_RELIC_APP_NAME: kmullaney-sam-no-outbound-vpc-nodejs18x   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
   #         NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
   #     Layers:
-  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:68
+  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
   #     VpcConfig:
   #       SubnetIds: !Ref SubnetIds
   #       SecurityGroupIds: !Ref SecurityGroupIds
@@ -226,4 +255,4 @@ Resources:
   #   Type: AWS::Logs::LogGroup
   #   Properties:
   #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamNoOutboundVpcNodejs18x}'
-  #     RetentionInDays: 3
+  #     RetentionInDays: 1

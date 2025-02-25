@@ -11,9 +11,9 @@ Parameters:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
-  SecretsManagerSecretName:
+  LicenseKeyName:
     Type: String
-    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
     AllowedPattern: '[0-9A-Z_-]+'
   # SecurityGroupIds:
   #   Type: List<AWS::EC2::SecurityGroup::Id>
@@ -41,10 +41,9 @@ Globals:
         NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
@@ -67,9 +66,9 @@ Resources:
         - Key: reason
           Value: testing
         - Key: description
-          Value: "python3.9 instrumentation"
+          Value: "python instrumentation"
       Policies:
-        - PolicyName: LambdaSecretsManagerAccess
+        - PolicyName: LambdaAccess
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
@@ -86,7 +85,11 @@ Resources:
               - Sid: GetSecretValue
                 Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsManagerSecretName}-*'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
+              - Sid: GetParameterStoreValue
+                Effect: Allow
+                Action: 'ssm:GetParameter'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
@@ -109,7 +112,7 @@ Resources:
     Properties:
       # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
       FunctionName: kmullaney-sam-python-39
-      CodeUri: ./src/
+      CodeUri: ./src/python39/
       Description: Testing instrumentation for Python 3.9
       # The handler for your function needs to be the one provided by the instrumentation layer, below.
       Handler: newrelic_lambda_wrapper.handler
@@ -121,8 +124,10 @@ Resources:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-python-39                  # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_LAMBDA_HANDLER: function.handler                   # The actual function handler
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:60
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:81
       # Policies:
         # This policy allows the lambda to know the value of the New Relic license key. We need this so
         # that we can send telemetry back to New Relic
@@ -137,6 +142,38 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython39}'
-      RetentionInDays: 3
+      RetentionInDays: 1
 
+# -------------------------------------------------
 
+  KmullaneySamPython311ssm:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      FunctionName: kmullaney-sam-python-311-ssm
+      CodeUri: ./src/python311ssm/
+      Description: Testing instrumentation for Python 3.11 with SSM license key
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.11
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-311-ssm                 # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                       # The actual function handler
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SSM_PARAMETER_NAME: !Ref LicenseKeyName    # Parameter Store name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:81
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "python3.11 instrumentation with SSM license key"
+
+  KmullaneyPython311ssmLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython311ssm}'
+      RetentionInDays: 1
