@@ -89,7 +89,19 @@ Resources:
               - Sid: GetParameterStoreValue
                 Effect: Allow
                 Action: 'ssm:GetParameter'
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY'
+                # Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
+              - Sid: KmsDecrypt
+                Effect: Allow
+                Action: 'kms:Decrypt'
+                Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+              - Sid: PutDynamoDbItem
+                Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                  - 'dynamodb:UpdateItem'
+                  - 'dynamodb:DescribeTable'
+                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*'
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
@@ -146,6 +158,41 @@ Resources:
 
 # -------------------------------------------------
 
+  KmullaneySamPython310dynamodb:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      FunctionName: kmullaney-sam-python-310-dynamodb
+      CodeUri: ./src/python310dynamodb/
+      Description: Testing instrumentation for Python 3.10 with DynamoDB
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.10
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-310-dynamodb        # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                   # The actual function handler
+          NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId          # AWS account ID
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython310:43
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "python3.10 instrumentation with DynamoDB"
+
+  KmullaneyPython310dynamodbLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython310dynamodb}'
+      RetentionInDays: 1
+
+# -------------------------------------------------
+
   KmullaneySamPython311ssm:
     Type: AWS::Serverless::Function
     Properties:
@@ -164,9 +211,9 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-python-311-ssm                 # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_LAMBDA_HANDLER: function.handler                       # The actual function handler
           # extension config
-          NEW_RELIC_LICENSE_KEY_SSM_PARAMETER_NAME: !Ref LicenseKeyName    # Parameter Store name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          # NEW_RELIC_LICENSE_KEY_SSM_PARAMETER_NAME: !Ref LicenseKeyName    # Parameter Store name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:81
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:36
       Tags:
         owner: kmullaney
         reason: testing
