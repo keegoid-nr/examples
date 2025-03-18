@@ -1,5 +1,6 @@
 import boto3
 import json
+import uuid
 import newrelic.agent
 
 # Initialize DynamoDB client and table outside the handler
@@ -9,8 +10,8 @@ table_name = 'KMULLANEY_TABLE'
 table = dynamodb.Table(table_name)
 
 def handler(event, context):
-    # Generate sample items to put into the DynamoDB table
-    items = [{'UserID': i, 'Text': f'Sample text {i}'} for i in range(1, 101)]
+    # Generate sample items with random UUID for UserID to put into the DynamoDB table
+    items = [{'UserID': str(uuid.uuid4()), 'Text': f'Sample text {i}'} for i in range(1, 3)]
 
     for item in items:
         try:
