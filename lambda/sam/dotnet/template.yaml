@@ -29,19 +29,19 @@ Globals:
         # agent distributed tracing config
         NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
         NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
-        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
-        NEW_RELIC_PRIMARY_APPLICATION_ID: unknown                      # Set this to identify the primary application ID. By default the value is "unknown"
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # Enable Distributed Tracing
+        # NEW_RELIC_PRIMARY_APPLICATION_ID: unknown                      # Set this to identify the primary application ID. By default the value is "unknown"
 
         # required agent serverless config
         CORECLR_ENABLE_PROFILING: 1                                                    # For .NET Core
         CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'                     # For .NET Core
         CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
-        CORECLR_NEWRELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
+        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
         NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (stdout/CloudWatch)
 
         # optional agent serverless config
         NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs
-        NEWRELIC_LOG_LEVEL: finest                                                     # info|debug|finest
+        NEW_RELIC_LOG_LEVEL: finest                                                    # info|debug|finest
 
         # extension config
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                         # Enable/disable extension
@@ -50,8 +50,9 @@ Globals:
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable [NR_EXT] log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
-        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true                  # Also send extension logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: false                 # Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: all                         # Ignore extension checks
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
@@ -169,13 +170,12 @@ Resources:
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       FunctionName: kmullaney-sam-dotnet8-helloworld
-      Environment:
-        Variables:
+      # Environment:
+        # Variables:
           # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-dotnet8-helloworld                               # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: HelloWorld::HelloWorld.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
+          # NEW_RELIC_LAMBDA_HANDLER: HelloWorld::HelloWorld.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:11
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:20
       # Policies:
         # This policy allows the lambda to know the value of the New Relic license key. We need this so
         # that we can send telemetry back to New Relic
