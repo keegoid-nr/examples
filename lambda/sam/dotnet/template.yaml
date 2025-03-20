@@ -36,8 +36,9 @@ Globals:
         CORECLR_ENABLE_PROFILING: 1                                                    # For .NET Core
         CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'                     # For .NET Core
         CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
-        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent                          # Path to the directory containing the New Relic .NET Agent
+        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent                         # Path to the directory containing the New Relic .NET Agent
         NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (stdout/CloudWatch)
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId                            # AWS account ID
 
         # optional agent serverless config
         NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs

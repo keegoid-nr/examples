@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: And example of a simple instrumented NodeJS Lambda
+Description: Testing Ruby 3.3 instrumentation
 
 Parameters:
   NRAccountId:
@@ -11,15 +11,21 @@ Parameters:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
-  SecretsManagerSecretName:
+  LicenseKeyName:
     Type: String
-    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
     AllowedPattern: '[0-9A-Z_-]+'
+  # SecurityGroupIds:
+  #   Type: List<AWS::EC2::SecurityGroup::Id>
+  #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
+  # SubnetIds:
+  #   Type: List<AWS::EC2::Subnet::Id>
+  #   Description: The list of Subnet IDs for the Lambda function's VPC configuration.
 
 Globals:
   Function:
     MemorySize: 256
-    Timeout: 20
+    Timeout: 10
     Environment:
       Variables:
         # agent distributed tracing config
@@ -28,22 +34,19 @@ Globals:
         NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
 
         # agent serverless config
-        NEW_RELIC_NO_CONFIG_FILE: true                                 # Agent uses environment variables in Lambda
-        NEW_RELIC_NATIVE_METRICS_ENABLED: false                        # Reduce cold start duration by not collecting VM metrics
-        NEW_RELIC_LOG_ENABLED: true                                    # Agent logs
-        NEW_RELIC_LOG: stdout                                          # Agent log path
+        NEW_RELIC_SERVERLESS_MODE_ENABLED: true                        # Enable/disable serverless mode
         NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
         NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId            # AWS account ID
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
-        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true                  # Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+        NEW_RELIC_IGNORE_EXTENSION_CHECKS: false                       # Ignore extension checks (false, all, agent, handler, sanity, vendor)
+        NR_TAGS: 'owner:kmullaney,reason:testing,description:ruby 3.3 instrumentation'
 
 Resources:
   KmullaneyLambdaExecutionRole:
@@ -61,9 +64,9 @@ Resources:
         - Key: owner
           Value: kmullaney
         - Key: reason
-          Value: demo
+          Value: testing
         - Key: description
-          Value: "Secrets Manager access"
+          Value: "Instrumentation for Lambda functions"
       Policies:
         - PolicyName: LambdaAccess
           PolicyDocument:
@@ -82,7 +85,23 @@ Resources:
               - Sid: GetSecretValue
                 Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsManagerSecretName}-*'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
+              - Sid: GetParameterStoreValue
+                Effect: Allow
+                Action: 'ssm:GetParameter'
+                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY'
+                # Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
+              - Sid: KmsDecrypt
+                Effect: Allow
+                Action: 'kms:Decrypt'
+                Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+              - Sid: PutDynamoDbItem
+                Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                  - 'dynamodb:UpdateItem'
+                  - 'dynamodb:DescribeTable'
+                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*'
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
@@ -100,32 +119,34 @@ Resources:
                     'cloudwatch:namespace':
                       - 'AWS/Lambda'
 
-############################
-
-  KmullaneySamContainerizedNodejs20x:
+  KmullaneySamRuby33:
     Type: AWS::Serverless::Function
     Properties:
-      PackageType: Image
-      Description: A containerized Lambda function with New Relic instrumentation
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      FunctionName: kmullaney-sam-ruby-33
+      CodeUri: ./src/ruby33/
+      Description: Testing instrumentation for Ruby 3.3
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: ruby3.3
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      FunctionName: kmullaney-sam-containerized-nodejs20x
-      ImageConfig:
-        Command: ["newrelic-lambda-wrapper.handler"]
+      PackageType: Zip
       Environment:
         Variables:
-          NEW_RELIC_APP_NAME: kmullaney-sam-containerized-nodejs20x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-ruby-33                    # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.App.handler               # The actual function handler in the format of filename.class.handler
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:11
       Tags:
         owner: kmullaney
-        reason: "demo"
-        description: "A containerized Lambda function with New Relic instrumentation"
-    Metadata:
-      Dockerfile: Dockerfile
-      DockerContext: ./src/nodejs20x/
-      # DockerTag: latest
+        reason: testing
+        description: "ruby 3.3 instrumentation"
 
-  KmullaneySamContainerizedNodejs20xLogGroup:
+  KmullaneyRuby33LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamContainerizedNodejs20x}'
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamRuby33}'
       RetentionInDays: 1
