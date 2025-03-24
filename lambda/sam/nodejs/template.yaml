@@ -125,7 +125,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:56
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:59
       Tags:
         owner: kmullaney
         reason: "ESM manual wrapping"
@@ -213,7 +213,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-nodejs20x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
           NEW_RELIC_LAMBDA_HANDLER: function.handler                        # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:56
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:59
       Tags:
         owner: kmullaney
         reason: "reproduction"
