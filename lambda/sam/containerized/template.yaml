@@ -11,7 +11,7 @@ Parameters:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
     AllowedPattern: '[0-9]+'
-  SecretsManagerSecretName:
+  LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
     AllowedPattern: '[0-9A-Z_-]+'
@@ -36,7 +36,7 @@ Globals:
         NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId            # AWS account ID
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref SecretsManagerSecretName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 1s                          # Reduce timeout duration when for "Telemetry client error"
@@ -82,7 +82,7 @@ Resources:
               - Sid: GetSecretValue
                 Effect: Allow
                 Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretsManagerSecretName}-*'
+                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
