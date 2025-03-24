@@ -21,7 +21,7 @@ version = 0.1
 [default.deploy.parameters]
 region = "us-west-2"
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "NRAccountId=331786 NRTrustedAccountKey=1234567 LicenseKeyName=NEW_RELIC_LICENSE_KEY"
+parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567 LicenseKeyName=NEW_RELIC_LICENSE_KEY"
 ```
 
 ## Deployment Steps

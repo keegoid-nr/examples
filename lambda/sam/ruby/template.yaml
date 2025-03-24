@@ -145,6 +145,32 @@ Resources:
         reason: testing
         description: "ruby 3.3 instrumentation"
 
+  KmullaneySamModularRuby33:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      FunctionName: kmullaney-sam-ruby-modular-33
+      CodeUri: ./src/ruby33/
+      Description: Testing instrumentation for Ruby 3.3
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: ruby3.3
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-ruby-modular-33                     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: modular_function.TestModule::App.handler    # The actual function handler in the format of filename.class.handler
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:11
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "ruby 3.3 instrumentation"
+
   KmullaneyRuby33LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
