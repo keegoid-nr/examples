@@ -1,9 +1,11 @@
+import newrelic.agent
 import requests
 import logging
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+@newrelic.agent.lambda_handler()
 def lambda_handler(event, context):
     try:
         # Extract delay and request_timeout from the event, with defaults (10s max)
@@ -27,6 +29,7 @@ def lambda_handler(event, context):
     except requests.exceptions.Timeout:
         logger.error('Request timed out')
         logger.error('Status code: 504')
+        newrelic.agent.notice_error()
         return {
             'statusCode': 504,
             'body': 'Request timed out'
