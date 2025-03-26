@@ -135,11 +135,11 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-ruby-33                    # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.App.handler               # The actual function handler in the format of filename.module_or_class.handler_name
+          NEW_RELIC_LAMBDA_HANDLER: function.App.handler               # The actual function handler in the format of filename.module::class.handler_name
           # extension config
           NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName            # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:11
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:12
       Tags:
         owner: kmullaney
         reason: testing
@@ -169,11 +169,11 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-ruby-modular-33                     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: modular_function.TestModule::App.handler    # The actual function handler in the format of filename.module_or_class.handler_name
+          NEW_RELIC_LAMBDA_HANDLER: modular_function.TestModule::App.handler    # The actual function handler in the format of filename.module::class.handler_name
           # extension config
           NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName                     # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:11
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicRuby33:12
       Tags:
         owner: kmullaney
         reason: testing
