@@ -8,6 +8,8 @@ Testing SAM CLI deployments with New Relic instrumentation
 
 - [Setup](#setup)
 - [Deployment Steps](#deployment-steps)
+- [Testing Steps](#testing-steps)
+    - [Ruby](#ruby)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -31,3 +33,21 @@ parameter_overrides = "NRAccountId=1234567 NRTrustedAccountKey=1234567 LicenseKe
 1. Run the [deploy.sh](./deploy.sh) script to deploy an example.
 
 The `deploy.sh` script takes the AWS region as an argument.
+
+## Testing Steps
+
+Once deployed successfully the test cases can be invoked using the aws cli:
+
+### Ruby
+
+```bash
+# With event passed
+aws lambda invoke --cli-binary-format raw-in-base64-out --payload file://src/ruby33/event.json --function-name kmullaney-sam-ruby-33 /dev/stdout
+aws lambda invoke --cli-binary-format raw-in-base64-out --payload file://src/modular-ruby33/event.json --function-name kmullaney-sam-ruby-modular-33 /dev/stdout
+aws lambda invoke --cli-binary-format raw-in-base64-out --payload file://src/namespaced-modules-ruby33/event.json --function-name kmullaney-sam-ruby-namespaced-module-33 /dev/stdout
+
+# No event passed
+aws lambda invoke --function-name kmullaney-sam-ruby-33 /dev/stdout
+aws lambda invoke --function-name kmullaney-sam-ruby-modular-33 /dev/stdout
+aws lambda invoke --function-name kmullaney-sam-ruby-namespaced-module-33 /dev/stdout
+```
