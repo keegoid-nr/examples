@@ -42,7 +42,7 @@ Globals:
         NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId            # AWS account ID
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName              # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
@@ -115,7 +115,7 @@ Resources:
       CodeUri: ./src/esm/
       Description: An ESM Lambda function that bypasses the New Relic wrapper for improved cold start performance
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      Handler: function.handler
+      Handler: /opt/nodejs/node_modules/newrelic-esm-lambda-wrapper/index.handler
       Runtime: nodejs20.x
       PackageType: Zip
       FunctionName: kmullaney-sam-esm-nodejs20x
@@ -123,9 +123,10 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
+          NEW_RELIC_LAMBDA_HANDLER: function.handler                     # Your function's actual handler if not using manual wrapping method
+          # NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:59
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:63
       Tags:
         owner: kmullaney
         reason: "ESM manual wrapping"
@@ -154,7 +155,7 @@ Resources:
         Variables:
           NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:46
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:48
       Tags:
         owner: kmullaney
         reason: "test extension-only layer"
@@ -169,32 +170,32 @@ Resources:
 
 # -------------------------------------------------
 
-  KmullaneySamAwsSdkIssueNodejs18x:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./src/aws-sdk-issue/
-      Description: An extension-only layer with layerless instrumentation
-      Handler: newrelic-lambda-wrapper.handler
-      Runtime: nodejs18.x
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      FunctionName: kmullaney-sam-aws-sdk-issue-nodejs18x
-      Environment:
-        Variables:
-          NEW_RELIC_APP_NAME: kmullaney-sam-aws-sdk-issue-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
-      Tags:
-        owner: kmullaney
-        reason: "reproduction"
-        description: "test aws sdk issue with node.js agent"
+  # KmullaneySamAwsSdkIssueNodejs18x:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: ./src/aws-sdk-issue/
+  #     Description: An extension-only layer with layerless instrumentation
+  #     Handler: newrelic-lambda-wrapper.handler
+  #     Runtime: nodejs18.x
+  #     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+  #     PackageType: Zip
+  #     FunctionName: kmullaney-sam-aws-sdk-issue-nodejs18x
+  #     Environment:
+  #       Variables:
+  #         NEW_RELIC_APP_NAME: kmullaney-sam-aws-sdk-issue-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+  #         NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+  #     Layers:
+  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
+  #     Tags:
+  #       owner: kmullaney
+  #       reason: "reproduction"
+  #       description: "test aws sdk issue with node.js agent"
 
-  KmullaneySamAwsSdkIssueNodejs18xLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsSdkIssueNodejs18x}'
-      RetentionInDays: 1
+  # KmullaneySamAwsSdkIssueNodejs18xLogGroup:
+  #   Type: AWS::Logs::LogGroup
+  #   Properties:
+  #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsSdkIssueNodejs18x}'
+  #     RetentionInDays: 1
 
 # -------------------------------------------------
 
