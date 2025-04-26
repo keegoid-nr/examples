@@ -65,7 +65,7 @@ namespace HelloWorld
             catch (Exception ex)
             {
                 var errorAttributes = new Dictionary<string, string>() {{"foo", "bar"},{"baz", "luhr"}};
-                NewRelic.Api.Agent.NewRelic.NoticeError(ex, errorAttributes);
+                NewRelic.Api.Agent.NewRelic.NoticeError(ex.ToString(), errorAttributes);
             }
 
             return new APIGatewayProxyResponse
