@@ -50,6 +50,7 @@ javac TlsChecker.java
 After successful compilation:
 
 * **To run in TLS Test Mode (GET request):**
+
     Ensure the `NEW_RELIC_LICENSE_KEY` environment variable is *not* set or is empty.
 
     ```bash
@@ -59,24 +60,26 @@ After successful compilation:
     *(You will see "INFO: NEW_RELIC_LICENSE_KEY environment variable not set or is empty." in the output.)*
 
 * **To run in Log Sending Mode (POST request):**
+
     First, set the `NEW_RELIC_LICENSE_KEY` environment variable. Replace `YOUR_ACTUAL_API_KEY` with your valid New Relic Ingest License Key.
+
   * Linux/macOS:
 
-        ```bash
-        export NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
-        ```
+    ```bash
+    export NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
+    ```
 
   * Windows (Command Prompt):
 
-        ```bash
-        set NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
-        ```
+    ```bash
+    set NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
+    ```
 
   * Windows (PowerShell):
 
-        ```bash
-        $env:NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
-        ```
+    ```bash
+    $env:NEW_RELIC_LICENSE_KEY="YOUR_ACTUAL_API_KEY"
+    ```
 
     Then, run the program:
 
