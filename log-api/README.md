@@ -128,7 +128,7 @@ After successful compilation:
 ```
 INFO: NEW_RELIC_LICENSE_KEY environment variable not set or is empty.
 Performing a GET request to test TLS handshake only.
-Attempting a GET request to: [https://log-api.newrelic.com/log/v1](https://log-api.newrelic.com/log/v1)
+Attempting a GET request to: https://log-api.newrelic.com/log/v1
 TLS connection established.
 Cipher Suite: TLS_AES_256_GCM_SHA384
 HTTP Method: GET
@@ -144,7 +144,7 @@ Server response content:
 
 ```
 INFO: NEW_RELIC_LICENSE_KEY found. Performing POST request to send logs.
-Attempting to POST to: [https://log-api.newrelic.com/log/v1](https://log-api.newrelic.com/log/v1)
+Attempting to POST to: https://log-api.newrelic.com/log/v1
 Payload: [{"message": "This is a test log message from TlsChecker.java on Fri May 09 22:00:37 PDT 2025","timestamp": 1746882037000,"attributes": {"service": "my-java-test-service","logtype": "my-java-test-log-type","source": "TlsChecker.java","hostname": "my-dev-machine","plugin.source": "/opt/jdk/jdk-11.0.12/bin/java","plugin.version": "11.0.12"}}]
 TLS connection established.
 Cipher Suite: TLS_AES_256_GCM_SHA384
