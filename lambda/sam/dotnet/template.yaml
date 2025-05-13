@@ -114,103 +114,84 @@ Resources:
 
 ############################
 
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-  # KmullaneySamDotnet6HelloWorld:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: ./src/dotnet6/src/HelloWorld/
-  #     Description: A basic Dotnet 6 Hello World Lambda function using APIGatewayProxyRequest.
-  #     Runtime: dotnet6
-  #     Handler: HelloWorld::HelloWorld.Function::FunctionHandler
-  #     Architectures:
-  #     - x86_64
-  #     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-  #     PackageType: Zip
-  #     FunctionName: kmullaney-sam-dotnet6-helloworld
-  #     # Environment:
-  #     #   Variables:
-  #         # agent serverless config
-  #         # NEW_RELIC_APP_NAME: kmullaney-sam-dotnet6-helloworld                               # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-  #         # NEW_RELIC_LAMBDA_HANDLER: HelloWorld::HelloWorld.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
-  #     Layers:
-  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:6
-  #     # Policies:
-  #       # This policy allows the lambda to know the value of the New Relic license key. We need this so
-  #       # that we can send telemetry back to New Relic
-  #       # - AWSSecretsManagerGetSecretValuePolicy:
-  #       #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-  #     Events:
-  #       KmullaneySamDotnet6HelloWorld:
-  #         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-  #         Properties:
-  #           Path: /hello
-  #           Method: get
-  #     Tags:
-  #       owner: kmullaney
-  #       reason: "demo"
-  #       description: "Demo new Dotnet layer"
-
-  # KmullaneySamDotnet6HelloWorldLogGroup:
-  #   Type: AWS::Logs::LogGroup
-  #   Properties:
-  #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet6HelloWorld}'
-  #     RetentionInDays: 1
-
-############################
-
-  KmullaneySamDotnet8HelloWorld:
+  KmullaneySamDotnet8ObjectError:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/dotnet8/src/HelloWorld/
-      Description: A basic Dotnet 8 Hello World Lambda function using APIGatewayProxyRequest.
-      Handler: HelloWorld::HelloWorld.Function::FunctionHandler
+      CodeUri: ./src/ObjectError/
+      Description: A basic Dotnet 8 Object Error Lambda function using APIGatewayProxyRequest.
+      Handler: ObjectError::ObjectError.Function::FunctionHandler
       Runtime: dotnet8
       Architectures:
       - x86_64
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
-      FunctionName: kmullaney-sam-dotnet8-helloworld
+      FunctionName: kmullaney-sam-dotnet8-objecterror
       # Environment:
         # Variables:
           # agent serverless config
-          # NEW_RELIC_LAMBDA_HANDLER: HelloWorld::HelloWorld.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
+          # NEW_RELIC_LAMBDA_HANDLER: ObjectError::ObjectError.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:23
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:24
       # Policies:
         # This policy allows the lambda to know the value of the New Relic license key. We need this so
         # that we can send telemetry back to New Relic
         # - AWSSecretsManagerGetSecretValuePolicy:
         #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
       Events:
-        KmullaneySamDotnet8HelloWorld:
+        KmullaneySamDotnet8ObjectError:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /object/error
             Method: get
       Tags:
         owner: kmullaney
-        reason: "demo"
-        description: "Demo new Dotnet layer"
+        reason: "reproduction"
+        description: "NewRelic.Api.Agent.NewRelic.NoticeError with Exception and IDictionary"
 
-  KmullaneySamDotnet8HelloWorldLogGroup:
+  KmullaneySamDotnet8ObjectErrorLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8HelloWorld}'
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8ObjectError}'
       RetentionInDays: 1
 
 ############################
 
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  KmullaneySamDotnet8HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  KmullaneySamDotnet8HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt KmullaneySamDotnet8HelloWorld.Arn
-  KmullaneySamDotnet8HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt KmullaneyLambdaExecutionRole.Arn
+  KmullaneySamDotnet8StringError:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/StringError/
+      Description: A basic Dotnet 8 String Error Lambda function using APIGatewayProxyRequest.
+      Handler: StringError::StringError.Function::FunctionHandler
+      Runtime: dotnet8
+      Architectures:
+      - x86_64
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-dotnet8-stringerror
+      # Environment:
+        # Variables:
+          # agent serverless config
+          # NEW_RELIC_LAMBDA_HANDLER: StringError::StringError.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:24
+      # Policies:
+        # This policy allows the lambda to know the value of the New Relic license key. We need this so
+        # that we can send telemetry back to New Relic
+        # - AWSSecretsManagerGetSecretValuePolicy:
+        #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+      Events:
+        KmullaneySamDotnet8StringError:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /string/error
+            Method: get
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "NewRelic.Api.Agent.NewRelic.NoticeError with string and IDictionary"
+
+  KmullaneySamDotnet8StringErrorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8StringError}'
+      RetentionInDays: 1
