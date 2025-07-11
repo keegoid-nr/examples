@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: And example of a simple instrumented NodeJS Lambda
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NRTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 5
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # DT
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true # Agent uses environment variables in Lambda
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
+        NEW_RELIC_LOG_ENABLED: true # Agent logs
+        NEW_RELIC_LOG: stdout # Agent log path
+        NEW_RELIC_LOG_LEVEL: info # Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
+
+  # -------------------------------------------------
+
+Resources:
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  KmullaneySamEsmSdkCwNodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
+      CodeUri: ./src/esm/
+      Description: ESM function instrumented with SDK method and shipped via CloudWatch
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      Handler: function.handler
+      Runtime: nodejs20.x
+      PackageType: Zip
+      FunctionName: kmullaney-sam-esm-sdk-cw-nodejs20x
+      Environment:
+        Variables:
+          # agent serverless config
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-sdk-cw-nodejs20x # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+      Tags:
+        owner: kmullaney
+        reason: "testing"
+        description: "testing CloudWatch shipping with ESM function and SDK method"
+
+  KmullaneySamEsmSdkCwNodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamEsmSdkCwNodejs20x}"
+      RetentionInDays: 7
+
+  KmullaneySamEsmSubscriptionfilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamEsmSdkCwNodejs20xLogGroup
+      FilterName: !Sub "${KmullaneySamEsmSdkCwNodejs20x}-filter"
+
+  # -------------------------------------------------
+
+  KmullaneySamRecordMetricSdkCwNodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/record-metric/
+      Description: SDK method shipped via CloudWatch and records a custom metric
+      Handler: function.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-record-metric-sdk-cw-nodejs20x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-sdk-cw-nodejs20x # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "test aws record metric with SDK method and CloudWatch shipping"
+
+  KmullaneySamRecordMetricSdkCwNodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamRecordMetricSdkCwNodejs20x}"
+      RetentionInDays: 7
+
+  KmullaneySamRecordMetricSubscriptionfilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamRecordMetricSdkCwNodejs20xLogGroup
+      FilterName: !Sub "${KmullaneySamRecordMetricSdkCwNodejs20x}-filter"

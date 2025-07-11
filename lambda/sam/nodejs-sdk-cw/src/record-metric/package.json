@@ -1,0 +1,14 @@
+{
+  "name": "kmullaney-record-metric",
+  "version": "1.0.0",
+  "description": "",
+  "main": "function.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keegan Mullaney",
+  "license": "ISC",
+  "dependencies": {
+    "newrelic": "^12.25.0"
+  }
+}
