@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: And example of a simple instrumented NodeJS Lambda
 
@@ -6,15 +6,15 @@ Parameters:
   NRAccountId:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   NRTrustedAccountKey:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
-    AllowedPattern: '[0-9A-Z_-]+'
+    AllowedPattern: "[0-9A-Z_-]+"
   # SecurityGroupIds:
   #   Type: List<AWS::EC2::SecurityGroup::Id>
   #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
@@ -29,40 +29,40 @@ Globals:
     Environment:
       Variables:
         # agent distributed tracing config
-        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
-        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
-        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # DT
 
         # agent serverless config
-        NEW_RELIC_NO_CONFIG_FILE: true                                 # Agent uses environment variables in Lambda
-        NEW_RELIC_NATIVE_METRICS_ENABLED: false                        # Reduce cold start duration by not collecting VM metrics
-        NEW_RELIC_LOG_ENABLED: true                                    # Agent logs
-        NEW_RELIC_LOG: stdout                                          # Agent log path
-        NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
-        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId            # AWS account ID
+        NEW_RELIC_NO_CONFIG_FILE: true # Agent uses environment variables in Lambda
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
+        NEW_RELIC_LOG_ENABLED: true # Agent logs
+        NEW_RELIC_LOG: stdout # Agent log path
+        NEW_RELIC_LOG_LEVEL: info # Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName              # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
-        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
-        NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
-        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
-        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true                  # Also send extension logs
-        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true # Also send extension logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
 
 Resources:
   KmullaneyLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       Tags:
         - Key: owner
           Value: kmullaney
@@ -73,7 +73,7 @@ Resources:
       Policies:
         - PolicyName: LambdaAccess
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               # - Sid: AWSLambdaVPCAccess
               #   Effect: Allow
@@ -87,26 +87,26 @@ Resources:
               #   Resource: '*'
               - Sid: GetSecretValue
                 Effect: Allow
-                Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
               - Sid: CloudWatchMetricsAccess
                 Effect: Allow
                 Action:
-                  - 'cloudwatch:PutMetricData'
-                Resource: '*'
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
                 Condition:
                   StringEquals:
-                    'cloudwatch:namespace':
-                      - 'AWS/Lambda'
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamEsmNodejs20x:
     Type: AWS::Serverless::Function
@@ -122,23 +122,23 @@ Resources:
       Environment:
         Variables:
           # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x                # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler                     # Your function's actual handler if not using manual wrapping method
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-nodejs20x # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler # Your function's actual handler if not using manual wrapping method
           # NEW_RELIC_USE_ESM: true                                        # ESM functions that use async/await and not callbacks
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:63
       Tags:
         owner: kmullaney
-        reason: "ESM manual wrapping"
-        description: "nodejs20 ESM manual handler wrapping for improved cold start performance"
+        reason: "new ESM wrapper"
+        description: "nodejs20 ESM handler wrapper for improved cold start performance"
 
   KmullaneySamEsmNodejs20xLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamEsmNodejs20x}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamEsmNodejs20x}"
+      RetentionInDays: 7
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamExtensionOnlyNodejs18x:
     Type: AWS::Serverless::Function
@@ -153,7 +153,7 @@ Resources:
       FunctionName: kmullaney-sam-extension-only-nodejs18x
       Environment:
         Variables:
-          NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_APP_NAME: kmullaney-sam-extension-only-nodejs18x # Should be set but not used in the New Relic UI, entity names come from the AWS integration
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:48
       Tags:
@@ -164,11 +164,10 @@ Resources:
   KmullaneySamExtensionOnlyNodejs18xLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamExtensionOnlyNodejs18x}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamExtensionOnlyNodejs18x}"
+      RetentionInDays: 7
 
-
-# -------------------------------------------------
+  # -------------------------------------------------
 
   # KmullaneySamAwsSdkIssueNodejs18x:
   #   Type: AWS::Serverless::Function
@@ -195,9 +194,9 @@ Resources:
   #   Type: AWS::Logs::LogGroup
   #   Properties:
   #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsSdkIssueNodejs18x}'
-  #     RetentionInDays: 1
+  #     RetentionInDays: 7
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamAwsRecordMetricNodejs20x:
     Type: AWS::Serverless::Function
@@ -211,8 +210,8 @@ Resources:
       FunctionName: kmullaney-sam-aws-record-metric-nodejs20x
       Environment:
         Variables:
-          NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-nodejs20x     # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler                        # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+          NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-nodejs20x # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+          NEW_RELIC_LAMBDA_HANDLER: function.handler # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20X:59
       Tags:
@@ -223,38 +222,37 @@ Resources:
   KmullaneySamAwsRecordMetricNodejs20xLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamAwsRecordMetricNodejs20x}'
-      RetentionInDays: 1
-
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamAwsRecordMetricNodejs20x}"
+      RetentionInDays: 7
 # -------------------------------------------------
 
-  # KmullaneySamNoOutboundVpcNodejs18x:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: ./src/no-outbound-vpc/
-  #     Description: Test agent and extension with no outbound access
-  #     Handler: newrelic-lambda-wrapper.handler
-  #     Runtime: nodejs18.x
-  #     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-  #     PackageType: Zip
-  #     FunctionName: kmullaney-sam-no-outbound-vpc-nodejs18x
-  #     Environment:
-  #       Variables:
-  #         NEW_RELIC_APP_NAME: kmullaney-sam-no-outbound-vpc-nodejs18x   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-  #         NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
-  #     Layers:
-  #       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
-  #     VpcConfig:
-  #       SubnetIds: !Ref SubnetIds
-  #       SecurityGroupIds: !Ref SecurityGroupIds
-  #       Ipv6AllowedForDualStack: false
-  #     Tags:
-  #       owner: kmullaney
-  #       reason: case
-  #       description: 00182486
+# KmullaneySamNoOutboundVpcNodejs18x:
+#   Type: AWS::Serverless::Function
+#   Properties:
+#     CodeUri: ./src/no-outbound-vpc/
+#     Description: Test agent and extension with no outbound access
+#     Handler: newrelic-lambda-wrapper.handler
+#     Runtime: nodejs18.x
+#     Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+#     PackageType: Zip
+#     FunctionName: kmullaney-sam-no-outbound-vpc-nodejs18x
+#     Environment:
+#       Variables:
+#         NEW_RELIC_APP_NAME: kmullaney-sam-no-outbound-vpc-nodejs18x   # Should be set but not used in the New Relic UI, entity names come from the AWS integration
+#         NEW_RELIC_LAMBDA_HANDLER: function.handler                    # Your function's actual handler if not using manual wrapping method for better ESM cold start performance
+#     Layers:
+#       - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS18X:106
+#     VpcConfig:
+#       SubnetIds: !Ref SubnetIds
+#       SecurityGroupIds: !Ref SecurityGroupIds
+#       Ipv6AllowedForDualStack: false
+#     Tags:
+#       owner: kmullaney
+#       reason: case
+#       description: 00182486
 
-  # KmullaneySamNoOutboundVpcNodejs18xLogGroup:
-  #   Type: AWS::Logs::LogGroup
-  #   Properties:
-  #     LogGroupName: !Sub '/aws/lambda/${KmullaneySamNoOutboundVpcNodejs18x}'
-  #     RetentionInDays: 1
+# KmullaneySamNoOutboundVpcNodejs18xLogGroup:
+#   Type: AWS::Logs::LogGroup
+#   Properties:
+#     LogGroupName: !Sub '/aws/lambda/${KmullaneySamNoOutboundVpcNodejs18x}'
+#     RetentionInDays: 7

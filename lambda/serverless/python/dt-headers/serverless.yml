@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: dt-headers
   timeout: 10
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: case
@@ -19,7 +19,7 @@ provider:
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements
@@ -27,13 +27,13 @@ plugins:
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID
-    apiKey: ${env:NEW_RELIC_USER_API_KEY}     # User api key
-    disableAutoSubscription: true             # Don't create a subscription filter to the newrelic-log-ingestion function
-    enableFunctionLogs: true                  # Send logs via [NR_EXT]
-    logEnabled: true                          # Python agent logs
-    logLevel: info                            # Python agent log level
-    debug: true                               # Serverless Framework debug
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY} # User api key
+    disableAutoSubscription: true # Don't create a subscription filter to the newrelic-log-ingestion function
+    enableFunctionLogs: true # Send logs via [NR_EXT]
+    logEnabled: true # Python agent logs
+    logLevel: info # Python agent log level
+    debug: true # Serverless Framework debug
   pythonRequirements:
     fileName: ./requirements.txt
 
@@ -48,7 +48,7 @@ functions:
     handler: function.lambda_handler
     package:
       patterns:
-        - '!./**'
-        - 'function.py'
+        - "!./**"
+        - "function.py"
     runtime: python3.7
     provisionedConcurrency: 0

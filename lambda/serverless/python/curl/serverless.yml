@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: curl
   timeout: 10
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: case
@@ -20,10 +20,10 @@ provider:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     # NEW_RELIC_LICENSE_KEY: ${env:NEW_RELIC_LICENSE_KEY}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
+    NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
     # NEW_RELIC_LOG_LEVEL: info
     # NEW_RELIC_LOG: stderr
-    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements

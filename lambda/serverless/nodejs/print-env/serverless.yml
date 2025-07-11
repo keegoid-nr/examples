@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: cjs
   timeout: 4
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -24,7 +24,7 @@ provider:
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
+    NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
 
 plugins:
   # - serverless-offline
@@ -32,17 +32,17 @@ plugins:
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}                       # New Relic account ID
-    trustedAccountKey: ${env:NEW_RELIC_TRUSTED_ACCOUNT_KEY}      # New Relic account ID or parent ID
-    apiKey: ${env:NEW_RELIC_USER_API_KEY}                        # User api key
-    disableAutoSubscription: true                                # Don't create a subscription filter to the newrelic-log-ingestion function
-    disableLicenseKeySecret: false                               # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
-    enableFunctionLogs: true                                     # Send logs via [NR_EXT]
-    enableIntegration: false                                     # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                             # Agent logs
-    logLevel: debug                                              # Agent log level
-    debug: true                                                  # Serverless Framework debug
-    manualWrapping: false                                        # use legacy wrapper for better ESM performance
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_TRUSTED_ACCOUNT_KEY} # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY} # User api key
+    disableAutoSubscription: true # Don't create a subscription filter to the newrelic-log-ingestion function
+    disableLicenseKeySecret: false # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
+    enableFunctionLogs: true # Send logs via [NR_EXT]
+    enableIntegration: false # Don't create an api polling integration (already have Metric Streams)
+    logEnabled: true # Agent logs
+    logLevel: debug # Agent log level
+    debug: true # Serverless Framework debug
+    manualWrapping: false # use legacy wrapper for better ESM performance
     # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:29   # uncomment if you want to pin a layer version
 
 package:
@@ -57,7 +57,7 @@ functions:
     runtime: nodejs20.x
     package:
       patterns:
-        - 'function.js'
+        - "function.js"
     provisionedConcurrency: 0
     environment:
       NEW_RELIC_APP_NAME: kmullaney-sls-cjs-print-env-nodejs20x

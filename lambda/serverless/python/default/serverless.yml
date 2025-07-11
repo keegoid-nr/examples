@@ -16,7 +16,7 @@ provider:
       Resource: "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:${env:NEW_RELIC_LICENSE_KEY_SECRET}-*"
   timeout: 20
   memorySize: 1024 #512
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: ticket
@@ -30,7 +30,7 @@ provider:
     # NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     # NEW_RELIC_LOG_LEVEL: info
     # NEW_RELIC_LOG: stderr
-    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements
@@ -57,7 +57,7 @@ functions:
     handler: function.handler
     package:
       patterns:
-        - 'node_modules/**'
-        - 'function.js'
+        - "node_modules/**"
+        - "function.js"
     runtime: python3.8
     provisionedConcurrency: 0

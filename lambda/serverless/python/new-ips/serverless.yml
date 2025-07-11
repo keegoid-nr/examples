@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: new-ips
   timeout: 10
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: case
@@ -28,8 +28,8 @@ custom:
 
 package:
   patterns:
-    - '!./**'
-    - 'function.py'
+    - "!./**"
+    - "function.py"
 
 # package:
 #   individually: true

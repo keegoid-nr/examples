@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: "00059605"
   timeout: 4
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: ticket
@@ -22,7 +22,7 @@ provider:
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     NEW_RELIC_LOG_LEVEL: info
     NEW_RELIC_LOG: stderr
-    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false   # disable package reporting feature to improve cold start times
+    NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable package reporting feature to improve cold start times
 
 plugins:
   - serverless-python-requirements

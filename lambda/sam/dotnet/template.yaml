@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   Sample SAM Template for dotnet8
@@ -7,15 +7,15 @@ Parameters:
   NRAccountId:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   NRTrustedAccountKey:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
-    AllowedPattern: '[0-9A-Z_-]+'
+    AllowedPattern: "[0-9A-Z_-]+"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -27,21 +27,21 @@ Globals:
     Environment:
       Variables:
         # agent distributed tracing config
-        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
-        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
-        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # Enable Distributed Tracing
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # Enable Distributed Tracing
 
         # required agent serverless config with paths for use with Lambda layers
-        CORECLR_ENABLE_PROFILING: 1                                                    # For .NET Core
-        CORECLR_PROFILER: '{36032161-FFC0-4B61-B559-F6C5D41BAE5A}'                     # For .NET Core
-        CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
-        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent                         # Path to the directory containing the New Relic .NET Agent
+        CORECLR_ENABLE_PROFILING: 1 # For .NET Core
+        CORECLR_PROFILER: "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}" # For .NET Core
+        CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so # Path to the profiler used by the .NET agent
+        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent # Path to the directory containing the New Relic .NET Agent
 
         # optional agent serverless config
-        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId                            # AWS account ID
-        NEW_RELIC_LOG_ENABLED: 1                                                       # Agent logs
-        NEW_RELIC_LOG_CONSOLE: 1                                                       # Send log messages to the console (stdout/CloudWatch)
-        NEW_RELIC_LOG_LEVEL: finest                                                    # info|debug|finest
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
+        NEW_RELIC_LOG_ENABLED: 1 # Agent logs
+        NEW_RELIC_LOG_CONSOLE: 1 # Send log messages to the console (stdout/CloudWatch)
+        NEW_RELIC_LOG_LEVEL: finest # info|debug|finest
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
@@ -50,13 +50,13 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       Tags:
         - Key: owner
           Value: kmullaney
@@ -67,30 +67,30 @@ Resources:
       Policies:
         - PolicyName: LambdaAccess
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               - Sid: GetSecretValue
                 Effect: Allow
-                Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
               - Sid: CloudWatchMetricsAccess
                 Effect: Allow
                 Action:
-                  - 'cloudwatch:PutMetricData'
-                Resource: '*'
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
                 Condition:
                   StringEquals:
-                    'cloudwatch:namespace':
-                      - 'AWS/Lambda'
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
 
-############################
+  # -----------------------------
 
   KmullaneySamDotnet8ObjectError:
     Type: AWS::Serverless::Function
@@ -100,15 +100,15 @@ Resources:
       Handler: ObjectError::ObjectError.Function::FunctionHandler
       Runtime: dotnet8
       Architectures:
-      - x86_64
+        - x86_64
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       FunctionName: kmullaney-sam-dotnet8-objecterror
       Environment:
         Variables:
           # SDK paths for NuGet package
-          CORECLR_PROFILER_PATH: /var/task/newrelic/libNewRelicProfiler.so   # Path to the profiler used by the .NET agent
-          CORECLR_NEW_RELIC_HOME: /var/task/newrelic                         # Path to the directory containing the New Relic .NET Agent
+          CORECLR_PROFILER_PATH: /var/task/newrelic/libNewRelicProfiler.so # Path to the profiler used by the .NET agent
+          CORECLR_NEW_RELIC_HOME: /var/task/newrelic # Path to the directory containing the New Relic .NET Agent
       Events:
         KmullaneySamDotnet8ObjectError:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -123,17 +123,18 @@ Resources:
   KmullaneySamDotnet8ObjectErrorLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8ObjectError}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamDotnet8ObjectError}"
+      RetentionInDays: 7
 
-  KmullaneySamDotnet8ObjectErrorSubscriptionFilter:
+  KmullaneySamDotNet8ObjectErrorSubscriptionfilter:
     Type: AWS::Logs::SubscriptionFilter
     Properties:
-      DestinationArn: arn:aws:lambda:us-west-2:368927449855:function:newrelic-log-ingestion-02aeffb53869
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
       FilterPattern: ""
       LogGroupName: !Ref KmullaneySamDotnet8ObjectErrorLogGroup
+      FilterName: !Sub "${KmullaneySamDotnet8ObjectError}-filter"
 
-############################
+  # -----------------------------
 
   KmullaneySamDotnet8StringError:
     Type: AWS::Serverless::Function
@@ -143,7 +144,7 @@ Resources:
       Handler: StringError::StringError.Function::FunctionHandler
       Runtime: dotnet8
       Architectures:
-      - x86_64
+        - x86_64
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       FunctionName: kmullaney-sam-dotnet8-stringerror
@@ -153,15 +154,15 @@ Resources:
           # NEW_RELIC_LAMBDA_HANDLER: StringError::StringError.Function::FunctionHandler         # Required if the runtime handler is not in the assembly::class::method format i.e. RuntimeSupport library
 
           # extension config
-          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                         # Enable/disable extension
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
           # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
-          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
-          NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable [NR_EXT] log lines
-          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
-          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: false                 # Also send extension logs
-          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
-          NEW_RELIC_IGNORE_EXTENSION_CHECKS: all                         # Ignore extension checks
+          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s # Reduce timeout duration when for "Telemetry client error"
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable [NR_EXT] log lines
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: false # Also send extension logs
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
+          NEW_RELIC_IGNORE_EXTENSION_CHECKS: all # Ignore extension checks
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:24
       Events:
@@ -178,5 +179,5 @@ Resources:
   KmullaneySamDotnet8StringErrorLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamDotnet8StringError}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamDotnet8StringError}"
+      RetentionInDays: 7

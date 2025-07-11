@@ -8,7 +8,7 @@ provider:
   stage: "00217664"
   timeout: 10
   runtime: provided.al2023
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: example
@@ -32,16 +32,16 @@ plugins:
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
-    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID or parent ID
-    apiKey: ${env:NEW_RELIC_USER_API_KEY}             # User api key
-    disableAutoSubscription: true                     # Don't create a subscription filter to the newrelic-log-ingestion function
-    disableLicenseKeySecret: false                    # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
-    enableFunctionLogs: true                          # Send logs via [NR_EXT]
-    enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Agent logs
-    logLevel: debug                                   # Agent log level
-    debug: true                                       # Serverless Framework debug
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY} # User api key
+    disableAutoSubscription: true # Don't create a subscription filter to the newrelic-log-ingestion function
+    disableLicenseKeySecret: false # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
+    enableFunctionLogs: true # Send logs via [NR_EXT]
+    enableIntegration: false # Don't create an api polling integration (already have Metric Streams)
+    logEnabled: true # Agent logs
+    logLevel: debug # Agent log level
+    debug: true # Serverless Framework debug
     layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42
 
 package:
@@ -61,7 +61,7 @@ functions:
       NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
     package:
       patterns:
-        - '!**'
-        - 'bootstrap'
+        - "!**"
+        - "bootstrap"
     layers:
       - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42

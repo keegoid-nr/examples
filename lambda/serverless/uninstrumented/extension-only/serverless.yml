@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: ext-only
   timeout: 4
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: demo
@@ -21,24 +21,24 @@ provider:
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
     NEW_RELIC_APP_NAME: kmullaney-sls-ext-only-nodejs16x
     NEW_RELIC_NO_CONFIG_FILE: true
-    NEW_RELIC_NATIVE_METRICS_ENABLED: false                      # Reduce cold start duration by not collecting VM metrics
+    NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
 
 plugins:
   - serverless-newrelic-lambda-layers
 
 custom:
   newRelic:
-    accountId: ${env:NEW_RELIC_ACCOUNT_ID}            # New Relic account ID
-    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID}    # New Relic account ID or parent ID
-    apiKey: ${env:NEW_RELIC_USER_API_KEY}         # User api key
-    disableAutoSubscription: true                     # Don't create a subscription filter to the newrelic-log-ingestion function
-    disableLicenseKeySecret: true                     # Use NEW_RELIC_LICENSE_KEY env var instead of AWS Secrets Manager secret
-    enableFunctionLogs: true                          # Send logs via [NR_EXT]
-    enableIntegration: false                          # Don't create an api polling integration (already have Metric Streams)
-    logEnabled: true                                  # Agent logs
-    logLevel: debug                                   # Agent log level
-    debug: true                                       # Serverless Framework debug
-    manualWrapping: true                              # use legacy wrapper (agent not in layer)
+    accountId: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID
+    trustedAccountKey: ${env:NEW_RELIC_ACCOUNT_ID} # New Relic account ID or parent ID
+    apiKey: ${env:NEW_RELIC_USER_API_KEY} # User api key
+    disableAutoSubscription: true # Don't create a subscription filter to the newrelic-log-ingestion function
+    disableLicenseKeySecret: true # Use NEW_RELIC_LICENSE_KEY env var instead of AWS Secrets Manager secret
+    enableFunctionLogs: true # Send logs via [NR_EXT]
+    enableIntegration: false # Don't create an api polling integration (already have Metric Streams)
+    logEnabled: true # Agent logs
+    logLevel: debug # Agent log level
+    debug: true # Serverless Framework debug
+    manualWrapping: true # use legacy wrapper (agent not in layer)
     layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:34
 
 package:
@@ -53,6 +53,6 @@ functions:
     runtime: nodejs16.x
     package:
       patterns:
-        - 'node_modules/**'
-        - 'function.js'
+        - "node_modules/**"
+        - "function.js"
     provisionedConcurrency: 0

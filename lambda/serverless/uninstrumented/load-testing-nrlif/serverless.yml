@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   stage: load-test
   runtime: nodejs18.x
-  logRetentionInDays: 1
+  logRetentionInDays: 7
   tags:
     owner: kmullaney
     reason: case 00156124
@@ -30,7 +30,7 @@ functions:
     timeout: 3
     package:
       patterns:
-        - 'function.mjs'
+        - "function.mjs"
     # provisionedConcurrency: 2
     # reservedConcurrency: 1
 
@@ -43,7 +43,7 @@ functions:
     timeout: 65
     package:
       patterns:
-        - 'node_modules/**'
-        - 'invoker.js'
+        - "node_modules/**"
+        - "invoker.js"
     # provisionedConcurrency: 0
     # reservedConcurrency: 1

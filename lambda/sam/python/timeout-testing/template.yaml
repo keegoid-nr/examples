@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Testing Python 3.9 instrumentation
 
@@ -6,15 +6,15 @@ Parameters:
   NRAccountId:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   NRTrustedAccountKey:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
-    AllowedPattern: '[0-9]+'
+    AllowedPattern: "[0-9]+"
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
-    AllowedPattern: '[0-9A-Z_-]+'
+    AllowedPattern: "[0-9A-Z_-]+"
   # SecurityGroupIds:
   #   Type: List<AWS::EC2::SecurityGroup::Id>
   #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
@@ -28,38 +28,38 @@ Globals:
     Environment:
       Variables:
         # agent distributed tracing config
-        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId                         # New Relic account ID
-        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey        # New Relic account ID or parent ID
-        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true                    # DT
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # DT
 
         # agent serverless config
-        NEW_RELIC_NO_CONFIG_FILE: true                                 # Agent uses environment variables in Lambda
-        NEW_RELIC_PACKAGE_REPORTING_ENABLED: false                     # disable Python agent package reporting feature to improve cold start times
-        NEW_RELIC_LOG_ENABLED: true                                    # Agent logs
-        NEW_RELIC_LOG: stderr                                          # Agent log path
-        NEW_RELIC_LOG_LEVEL: info                                      # Agent log level: fatal, error, warn, info, debug, or trace
-        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId            # AWS account ID
+        NEW_RELIC_NO_CONFIG_FILE: true # Agent uses environment variables in Lambda
+        NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable Python agent package reporting feature to improve cold start times
+        NEW_RELIC_LOG_ENABLED: true # Agent logs
+        NEW_RELIC_LOG: stderr # Agent log path
+        NEW_RELIC_LOG_LEVEL: info # Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
 
         # extension config
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
-        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true                       # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s                          # Reduce timeout duration when for "Telemetry client error"
-        NEW_RELIC_EXTENSION_LOGS_ENABLED: true                         # Enable/disable NR_EXT log lines
-        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true                   # Send function logs
-        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG                           # INFO or DEBUG
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
 
 Resources:
   KmullaneyLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
-            Action: 'sts:AssumeRole'
+            Action: "sts:AssumeRole"
       Tags:
         - Key: owner
           Value: kmullaney
@@ -70,7 +70,7 @@ Resources:
       Policies:
         - PolicyName: LambdaAccess
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
               # - Sid: AWSLambdaVPCAccess
               #   Effect: Allow
@@ -84,40 +84,40 @@ Resources:
               #   Resource: '*'
               - Sid: GetSecretValue
                 Effect: Allow
-                Action: 'secretsmanager:GetSecretValue'
-                Resource: !Sub 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*'
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
               - Sid: GetParameterStoreValue
                 Effect: Allow
-                Action: 'ssm:GetParameter'
-                Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY'
+                Action: "ssm:GetParameter"
+                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY"
                 # Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
               - Sid: KmsDecrypt
                 Effect: Allow
-                Action: 'kms:Decrypt'
-                Resource: !Sub 'arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+                Action: "kms:Decrypt"
+                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
               - Sid: PutDynamoDbItem
                 Effect: Allow
                 Action:
-                  - 'dynamodb:PutItem'
-                  - 'dynamodb:UpdateItem'
-                  - 'dynamodb:DescribeTable'
-                Resource: !Sub 'arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*'
+                  - "dynamodb:PutItem"
+                  - "dynamodb:UpdateItem"
+                  - "dynamodb:DescribeTable"
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
-                  - 'logs:CreateLogGroup'
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
               - Sid: CloudWatchMetricsAccess
                 Effect: Allow
                 Action:
-                  - 'cloudwatch:PutMetricData'
-                Resource: '*'
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
                 Condition:
                   StringEquals:
-                    'cloudwatch:namespace':
-                      - 'AWS/Lambda'
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
 
   KmullaneySamPython312HandledRequestTimeout:
     Type: AWS::Serverless::Function
@@ -138,9 +138,9 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-request-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler                    # The actual function handler
+          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
           # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName                    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
       Tags:
@@ -151,10 +151,10 @@ Resources:
   KmullaneyPython312HandledRequestTimeoutLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython312HandledRequestTimeout}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312HandledRequestTimeout}"
+      RetentionInDays: 7
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamPython312UnhandledRequestTimeout:
     Type: AWS::Serverless::Function
@@ -175,9 +175,9 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-request-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler                    # The actual function handler
+          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
           # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName                    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
       Tags:
@@ -188,10 +188,10 @@ Resources:
   KmullaneyPython312UnhandledRequestTimeoutLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython312UnhandledRequestTimeout}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312UnhandledRequestTimeout}"
+      RetentionInDays: 7
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamPython312HandledRuntimeTimeout:
     Type: AWS::Serverless::Function
@@ -212,9 +212,9 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-runtime-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler                    # The actual function handler
+          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
           # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName                    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
       Tags:
@@ -225,10 +225,10 @@ Resources:
   KmullaneyPython312HandledRuntimeTimeoutLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython312HandledRuntimeTimeout}'
-      RetentionInDays: 1
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312HandledRuntimeTimeout}"
+      RetentionInDays: 7
 
-# -------------------------------------------------
+  # -------------------------------------------------
 
   KmullaneySamPython312UnhandledRuntimeTimeout:
     Type: AWS::Serverless::Function
@@ -249,9 +249,9 @@ Resources:
         Variables:
           # agent serverless config
           NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-runtime-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler                    # The actual function handler
+          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
           # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName                    # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
       Layers:
         - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
       Tags:
@@ -262,6 +262,5 @@ Resources:
   KmullaneyPython312UnhandledRuntimeTimeoutLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub '/aws/lambda/${KmullaneySamPython312UnhandledRuntimeTimeout}'
-      RetentionInDays: 1
-
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312UnhandledRuntimeTimeout}"
+      RetentionInDays: 7
