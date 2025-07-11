@@ -42,16 +42,16 @@ custom:
     logEnabled: true # Agent logs
     logLevel: trace # Agent log level
     debug: true # Serverless Framework debug
-    manualWrapping: false # use legacy wrapper for better ESM performance
-    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:100 # pin a layer version
+    # manualWrapping: false # use legacy wrapper for better ESM performance
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:100 # pin a layer version
 
 functions:
-  dt-headers-nodejs18x:
+  dt-headers-nodejs20x:
     description: accept or insert dt headers
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
-    runtime: nodejs18.x
+    runtime: nodejs20.x
     memorySize: 256
     package:
       patterns:
@@ -61,7 +61,7 @@ functions:
         - "node_modules/axios/**" # Include only axios in node_modules
     provisionedConcurrency: 0
     environment:
-      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-dt-headers-nodejs18x
+      NEW_RELIC_APP_NAME: kmullaney-sls-cjs-dt-headers-nodejs20x
 
 package:
   individually: true

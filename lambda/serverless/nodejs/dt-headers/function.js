@@ -4,15 +4,15 @@ const fs = require("fs")
 
 // In a Node Lambda, the runtime loads the handler code as a module; so code in the top level
 // of the module occurs once, during cold start.
-console.log("Lambda Handler starting up")
+console.info("Lambda Handler starting up")
 
 function get_user() {
-  console.log("getting DB username ")
+  console.info("getting DB username ")
   return "Bill"
 }
 
 function get_pass() {
-  console.log("getting DB password")
+  console.info("getting DB password")
   return "123456"
 }
 
@@ -34,25 +34,14 @@ module.exports.lambda_handler = async function (event, context) {
         }
       )
     } catch (error) {
-      console.log("An exception occurred inserting dt headers:", error.message)
+      console.error("An exception occurred inserting dt headers:", error.message)
     }
   } else {
     try {
       transaction.acceptDistributedTraceHeaders("HTTP", headers)
     } catch (error) {
-      console.log("An exception occurred accepting dt headers:", error.message)
+      console.error("An exception occurred accepting dt headers:", error.message)
     }
-  }
-
-  // Print out the distributed tracing headers
-  console.log("Distributed tracing headers:")
-  console.info("The proprietary `newrelic` header can be decoded with: `pbpaste | base64 -d | jq .`")
-  try {
-    for (let key in headers) {
-      console.log(`${key}: ${headers[key]}`)
-    }
-  } catch (error) {
-    console.log("An exception occurred printing dt headers:", error.message)
   }
 
   // Make an external HTTP request and inject distributed trace headers
@@ -69,6 +58,7 @@ module.exports.lambda_handler = async function (event, context) {
   console.info("password: ", password)
   console.info("ENVIRONMENT VARIABLES\n" + JSON.stringify(process.env, null, 2))
   console.info("EVENT\n" + JSON.stringify(event, null, 2))
+  console.info("HEADERS\n" + JSON.stringify(headers, null, 2))
   console.warn("This is a warning log.")
   console.error("This is an error log!")
   console.info(files)
