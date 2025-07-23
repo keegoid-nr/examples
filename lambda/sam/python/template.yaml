@@ -127,12 +127,12 @@ Resources:
 
   # -------------------------------------------------
 
-  KmullaneySamPython311:
+  KmullaneySamPython311sqs:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: kmullaney-sam-python-311
-      CodeUri: ./src/python311/
-      Description: Testing instrumentation for Python 3.11
+      FunctionName: kmullaney-sam-python-311-sqs
+      CodeUri: ./src/python311sqs/
+      Description: Testing instrumentation for Python 3.11 with SQS trigger.
       Handler: newrelic_lambda_wrapper.handler
       Runtime: python3.11
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
@@ -140,7 +140,7 @@ Resources:
       Tracing: Active # Enable AWS X-Ray tracing for the Lambda function
       Environment:
         Variables:
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-311
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-311-sqs
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false
       Layers:
@@ -148,7 +148,7 @@ Resources:
       Tags:
         owner: kmullaney
         reason: testing
-        description: "python3.11 instrumentation with SSM license key"
+        description: "python3.11 instrumentation with SQS trigger"
       # --- REPLACED API GATEWAY EVENT WITH SQS EVENT ---
       Events:
         SqsEvent:
@@ -158,16 +158,84 @@ Resources:
             BatchSize: 10
       # -----------------------------------------------
 
-  KmullaneySamPython311LogGroup:
+  KmullaneySamPython311sqsLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython311}"
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython311sqs}"
       RetentionInDays: 7
 
-  KmullaneySamPython311Subscriptionfilter:
+  KmullaneySamPython311sqsSubscriptionfilter:
     Type: AWS::Logs::SubscriptionFilter
     Properties:
       DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
       FilterPattern: ""
-      LogGroupName: !Ref KmullaneySamPython311LogGroup
-      FilterName: !Sub "${KmullaneySamPython311}-filter"
+      LogGroupName: !Ref KmullaneySamPython311sqsLogGroup
+      FilterName: !Sub "${KmullaneySamPython311sqs}-filter"
+
+  # -------------------------------------------------
+
+  KmullaneySamPython311eventbridge:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: kmullaney-sam-python-311-eventbridge
+      CodeUri: ./src/python311eventbridge/
+      Description: Testing instrumentation for Python 3.11 with EventBridge trigger and custom payload.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.11
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Tracing: Active # Enable AWS X-Ray tracing for the Lambda function
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-311-eventbridge
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:51
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "python3.11 instrumentation with EventBridge trigger and custom payload"
+      Events:
+        ScheduledEvent:
+          Type: Schedule
+          Properties:
+            Name: custom-eventbridge-payload-trigger
+            Description: "Fires every 5 minutes with a custom JSON payload that adds event metadata."
+            Schedule: rate(5 minutes)
+            Input: !Sub |
+              {
+                "Records": [
+                  {
+                    "messageId": "a1b2c3d4-e5f6-7890-g1h2-i3j4k5l6m7n8",
+                    "receiptHandle": "ReceiptHandleForEventBridge",
+                    "body": "This is a test message from an EventBridge schedule designed to add event metadata.",
+                    "attributes": {
+                      "ApproximateReceiveCount": "1",
+                      "SentTimestamp": "1679587200000",
+                      "SenderId": "AROAIASKVA53IEXAMPLE",
+                      "ApproximateFirstReceiveTimestamp": "1679587200001"
+                    },
+                    "messageAttributes": {},
+                    "md5OfBody": "79054025255fb1a26e4bc422aef54eb4",
+                    "eventSource": "aws:events",
+                    "eventSourceARN": "arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/custom-eventbridge-payload-trigger",
+                    "awsRegion": "${AWS::Region}"
+                  }
+                ]
+              }
+      # -----------------------------------------------------------
+
+  KmullaneySamPython311eventbridgeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython311eventbridge}"
+      RetentionInDays: 7
+
+  KmullaneySamPython311eventbridgeSubscriptionfilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamPython311eventbridgeLogGroup
+      FilterName: !Sub "${KmullaneySamPython311eventbridge}-filter"
