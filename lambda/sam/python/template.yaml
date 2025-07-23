@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: Testing Python 3.9 instrumentation
+Description: Testing Python instrumentation with an SQS trigger.
 
 Parameters:
   NRAccountId:
@@ -15,12 +15,6 @@ Parameters:
     Type: String
     Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
     AllowedPattern: "[0-9A-Z_-]+"
-  # SecurityGroupIds:
-  #   Type: List<AWS::EC2::SecurityGroup::Id>
-  #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
-  # SubnetIds:
-  #   Type: List<AWS::EC2::Subnet::Id>
-  #   Description: The list of Subnet IDs for the Lambda function's VPC configuration.
 
 Globals:
   Function:
@@ -50,6 +44,10 @@ Globals:
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
 
 Resources:
+  # --- ADDED THIS SQS QUEUE RESOURCE ---
+  MySqsQueue:
+    Type: AWS::SQS::Queue
+
   KmullaneyLambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -73,16 +71,6 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              # - Sid: AWSLambdaVPCAccess
-              #   Effect: Allow
-              #   Action:
-              #     - 'ec2:CreateNetworkInterface'
-              #     - 'ec2:DescribeNetworkInterfaces'
-              #     - 'ec2:DescribeSubnets'
-              #     - 'ec2:DeleteNetworkInterface'
-              #     - 'ec2:AssignPrivateIpAddresses'
-              #     - 'ec2:UnassignPrivateIpAddresses'
-              #   Resource: '*'
               - Sid: GetSecretValue
                 Effect: Allow
                 Action: "secretsmanager:GetSecretValue"
@@ -91,7 +79,6 @@ Resources:
                 Effect: Allow
                 Action: "ssm:GetParameter"
                 Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY"
-                # Resource: !Sub 'arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${LicenseKeyName}'
               - Sid: KmsDecrypt
                 Effect: Allow
                 Action: "kms:Decrypt"
@@ -119,330 +106,68 @@ Resources:
                   StringEquals:
                     "cloudwatch:namespace":
                       - "AWS/Lambda"
-
-  KmullaneySamPython39:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-39
-      CodeUri: ./src/python39/
-      Description: Testing instrumentation for Python 3.9
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Runtime: python3.9
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-39 # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython39:81
-      # Policies:
-      # This policy allows the lambda to know the value of the New Relic license key. We need this so
-      # that we can send telemetry back to New Relic
-      # - AWSSecretsManagerGetSecretValuePolicy:
-      #     SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.9 instrumentation"
-
-  KmullaneyPython39LogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython39}"
-      RetentionInDays: 7
+              # --- ADDED SQS PERMISSIONS ---
+              - Sid: SqsAccess
+                Effect: Allow
+                Action:
+                  - "sqs:ReceiveMessage"
+                  - "sqs:DeleteMessage"
+                  - "sqs:GetQueueAttributes"
+                Resource: !GetAtt MySqsQueue.Arn
+              # -----------------------------
+        - PolicyName: LambdaXRayAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "xray:PutTraceSegments"
+                  - "xray:PutTelemetryRecords"
+                Resource: "*"
 
   # -------------------------------------------------
 
-  KmullaneySamPython310dynamodb:
+  KmullaneySamPython311:
     Type: AWS::Serverless::Function
     Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-310-dynamodb
-      CodeUri: ./src/python310dynamodb/
-      Description: Testing instrumentation for Python 3.10 with DynamoDB
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Runtime: python3.10
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-310-dynamodb # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython310:43
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.10 instrumentation with DynamoDB"
-
-  KmullaneyPython310dynamodbLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython310dynamodb}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython311ssm:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-311-ssm
-      CodeUri: ./src/python311ssm/
-      Description: Testing instrumentation for Python 3.11 with SSM license key
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      FunctionName: kmullaney-sam-python-311
+      CodeUri: ./src/python311/
+      Description: Testing instrumentation for Python 3.11
       Handler: newrelic_lambda_wrapper.handler
       Runtime: python3.11
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
+      Tracing: Active # Enable AWS X-Ray tracing for the Lambda function
       Environment:
         Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-311-ssm # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.handler # The actual function handler
-          # extension config
-          # NEW_RELIC_LICENSE_KEY_SSM_PARAMETER_NAME: !Ref LicenseKeyName    # Parameter Store name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-311
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:36
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:51
       Tags:
         owner: kmullaney
         reason: testing
         description: "python3.11 instrumentation with SSM license key"
+      # --- REPLACED API GATEWAY EVENT WITH SQS EVENT ---
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt MySqsQueue.Arn
+            BatchSize: 10
+      # -----------------------------------------------
 
-  KmullaneyPython311ssmLogGroup:
+  KmullaneySamPython311LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython311ssm}"
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython311}"
       RetentionInDays: 7
 
-  # -------------------------------------------------
-
-  KmullaneySamPython312BasicRequestTimeout:
-    Type: AWS::Serverless::Function
+  KmullaneySamPython311Subscriptionfilter:
+    Type: AWS::Logs::SubscriptionFilter
     Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-basic-request-timeout
-      CodeUri: ./src2/python312basicrequesttimeout/
-      Description: Testing instrumentation for Python 3.12 with an external call that times out
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-basic-request-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with a basic external call that times out"
-
-  KmullaneyPython312BasicRequestTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312BasicRequestTimeout}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython312HandledRequestTimeout:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-handled-request-timeout
-      CodeUri: ./src2/python312handledrequesttimeout/
-      Description: Testing instrumentation for Python 3.12 with a handled external call that times out
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-request-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with a handled external call that times out"
-
-  KmullaneyPython312HandledRequestTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312HandledRequestTimeout}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython312UnhandledRequestTimeout:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-unhandled-request-timeout
-      CodeUri: ./src2/python312unhandledrequesttimeout/
-      Description: Testing instrumentation for Python 3.12 with an unhandled external call that times out
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-request-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with an unhandled external call that times out"
-
-  KmullaneyPython312UnhandledRequestTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312UnhandledRequestTimeout}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython312BasicLambdaTimeout:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-basic-lambda-timeout
-      CodeUri: ./src2/python312basiclambdatimeout/
-      Description: Testing instrumentation for Python 3.12 with an external call causes a Lambda timeout
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-basic-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with a basic external call that times out"
-
-  KmullaneyPython312BasicTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312BasicTimeout}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython312HandledTimeout:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-handled-timeout
-      CodeUri: ./src2/python312handledtimeout/
-      Description: Testing instrumentation for Python 3.12 with a handled external call that times out
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with a handled external call that times out"
-
-  KmullaneyPython312HandledTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312HandledTimeout}"
-      RetentionInDays: 7
-
-  # -------------------------------------------------
-
-  KmullaneySamPython312UnhandledTimeout:
-    Type: AWS::Serverless::Function
-    Properties:
-      # In this example, we're using the SAM CLI to package and deploy our lambda. SAM will transform this value during the publish step.
-      FunctionName: kmullaney-sam-python-312-unhandled-timeout
-      CodeUri: ./src2/python312unhandledtimeout/
-      Description: Testing instrumentation for Python 3.12 with an unhandled external call that times out
-      # The handler for your function needs to be the one provided by the instrumentation layer, below.
-      Handler: newrelic_lambda_wrapper.handler
-      Timeout: 20
-      Runtime: python3.12
-      Architectures:
-        - arm64
-      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
-      PackageType: Zip
-      Environment:
-        Variables:
-          # agent serverless config
-          NEW_RELIC_APP_NAME: kmullaney-sam-python-312-handled-timeout # Should be set but not used in the New Relic UI, entity names come from the AWS integration
-          NEW_RELIC_LAMBDA_HANDLER: function.lambda_handler # The actual function handler
-          # extension config
-          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
-      Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312ARM64:27
-      Tags:
-        owner: kmullaney
-        reason: testing
-        description: "python3.12 instrumentation with an unhandled external call that times out"
-
-  KmullaneyPython312UnhandledTimeoutLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312UnhandledTimeout}"
-      RetentionInDays: 7
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamPython311LogGroup
+      FilterName: !Sub "${KmullaneySamPython311}-filter"
