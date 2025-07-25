@@ -66,8 +66,37 @@ def handler(event, context):
     newrelic.agent.record_custom_event("MyPythonEvent", {
         "zip": "zap"
     })
-    # This attribute gets added to the normal AwsLambdaInvocation event
-    newrelic.agent.add_custom_parameter('customAttribute', 'customAttributeValue')
+
+    attributes_to_add = []
+
+    # Safely check if 'Records' exists and is a non-empty list.
+    if 'Records' in event and isinstance(event.get('Records'), list) and event['Records']:
+        # Get the first record from the list.
+        first_record = event['Records'][0]
+
+        event_source = first_record.get('eventSource')
+        event_source_arn = first_record.get('eventSourceARN')
+
+        # Process the eventSource string.
+        if event_source and event_source.startswith('aws:'):
+            try:
+                # Split on the first ':' and take the second part.
+                # e.g., "aws:events" -> "events"
+                event_type_value = event_source.split(':', 1)[1]
+                attributes_to_add.append(('aws.lambda.eventSource.eventType', event_type_value))
+                print(f"Event type: {event_type_value}")
+            except IndexError:
+                # This handles cases where eventSource might be just "aws."
+                pass
+
+        # Map the event source ARN to 'aws.lambda.eventSource.arn'.
+        if event_source_arn:
+            attributes_to_add.append(('aws.lambda.eventSource.arn', event_source_arn))
+            print(f"Event source ARN: {event_source_arn}")
+
+        # Add the collected attributes to the current New Relic transaction.
+        if attributes_to_add:
+            newrelic.agent.add_custom_attributes(attributes_to_add)
 
     # additional function processes
     username = get_user()
