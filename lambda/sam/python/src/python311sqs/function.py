@@ -28,6 +28,17 @@ def handler(event, context):
     # Get the transaction object for this function
     transaction = newrelic.agent.current_transaction()
 
+    # Log the event object to see key formats for eventSource and other attributes
+    events = event.get("Records", [])
+    if events:
+        try:
+          for record in events:
+              logging.info("Event Record: %s", record)
+        except Exception as e:
+            logging.error("An exception occurred logging event records: %s", e, exc_info=True)
+    else:
+        logging.info("Event: %s", event)
+
     # Accept distributed tracing headers
     headers = event.get("headers", {})
     if headers:
@@ -67,7 +78,7 @@ def handler(event, context):
         "zip": "zap"
     })
     # This attribute gets added to the normal AwsLambdaInvocation event
-    newrelic.agent.add_custom_parameter('customAttribute', 'customAttributeValue')
+    newrelic.agent.add_custom_attribute('customAttribute', 'customAttributeValue')
 
     # additional function processes
     username = get_user()

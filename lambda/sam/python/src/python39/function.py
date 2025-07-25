@@ -67,7 +67,7 @@ def handler(event, context):
         "zip": "zap"
     })
     # This attribute gets added to the normal AwsLambdaInvocation event
-    newrelic.agent.add_custom_parameter('customAttribute', 'customAttributeValue')
+    newrelic.agent.add_custom_attribute('customAttribute', 'customAttributeValue')
 
     # additional function processes
     username = get_user()
