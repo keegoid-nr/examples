@@ -1,0 +1,393 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for a .NET Lambda function with New Relic layer in a VPC.
+  This template demonstrates how to configure the function and New Relic extension
+  to send all outbound traffic through a dedicated HTTP proxy.
+
+# -----------------------------------------------------------------------------------
+# DEMONSTRATION NOTES: NAT Gateway vs. HTTP Proxy
+#
+# This template is designed to show a common enterprise networking pattern where
+# Lambda functions in a private network must send outbound traffic through an
+# HTTP proxy for security, monitoring, or policy enforcement.
+#
+# - What is a NAT Gateway?
+#   A NAT (Network Address Translation) Gateway is an AWS-managed service that allows
+#   resources in a private subnet (like a Lambda function) to access the internet.
+#   It operates at the NETWORK layer (Layer 3/4). It's transparent to the application;
+#   you just route traffic to it. The application itself doesn't need to be proxy-aware.
+#
+# - What is an HTTP Proxy?
+#   An HTTP Proxy (like the one we create on the EC2 instance below) operates at the
+#   APPLICATION layer (Layer 7). Applications must be explicitly configured to send
+#   their traffic to the proxy's address and port. This allows for more granular
+#   control, like inspecting HTTP headers, filtering URLs, and authenticating requests.
+#
+# This template creates a dedicated HTTP Proxy to show how you would configure the
+# New Relic Lambda Extension (using the NEW_RELIC_PROXY_* variables) in such an environment.
+# -----------------------------------------------------------------------------------
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NRTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  LicenseKeyName:
+    Type: String
+    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    AllowedPattern: "[0-9A-Z_-]+"
+  KeyPair:
+    Type: String
+    Description: Your AWS EC2 Key Pair name.
+    AllowedPattern: "[0-9A-Za-z_-]+"
+  DevAccount:
+    Type: String
+    Description: The New Relic dev account ID for test layers.
+    AllowedPattern: "[0-9]+"
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # Enable Distributed Tracing
+
+        # required agent serverless config with paths for use with Lambda layers
+        CORECLR_ENABLE_PROFILING: 1 # For .NET Core
+        CORECLR_PROFILER: "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}" # For .NET Core
+        CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so # Path to the profiler used by the .NET agent
+        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent # Path to the directory containing the New Relic .NET Agent
+
+        # optional agent serverless config
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
+        NEW_RELIC_LOG_ENABLED: 1 # Agent logs
+        NEW_RELIC_LOG_CONSOLE: 1 # Send log messages to the console (stdout/CloudWatch)
+        NEW_RELIC_LOG_LEVEL: info # info|debug|finest
+
+        # --- New Relic Extension Proxy Configuration ---
+        # These variables instruct the New Relic extension to send its telemetry
+        # through our dedicated HTTP proxy server.
+        NEW_RELIC_PROXY_HOST: !GetAtt HttpProxyInstance.PrivateIp
+        NEW_RELIC_PROXY_PORT: "8888"
+        NEW_RELIC_PROXY_USER: "" # Not needed for our simple proxy
+        NEW_RELIC_PROXY_PASS: "" # Not needed for our simple proxy
+
+Resources:
+  # ------------------------------------------------------------
+  # IAM policies and roles
+  # ------------------------------------------------------------
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: demo
+        - Key: description
+          Value: "Secrets Manager access"
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
+
+  # ------------------------------------------------------------
+  # VPC and Networking Resources
+  # ------------------------------------------------------------
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: NewRelicProxyVPC
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true # Instances in this subnet get a public IP
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: NewRelicProxyPublicSubnet
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      Tags:
+        - Key: Name
+          Value: NewRelicProxyPrivateSubnet
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: NewRelicProxyIGW
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: NewRelicProxyPublicRouteTable
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # Note: We do not create a route table for the private subnet. Without a route
+  # to an Internet Gateway or NAT Gateway, it is fully isolated from the internet.
+  # The Lambda function can only communicate with other resources inside the VPC,
+  # like our proxy server.
+
+  # ------------------------------------------------------------
+  # Security Groups
+  # ------------------------------------------------------------
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for the Lambda function. Allows outbound to proxy."
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: HttpProxySG
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  ProxySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for the HTTP Proxy. Allows inbound from Lambda."
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        # Allow traffic from the Lambda function on the proxy port (8888)
+        - IpProtocol: tcp
+          FromPort: 8888
+          ToPort: 8888
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+        # Allow SSH access from anywhere for testing purposes.
+        # WARNING: For production, you should restrict this to a known IP range.
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: "0.0.0.0/0"
+      Tags:
+        - Key: Name
+          Value: NewRelicHttpProxySG
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  # We need to define the egress rule separately to avoid a circular dependency
+  LambdaToProxyEgressRule:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref LambdaSecurityGroup
+      IpProtocol: tcp
+      FromPort: 8888
+      ToPort: 8888
+      DestinationSecurityGroupId: !Ref ProxySecurityGroup
+
+  # ------------------------------------------------------------
+  # HTTP Proxy Server (EC2 Instance)
+  # ------------------------------------------------------------
+  HttpProxyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      # NOTE: This key pair must already exist in your region. It is for SSH access to the EC2 instance.
+      KeyName: !Ref KeyPair
+      InstanceType: t2.micro
+      # BEST PRACTICE: Use a dynamic SSM parameter to get the latest AMI ID.
+      # This avoids errors from using outdated, hardcoded AMI IDs.
+      # This parameter automatically resolves to the latest Amazon Linux 2 AMI for the region.
+      ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2}}'
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref ProxySecurityGroup
+      # This UserData script installs and configures 'tinyproxy', a lightweight HTTP proxy.
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          # Enable the EPEL repository which contains the tinyproxy package
+          amazon-linux-extras install epel -y
+          # Now install tinyproxy
+          yum install -y tinyproxy
+          # Allow connections from anywhere within our VPC
+          echo "Allow 10.0.0.0/16" >> /etc/tinyproxy/tinyproxy.conf
+          # Start the proxy service using systemctl for reliability on Amazon Linux 2
+          systemctl start tinyproxy
+          # Enable the service so it starts automatically on reboot
+          systemctl enable tinyproxy
+      Tags:
+        - Key: Name
+          Value: NewRelicDemoHttpProxy
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  # ------------------------------------------------------------
+  # Lambda Function
+  # ------------------------------------------------------------
+  HttpProxy:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/HttpProxy/
+      Handler: HttpProxy::HttpProxy.Function::FunctionHandler
+      Runtime: dotnet8
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Architectures:
+        - x86_64
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet
+      Layers:
+        - !Sub arn:aws:lambda:ca-central-1:${DevAccount}:layer:NewRelicDotnet:2
+      Environment:
+        Variables:
+          # --- New Relic Configuration ---
+          # NEW_RELIC_LAMBDA_HANDLER: "HttpProxy::HttpProxy.Function::FunctionHandler"
+
+          # --- .NET Agent & Application Proxy Configuration ---
+          # The .NET HttpClient automatically looks for these standard proxy variables.
+          # This ensures our application code also sends its traffic through the proxy.
+          HTTPS_PROXY: !Sub "http://${HttpProxyInstance.PrivateIp}:8888"
+
+          # extension config
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+          # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
+          NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s # Reduce timeout duration when for "Telemetry client error"
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable [NR_EXT] log lines
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true # Also send extension logs
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
+          # NEW_RELIC_IGNORE_EXTENSION_CHECKS: all # Ignore extension checks
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "Testing HTTP Proxy with new Extension proxy environment variables"
+
+  HttpProxyLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${HttpProxy}"
+      RetentionInDays: 7
+
+Outputs:
+  LambdaFunctionName:
+    Description: "Name of the Lambda function"
+    Value: !Ref HttpProxy
+  HttpProxyPublicIp:
+    Description: "Public IP of the HTTP Proxy EC2 Instance"
+    Value: !GetAtt HttpProxyInstance.PublicIp
+  HttpProxyPublicDns:
+    Description: "Public DNS of the HTTP Proxy EC2 Instance"
+    Value: !GetAtt HttpProxyInstance.PublicDnsName
