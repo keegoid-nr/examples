@@ -10,7 +10,7 @@ if [ -z "$1" ]; then
 fi
 
 region="$1"
-bucket="$USER-$(basename "$PWD")-$region"
+bucket=$(echo "$USER-$(basename "$PWD")-$region" | tr '[:upper:]' '[:lower:]')
 
 echo "region set to ${region}"
 echo "bucket set to ${bucket}"
@@ -24,7 +24,7 @@ else
 fi
 
 sam build --use-container --region "${region}"
-sam package --s3-bucket "${bucket}" --output-template-file packaged.yaml #--debug
-sam deploy --stack-name "${bucket}" --capabilities CAPABILITY_IAM --template-file packaged.yaml #--debug
+sam package --region "${region}" --s3-bucket "${bucket}" --output-template-file packaged.yaml #--debug
+sam deploy --region "${region}" --stack-name "${bucket}" --capabilities CAPABILITY_IAM --template-file packaged.yaml #--debug
 
 echo "Deployment complete."
