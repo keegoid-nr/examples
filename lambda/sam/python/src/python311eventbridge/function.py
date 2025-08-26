@@ -86,7 +86,7 @@ def handler(event, context):
                 attributes_to_add.append(('aws.lambda.eventSource.eventType', event_type_value))
                 print(f"Event type: {event_type_value}")
             except IndexError:
-                # This handles cases where eventSource might be just "aws."
+                # This handles cases where eventSource might be just "aws:"
                 pass
 
         # Map the event source ARN to 'aws.lambda.eventSource.arn'.
