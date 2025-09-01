@@ -78,7 +78,7 @@ Before you begin, ensure you have the following installed and configured:
 ├── README.md
 ├── deploy.sh       <-- The deployment script
 ├── src
-│   |── app.py      <-- Your Lambda function code
+│   │── app.py      <-- Your Lambda function code
 │   └── event.json  <-- Example test event payload
 └── template.yaml   <-- The SAM template
 ```
