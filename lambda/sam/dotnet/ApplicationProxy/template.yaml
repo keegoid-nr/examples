@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   SAM template for a .NET Lambda function with New Relic layer in a VPC.
@@ -40,7 +40,7 @@ Parameters:
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
-    AllowedPattern: "[0-9A-Z_-]+"
+    AllowedPattern: "[\\w/_-]+"
   KeyPair:
     Type: String
     Description: Your AWS EC2 Key Pair name.
@@ -156,7 +156,7 @@ Resources:
       VpcId: !Ref VPC
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true # Instances in this subnet get a public IP
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
         - Key: Name
           Value: NewRelicProxyPublicSubnet
@@ -172,7 +172,7 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      AvailabilityZone: !Select [0, !GetAZs ""]
       Tags:
         - Key: Name
           Value: NewRelicProxyPrivateSubnet
@@ -302,7 +302,7 @@ Resources:
       # BEST PRACTICE: Use a dynamic SSM parameter to get the latest AMI ID.
       # This avoids errors from using outdated, hardcoded AMI IDs.
       # This parameter automatically resolves to the latest Amazon Linux 2 AMI for the region.
-      ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2}}'
+      ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2}}"
       SubnetId: !Ref PublicSubnet
       SecurityGroupIds:
         - !Ref ProxySecurityGroup

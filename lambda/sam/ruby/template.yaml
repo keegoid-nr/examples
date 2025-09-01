@@ -14,7 +14,7 @@ Parameters:
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
-    AllowedPattern: "[0-9A-Z_-]+"
+    AllowedPattern: "[\\w/_-]+"
   # SecurityGroupIds:
   #   Type: List<AWS::EC2::SecurityGroup::Id>
   #   Description: The list of Security Group IDs for the Lambda function's VPC configuration.
@@ -46,7 +46,7 @@ Globals:
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
         NEW_RELIC_IGNORE_EXTENSION_CHECKS: false # Ignore extension checks (false, all, agent, handler, sanity, vendor)
-        NR_TAGS: "owner:kmullaney,reason:testing,description:ruby 3.3 instrumentation"
+        NR_TAGS: 'owner:kmullaney;reason:testing;description:ruby 3.3 instrumentation'
 
 Resources:
   KmullaneyLambdaExecutionRole:

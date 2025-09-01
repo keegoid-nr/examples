@@ -15,7 +15,7 @@ Parameters:
   LicenseKeyName:
     Type: String
     Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
-    AllowedPattern: "[0-9A-Z_-]+"
+    AllowedPattern: "[\\w/_-]+"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
