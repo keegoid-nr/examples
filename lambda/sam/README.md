@@ -9,7 +9,7 @@ Testing SAM CLI deployments with New Relic instrumentation
 - [Setup](#setup)
 - [Deployment Steps](#deployment-steps)
 - [Testing Steps](#testing-steps)
-    - [Ruby](#ruby)
+  - [Ruby](#ruby)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

@@ -142,7 +142,7 @@ Server response content:
 
 ### Scenario 2: Log Sending Mode (POST - `NEW_RELIC_LICENSE_KEY` is set)
 
-```
+```log
 INFO: NEW_RELIC_LICENSE_KEY found. Performing POST request to send logs.
 Attempting to POST to: https://log-api.newrelic.com/log/v1
 Payload: [{"message": "This is a test log message from TlsChecker.java on Fri May 09 22:00:37 PDT 2025","timestamp": 1746882037000,"attributes": {"service": "my-java-test-service","logtype": "my-java-test-log-type","source": "TlsChecker.java","hostname": "my-dev-machine","plugin.source": "/opt/jdk/jdk-11.0.12/bin/java","plugin.version": "11.0.12"}}]
