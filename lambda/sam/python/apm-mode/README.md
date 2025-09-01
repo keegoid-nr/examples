@@ -1,3 +1,22 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [New Relic APM + Serverless Convergence: Python Demo Project](#new-relic-apm--serverless-convergence-python-demo-project)
+  - [Feature Overview](#feature-overview)
+  - [Requirements](#requirements)
+  - [Prerequisites](#prerequisites)
+  - [Project Structure](#project-structure)
+  - [Deployment Steps](#deployment-steps)
+    - [Step 1: Make the Script Executable](#step-1-make-the-script-executable)
+    - [Step 2: Run the Deployment Script](#step-2-run-the-deployment-script)
+  - [Verification](#verification)
+    - [Step 1: Invoke the Lambda Function](#step-1-invoke-the-lambda-function)
+    - [Step 2: Find Your Function and Attributes in New Relic](#step-2-find-your-function-and-attributes-in-new-relic)
+  - [Clean Up](#clean-up)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # New Relic APM + Serverless Convergence: Python Demo Project
 
 This project provides a hands-on demonstration of the new **APM + Serverless Convergence** feature. It deploys a simple Python Lambda function configured to send its telemetry directly to New Relic APM, allowing you to explore the unified experience.
