@@ -17,6 +17,12 @@ The key configuration steps are:
 
 Once enabled, the Lambda function will appear as a service entity in the **APM & Services** UI, just like any other APM-instrumented application.
 
+## Requirements
+
+You must use a [New Relic Lambda layer](https://layers.newrelic-external.com/) that includes [Extension 2.3.24](https://github.com/newrelic/newrelic-lambda-extension/releases/tag/v2.3.24) or greater which adds support for `NR_TAGS` and the AWS Secrets Manager for APM Mode.
+
+*`NR_TAGS` is needed if not using a cloud integration. It is another way to attach the `NR.Apm.Lambda.Mode: true` tag to the APM entity.*
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed and configured:
