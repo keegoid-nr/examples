@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  nr-apm-lambda-demo
+
+  A sample SAM template for deploying a Python Lambda function
+  with New Relic APM + Serverless Convergence enabled.
+
+Parameters:
+  NewRelicAccountId:
+    Type: String
+    Description: Your New Relic Account ID.
+    AllowedPattern: "[0-9]+"
+  NewRelicTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  LicenseKeyName:
+    Type: String
+    Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
+    AllowedPattern: "[\\w/_-]+"
+  NewRelicHost:
+    Type: String
+    Description: The New Relic collector host for the agent.
+    Default: collector.newrelic.com
+  NewRelicLogEndpoint:
+    Type: String
+    Description: The New Relic log endpoint for the extension.
+    Default: https://log-api.newrelic.com/log/v1
+  NewRelicMetricEndpoint:
+    Type: String
+    Description: The New Relic metric endpoint for the extension.
+    Default: https://metric-api.newrelic.com/metric/v1
+  NewRelicTelemetryEndpoint:
+    Type: String
+    Description: The New Relic telemetry endpoint for the extension, if not using APM mode.
+    Default: https://cloud-collector.newrelic.com/aws/lambda/v1
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 256
+    Runtime: python3.11
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # DT
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true # Agent uses environment variables in Lambda
+        NEW_RELIC_PACKAGE_REPORTING_ENABLED: false # disable Python agent package reporting feature to improve cold start times
+        NEW_RELIC_LOG_ENABLED: true # Agent logs
+        NEW_RELIC_LOG: stderr # Agent log path
+        NEW_RELIC_LOG_LEVEL: info # Agent log level: fatal, error, warn, info, debug, or trace
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
+
+        # extension config
+        # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 3s # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
+
+Resources:
+  KmullaneyAPMDemoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/
+      FunctionName: Kmullaney-APM-Demo-Function
+      Description: Demo APM mode
+      # Use the New Relic wrapper as the handler
+      Handler: newrelic_lambda_wrapper.handler
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      # Find the latest for your region here:
+      # https://layers.newrelic-external.com/
+      PackageType: Zip
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:55
+      Environment:
+        Variables:
+          # --- New Relic APM + Serverless Convergence Configuration ---
+          # 1. Enable APM mode for the New Relic Lambda layer.
+          # NR_TAGS is needed if no cloud integration exists.
+          NEW_RELIC_APM_LAMBDA_MODE: 'true'
+          NR_TAGS: 'NR.Apm.Lambda.Mode:true'
+
+          # Point the wrapper to your actual function handler
+          NEW_RELIC_LAMBDA_HANDLER: app.lambda_handler
+          NEW_RELIC_APP_NAME: 'Kmullaney-APM-Lambda-Demo'
+
+          # extension config
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName # Secrets Manager secret name for the extension (can override with env var NEW_RELIC_LICENSE_KEY)
+
+          # --- Environment Configuration ---
+          # The following endpoints are for sending data to the New Relic various us/eu/staging environments.
+          NEW_RELIC_HOST: !Ref NewRelicHost
+          NEW_RELIC_LOG_ENDPOINT: !Ref NewRelicLogEndpoint
+          NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
+          NEW_RELIC_TELEMETRY_ENDPOINT: !Ref NewRelicTelemetryEndpoint # Only needed if not using APM mode
+      Tags:
+        # 2. Add the required tag to identify this as a Lambda function in APM mode.
+        # If no cloud integration exists, these tags will not get sent to New Relic. Use NR_TAGS instead.
+        NR.Apm.Lambda.Mode: 'true'
+        owner: kmullaney
+        reason: demo
+        description: "Demo APM mode"
+
+  KmullaneyAPMDemoFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneyAPMDemoFunction}"
+      RetentionInDays: 7
+
+  # IAM policies and roles
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: testing
+        - Key: description
+          Value: "python instrumentation"
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+Outputs:
+  KmullaneyAPMDemoFunctionArn:
+    Description: "ARN for the New Relic APM Demo Lambda Function"
+    Value: !GetAtt KmullaneyAPMDemoFunction.Arn
+
