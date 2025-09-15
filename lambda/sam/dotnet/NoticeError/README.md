@@ -11,7 +11,7 @@ By deploying and invoking these functions, you can observe how the error data is
 
 ## Project Structure
 
-```
+```sh
 .
 ├── lambda
 │   └── sam
