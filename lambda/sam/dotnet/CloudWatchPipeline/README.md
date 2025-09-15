@@ -1,15 +1,26 @@
-# .NET Lambda with New Relic and Dedicated HTTP Proxy
+# .NET Lambda with New Relic Log Ingestion Function
 
-This project demonstrates how to deploy a .NET 8 Lambda function that is instrumented with New Relic, runs within a private VPC subnet, and routes all its outbound traffic through a dedicated HTTP proxy server running on an EC2 instance.
+This project demonstrates how to deploy a .NET 8 Lambda function that is instrumented with New Relic, has the [extension](https://github.com/newrelic/newrelic-lambda-extension) disabled, and sends the `NR_LAMBDA_MONITORING` payload through the [newrelic-log-ingestion](https://github.com/newrelic/aws-log-ingestion) function.
 
-This setup is common in enterprise environments where outbound traffic must be inspected, logged, or controlled by a central proxy.
+The .NET agent generates a metadata payload with version 2 format, which is not currently supported by the log ingestion function. The version two format looks like this (when `LoggingConfig.LogFormat: JSON` is set.
+
+```json
+{
+    "timestamp": "2025-09-15T21:15:41.192Z",
+    "level": "Information",
+    "requestId": "dac298b6-0401-468c-87b4-87e459d3d788",
+    "traceId": "Root=1-[redacted];Parent=0ac54ea384f881e5;Sampled=0;Lineage=1:f2872f66:0",
+    "message": "[2,\"NR_LAMBDA_MONITORING\",{\"protocol_version\":17,\"agent_version\":\"10.44.1.0\",\"metadata_version\":2,\"agent_language\":\"dotnet\",\"execution_environment\":\"AWS_Lambda_dotnet8\",\"function_version\":\"$LATEST\",\"arn\":\"arn:aws:lambda:us-west-2:368927449855:function:kmullaney-sam-dotnet8-cloudwatchpipeline\"},\"H4sIAAAAAAAAA+wa227...\"]"
+}
+```
 
 ## Project Structure
 
 * `template.yaml`: The AWS SAM template that defines all AWS resources, including the VPC, EC2 proxy, and the Lambda function.
-* `src/HttpProxy/`: The directory containing the .NET Lambda project.
+* `deploy.sh`: A deploy script utilizing S3.
+* `src/CloudWatchPipeline/`: The directory containing the .NET Lambda project.
   * `Function.cs`: The main Lambda handler code.
-  * `HttpProxy.csproj`: The .NET project file.
+  * `CloudWatchPipeline.csproj`: The .NET project file.
 
 ## Before You Deploy
 
