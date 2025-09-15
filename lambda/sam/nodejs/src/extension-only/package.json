@@ -7,7 +7,7 @@
   "author": "SAM CLI",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.8.4",
+    "axios": "^1.12.2",
     "newrelic": "^11.23.2"
   },
   "scripts": {
