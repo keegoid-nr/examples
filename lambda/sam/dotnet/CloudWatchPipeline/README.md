@@ -69,6 +69,15 @@ NEW_RELIC_LOG_CONSOLE: 1 # Send log messages to the console (stdout/CloudWatch)
 NEW_RELIC_LOG_LEVEL: finest # info|debug|finest
 ```
 
+And log ingestion function logging set to:
+
+```yaml
+DEBUG_LOGGING_ENABLED: true
+INFRA_ENABLED: True
+LICENSE_KEY: [redacted]
+LOGGING_ENABLED: True
+```
+
 The log ingestion function fails to decode the version 2 payload, though we still get a 202 response from the endpoint.
 
 ```log
