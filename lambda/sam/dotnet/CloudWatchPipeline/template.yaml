@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for a .NET Lambda function with New Relic layer.
+  This template is to test the passing of the `NR_LAMBDA_MONITORING` payload,
+  with extension disabled, to the `newrelic-log-ingestion` function.
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NRTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+    LoggingConfig:
+      LogFormat: JSON
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId # New Relic account ID
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey # New Relic account ID or parent ID
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true # Enable Distributed Tracing
+
+        # required agent serverless config with paths for use with Lambda layers
+        CORECLR_ENABLE_PROFILING: 1 # For .NET Core
+        CORECLR_PROFILER: "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}" # For .NET Core
+        CORECLR_PROFILER_PATH: /opt/lib/newrelic-dotnet-agent/libNewRelicProfiler.so # Path to the profiler used by the .NET agent
+        CORECLR_NEW_RELIC_HOME: /opt/lib/newrelic-dotnet-agent # Path to the directory containing the New Relic .NET Agent
+
+        # optional agent serverless config
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId # AWS account ID
+        NEW_RELIC_LOG_ENABLED: 1 # Agent logs
+        NEW_RELIC_LOG_CONSOLE: 1 # Send log messages to the console (stdout/CloudWatch)
+        NEW_RELIC_LOG_LEVEL: finest # info|debug|finest
+
+Resources:
+  # ------------------------------------------------------------
+  # IAM policies and roles
+  # ------------------------------------------------------------
+  KmullaneyLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: reproduction
+        - Key: description
+          Value: "testing agent payload via CloudWatch"
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
+
+  # ------------------------------------------------------------
+  # Lambda Function
+  # ------------------------------------------------------------
+  CloudWatchPipeline:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/CloudWatchPipeline/
+      Handler: CloudWatchPipeline::CloudWatchPipeline.Function::FunctionHandler
+      Runtime: dotnet8
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-dotnet8-cloudwatchpipeline
+      Architectures:
+        - x86_64
+      Layers:
+        - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicDotnet:33
+      Environment:
+        Variables:
+          # --- New Relic Configuration ---
+          # NEW_RELIC_LAMBDA_HANDLER: "CloudWatchPipeline::CloudWatchPipeline.Function::FunctionHandler"
+
+          # extension config
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false # Enable/disable extension
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "testing agent payload via CloudWatch"
+
+  CloudWatchPipelineLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${CloudWatchPipeline}"
+      RetentionInDays: 7
+
+  SubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      LogGroupName: !Ref CloudWatchPipelineLogGroup
+      FilterPattern: "?NR_LAMBDA_MONITORING"
+      DestinationArn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd"
+
+  InvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd"
+      Action: "lambda:InvokeFunction"
+      Principal: !Sub "logs.${AWS::Region}.amazonaws.com"
+      SourceArn: !GetAtt CloudWatchPipelineLogGroup.Arn
+
+Outputs:
+  LambdaFunctionName:
+    Description: "Name of the Lambda function"
+    Value: !Ref CloudWatchPipeline
