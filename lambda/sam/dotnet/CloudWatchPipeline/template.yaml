@@ -20,7 +20,7 @@ Globals:
     Timeout: 20
     MemorySize: 512
     LoggingConfig:
-      LogFormat: JSON
+      LogFormat: Text
     Environment:
       Variables:
         # agent distributed tracing config

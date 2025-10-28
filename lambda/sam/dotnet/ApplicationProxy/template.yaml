@@ -130,6 +130,15 @@ Resources:
                   StringEquals:
                     "cloudwatch:namespace":
                       - "AWS/Lambda"
+              - Sid: VpcAccess
+                Effect: Allow
+                Action:
+                  - "ec2:CreateNetworkInterface"
+                  - "ec2:DescribeNetworkInterfaces"
+                  - "ec2:DescribeSubnets"
+                  - "ec2:DeleteNetworkInterface"
+                  - "ec2:AssignPrivateIpAddresses"
+                Resource: "*"
 
   # ------------------------------------------------------------
   # VPC and Networking Resources
