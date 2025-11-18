@@ -38,7 +38,7 @@ Globals:
         # extension config
         # NEW_RELIC_LICENSE_KEY: !Ref LicenseKey                         # New Relic ingest key, overrides Secrets Manager
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true # Enable/disable extension
-        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 2s # Reduce timeout duration when for "Telemetry client error"
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 3s # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
@@ -224,7 +224,6 @@ Resources:
                   }
                 ]
               }
-      # -----------------------------------------------------------
 
   KmullaneySamPython311eventbridgeLogGroup:
     Type: AWS::Logs::LogGroup
@@ -239,3 +238,33 @@ Resources:
       FilterPattern: ""
       LogGroupName: !Ref KmullaneySamPython311eventbridgeLogGroup
       FilterName: !Sub "${KmullaneySamPython311eventbridge}-filter"
+
+  # -------------------------------------------------
+
+  KmullaneySamPython312:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: kmullaney-sam-python-312
+      CodeUri: ./src/python312/
+      Description: Testing instrumentation for Python 3.12 with custom attribute and custom event.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.12
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      Tracing: Active # Enable AWS X-Ray tracing for the Lambda function
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-312
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312:49
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: "python3.12 instrumentation with custom attribute and custom event"
+
+  KmullaneySamPython312LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312}"
+      RetentionInDays: 7
