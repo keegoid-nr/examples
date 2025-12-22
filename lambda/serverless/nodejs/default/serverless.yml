@@ -1,6 +1,7 @@
 service: kmullaney-sls
 
 useDotenv: true
+configValidationMode: error
 
 provider:
   name: aws
@@ -16,11 +17,11 @@ provider:
   tags:
     owner: kmullaney
     reason: example
-    description: instrumentation with ESM bypassing dynamic wrapper for better performance
+    description: instrumentation of a cjs function
   stackTags:
     owner: kmullaney
     reason: example
-    description: instrumentation with ESM bypassing dynamic wrapper for better performance
+    description: instrumentation of a cjs function
   environment:
     NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
@@ -28,7 +29,6 @@ provider:
     NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true # Also send extension logs
 
 plugins:
-  # - serverless-offline
   - serverless-newrelic-lambda-layers
 
 custom:
@@ -38,13 +38,15 @@ custom:
     apiKey: ${env:NEW_RELIC_USER_API_KEY} # User api key
     disableAutoSubscription: true # Don't create a subscription filter to the newrelic-log-ingestion function
     disableLicenseKeySecret: false # Use NEW_RELIC_LICENSE_KEY env var or AWS Secrets Manager secret
-    enableFunctionLogs: true # Send logs via [NR_EXT]
+    enableFunctionLogs: true # Enable writing of function logs to CloudWatch
+    enableExtensionLogs: true # Enable writing of extension logs to CloudWatch
+    sendFunctionLogs: true # Send function logs to New Relic
+    sendExtensionLogs: true # Send extension logs to New Relic
     enableIntegration: false # Don't create an api polling integration (already have Metric Streams)
     logEnabled: true # Agent logs
-    logLevel: debug # Agent log level
+    logLevel: info # Agent log level
     debug: true # Serverless Framework debug
-    manualWrapping: false # use legacy wrapper for better ESM performance
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:29   # uncomment if you want to pin a layer version
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:101 # pinned to bypass SSL issues
 
 package:
   individually: true

@@ -50,6 +50,7 @@ Globals:
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
         NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: false # Also send extension logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
+        NEW_RELIC_COLLECT_TRACE_ID: true # Collect trace IDs
 
 Resources:
   KmullaneyLambdaExecutionRole:
@@ -195,4 +196,34 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${KmullaneySamAwsRecordMetricNodejs22x}"
+      RetentionInDays: 7
+
+  # -------------------------------------------------
+
+  KmullaneySamDefaultNodejs20xArm64:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/default/
+      Description: Testing new Rust extension
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs20.x
+      Architectures: [arm64]
+      Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-default-nodejs20x-arm64
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-default-nodejs20x-arm64
+          NEW_RELIC_LAMBDA_HANDLER: index.handler
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS20XARM64:99
+      Tags:
+        owner: kmullaney
+        reason: "reproduction"
+        description: "test sending of telemetry with new Rust extension"
+
+  KmullaneySamDefaultNodejs20xArm64LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamDefaultNodejs20xArm64}"
       RetentionInDays: 7

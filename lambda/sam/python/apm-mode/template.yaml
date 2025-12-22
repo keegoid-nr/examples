@@ -63,6 +63,7 @@ Globals:
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
+        NEW_RELIC_COLLECT_TRACE_ID: true # Enable/disable trace ID collection
 
 Resources:
   KmullaneyAPMDemoFunction:
@@ -78,7 +79,7 @@ Resources:
       # https://layers.newrelic-external.com/
       PackageType: Zip
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:55
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:63
       Environment:
         Variables:
           # --- New Relic APM + Serverless Convergence Configuration ---
