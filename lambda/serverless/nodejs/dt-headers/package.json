@@ -11,6 +11,6 @@
     "serverless-newrelic-lambda-layers": "^5.8.0"
   },
   "dependencies": {
-    "axios": "^1.9.0"
+    "axios": "^1.12.2"
   }
 }
