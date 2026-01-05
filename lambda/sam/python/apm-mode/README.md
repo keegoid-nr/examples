@@ -146,15 +146,15 @@ After you've entered the parameters, SAM will create the CloudFormation stack an
 
 ### Step 1: Invoke the Lambda Function
 
-Invoke the function a few times to generate telemetry data. The function name is hardcoded as `Kmullaney-APM-Demo-Function` in the `template.yaml`.
+Invoke the function a few times to generate telemetry data. The function name is hardcoded as `Kmullaney-APM-Demo-Python312` in the `template.yaml`.
 
 ```sh
-aws lambda invoke --function-name Kmullaney-APM-Demo-Function response.json
+aws lambda invoke --function-name Kmullaney-APM-Demo-Python312 response.json
 ```
 
 To test with a specific payload, create a file named `payload.json` with the following content:
 
-```sh
+```json
 {
   "userId": "user-demo-555",
   "cartValue": 310.45
@@ -164,7 +164,7 @@ To test with a specific payload, create a file named `payload.json` with the fol
 Then invoke the function with this payload:
 
 ```sh
-aws lambda invoke --function-name Kmullaney-APM-Demo-Function --payload file://payload.json response.json
+aws lambda invoke --function-name Kmullaney-APM-Demo-Python312 --payload file://payload.json response.json
 ```
 
 (Repeat invocations 5-10 times to ensure data is sent.)
