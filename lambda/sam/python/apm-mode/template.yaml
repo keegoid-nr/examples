@@ -40,7 +40,7 @@ Globals:
   Function:
     Timeout: 20
     MemorySize: 256
-    Runtime: python3.11
+    Runtime: python3.12
     Environment:
       Variables:
         # agent distributed tracing config
@@ -66,11 +66,11 @@ Globals:
         NEW_RELIC_COLLECT_TRACE_ID: true # Enable/disable trace ID collection
 
 Resources:
-  KmullaneyAPMDemoFunction:
+  KmullaneyAPMDemoPython312:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src/
-      FunctionName: Kmullaney-APM-Demo-Function
+      FunctionName: Kmullaney-APM-Demo-Python312
       Description: Demo APM mode
       # Use the New Relic wrapper as the handler
       Handler: newrelic_lambda_wrapper.handler
@@ -79,7 +79,7 @@ Resources:
       # https://layers.newrelic-external.com/
       PackageType: Zip
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:63
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312:53
       Environment:
         Variables:
           # --- New Relic APM + Serverless Convergence Configuration ---
@@ -109,10 +109,10 @@ Resources:
         reason: demo
         description: "Demo APM mode"
 
-  KmullaneyAPMDemoFunctionLogGroup:
+  KmullaneyAPMDemoPython312LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneyAPMDemoFunction}"
+      LogGroupName: !Sub "/aws/lambda/${KmullaneyAPMDemoPython312}"
       RetentionInDays: 7
 
   # IAM policies and roles
@@ -152,7 +152,6 @@ Resources:
                 Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
 
 Outputs:
-  KmullaneyAPMDemoFunctionArn:
+  KmullaneyAPMDemoPython312Arn:
     Description: "ARN for the New Relic APM Demo Lambda Function"
-    Value: !GetAtt KmullaneyAPMDemoFunction.Arn
-
+    Value: !GetAtt KmullaneyAPMDemoPython312.Arn

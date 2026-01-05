@@ -1,6 +1,12 @@
 import json
 import random
+import logging
 import newrelic.agent
+
+# 1. Configure the standard logging library. 
+# The New Relic agent hooks into this module to record 'apm.service.logging.lines'.
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # A background task to process user data and add custom attributes.
 # This demonstrates instrumenting a specific part of your code.
@@ -40,7 +46,13 @@ def process_user_data(event):
         "userTier": user_tier
     }
 
-    print(f"Processed data: {processed_data}")
+    # 2. These log lines will be intercepted by the agent.
+    # The count will be reflected in apm.service.logging.lines with 'level': 'INFO'
+    logger.info(f"Successfully processed user data for user: {user_id}")
+    
+    # Example of a different level:
+    logger.debug(f"Raw processed data: {json.dumps(processed_data)}")
+    
     return processed_data
 
 # The main handler for the Lambda function.
@@ -49,7 +61,9 @@ def lambda_handler(event, context):
     AWS Lambda handler function.
     This function calls our background task to process the event data.
     """
-    print(f"Received event: {json.dumps(event)}")
+    # 3. Logging at the entry point. 
+    # This generates an INFO count in the New Relic logging metrics.
+    logger.info("Lambda handler invoked")
 
     # Call the instrumented background task.
     processed_data = process_user_data(event)
