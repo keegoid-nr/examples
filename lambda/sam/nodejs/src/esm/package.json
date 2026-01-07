@@ -8,5 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Keegan Mullaney",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pino": "^9.6.0"
+  }
 }
