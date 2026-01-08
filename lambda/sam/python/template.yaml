@@ -144,7 +144,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:51
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:63
       Tags:
         owner: kmullaney
         reason: testing
@@ -191,7 +191,7 @@ Resources:
           NEW_RELIC_LAMBDA_HANDLER: function.handler
           NEW_RELIC_LAMBDA_EXTENSION_ENABLED: false
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:51
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython311:63
       Tags:
         owner: kmullaney
         reason: testing
@@ -257,7 +257,7 @@ Resources:
           NEW_RELIC_APP_NAME: kmullaney-sam-python-312
           NEW_RELIC_LAMBDA_HANDLER: function.handler
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312:49
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312:53
       Tags:
         owner: kmullaney
         reason: testing
