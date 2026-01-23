@@ -1,0 +1,10 @@
+{
+  "queryStringParameters": {
+    "name": "New Relic User"
+  },
+  "headers": {
+    "User-Agent": "PostmanRuntime/7.26.8",
+    "Accept": "*/*"
+  },
+  "body": "{\"key\": \"value\", \"nested\": {\"foo\": \"bar\"}}"
+}

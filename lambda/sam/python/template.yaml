@@ -41,6 +41,8 @@ Globals:
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 3s # Reduce timeout duration when for "Telemetry client error"
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable NR_EXT log lines
         NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true # Also send extension logs
+        NEW_RELIC_EXTENSION_SEND_PLATFORM_LOGS: true # Also send platform logs
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
 
 Resources:

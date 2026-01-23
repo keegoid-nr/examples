@@ -23,8 +23,22 @@ else
   echo "S3 bucket ${bucket} already exists."
 fi
 
-sam build --use-container --region "${region}"
-sam package --region "${region}" --s3-bucket "${bucket}" --output-template-file packaged.yaml #--debug
-sam deploy --region "${region}" --stack-name "${bucket}" --capabilities CAPABILITY_IAM --template-file packaged.yaml #--debug
+# Login to ECR
+# Extract account ID from the image repository URL if needed, or assume current account
+# Here assuming the user is logged into the correct AWS account for the registry
+aws ecr get-login-password --region "${region}" | docker login --username AWS --password-stdin 368927449855.dkr.ecr.us-west-2.amazonaws.com
+
+# Build the application
+# --use-container is generally good for native dependencies, but with Image package type, 
+# sam build works by building the docker image directly.
+sam build --region "${region}"
+
+# Deploy
+# Using samconfig.toml for parameters (image_repository, etc.)
+# We remove specific flags that might conflict or be redundant if they are in samconfig.toml,
+# but keeping critical ones like --stack-name if user wants dynamic naming based on bucket/user.
+# However, user's samconfig has defaults. 
+# The script calculates `bucket` and uses it as stack name.
+sam deploy --region "${region}" --stack-name "${bucket}" --capabilities CAPABILITY_IAM
 
 echo "Deployment complete."
