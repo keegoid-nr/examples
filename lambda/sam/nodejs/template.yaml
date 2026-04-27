@@ -159,7 +159,8 @@ Resources:
           NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
           NEW_RELIC_TELEMETRY_ENDPOINT: !Ref NewRelicTelemetryEndpoint # Only needed if not using APM mode
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS22X-slim:28
+        - arn:aws:lambda:us-west-2:466768951184:layer:NRTestRustExtensionNodejsX86:31
+        # - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS22X-slim:28
       Tags:
         # 2. Add the required tag to identify this as a Lambda function in APM mode.
         # If no cloud integration exists, these tags will not get sent to New Relic. Use NR_TAGS instead.

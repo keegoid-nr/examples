@@ -502,3 +502,6 @@ parameters.yaml
 .local-config
 **/lib/*
 !**/lib/cdk-stack.ts
+.claude
+AGENTS.md
+CLAUDE.md
