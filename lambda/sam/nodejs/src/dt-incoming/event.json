@@ -1,0 +1,30 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /",
+  "rawPath": "/",
+  "rawQueryString": "",
+  "headers": {
+    "content-type": "application/json",
+    "traceparent": "00-aabbccddeeff00112233445566778899-abcdef1234567890-01",
+    "tracestate": "nr=0-0-1234567-1234567-abcdef1234567890-1234567890abcdef-1-1.234567-1745748000000",
+    "newrelic": "eyJ2IjpbMCwxXSwiZCI6eyJ0eSI6IkFwcCIsImFjIjoiMTIzNDU2NyIsImFwIjoiMTIzNDU2NyIsImlkIjoiYWJjZGVmMTIzNDU2Nzg5MCIsInRyIjoiYWFiYmNjZGRlZWZmMDAxMTIyMzM0NDU1NjY3Nzg4OTkiLCJwciI6MS4yMzQ1NjcsInNhIjp0cnVlLCJ0aSI6MTc0NTc0ODAwMDAwMCwidGsiOiIxMjM0NTY3In19Cg=="
+  },
+  "requestContext": {
+    "accountId": "123456789012",
+    "apiId": "abcdef1234",
+    "http": {
+      "method": "POST",
+      "path": "/",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "192.0.2.1",
+      "userAgent": "test"
+    },
+    "requestId": "test-request-id",
+    "routeKey": "POST /",
+    "stage": "$default",
+    "time": "27/Apr/2026:10:00:00 +0000",
+    "timeEpoch": 1745748000000
+  },
+  "body": "{\"input\": \"test payload\"}",
+  "isBase64Encoded": false
+}

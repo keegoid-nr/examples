@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Lambda for troubleshooting incoming distributed trace headers from a POST request.
+  Logs the full event (step 1), extracts DT headers (step 2), manually accepts them
+  in case auto-instrumentation didn't (step 3), then logs NR trace context so you can
+  compare traceId against the upstream's trace.id (step 4).
+
+Parameters:
+  NewRelicAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NewRelicTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  LicenseKeyName:
+    Type: String
+    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    AllowedPattern: "[\\w/_-]+"
+  NewRelicHost:
+    Type: String
+    Description: The New Relic collector host for the agent.
+    Default: collector.newrelic.com
+  NewRelicLogEndpoint:
+    Type: String
+    Description: The New Relic log endpoint for the extension.
+    Default: https://log-api.newrelic.com/log/v1
+  NewRelicMetricEndpoint:
+    Type: String
+    Description: The New Relic metric endpoint for the extension.
+    Default: https://metric-api.newrelic.com/metric/v1
+  NewRelicTelemetryEndpoint:
+    Type: String
+    Description: The New Relic telemetry endpoint for the extension.
+    Default: https://cloud-collector.newrelic.com/aws/lambda/v1
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 10
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false
+        NEW_RELIC_LOG_ENABLED: true
+        NEW_RELIC_LOG: stdout
+        NEW_RELIC_LOG_LEVEL: info
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId
+
+        # extension config
+        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName
+        NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true
+        NEW_RELIC_DATA_COLLECTION_TIMEOUT: 3s
+        NEW_RELIC_EXTENSION_LOGS_ENABLED: true
+        NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+        NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true
+        NEW_RELIC_EXTENSION_SEND_PLATFORM_LOGS: true
+        NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+        NEW_RELIC_COLLECT_TRACE_ID: true
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: troubleshooting
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+
+  KmullaneySamDtIncomingNodejs22x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: >
+        Troubleshoot incoming distributed trace headers from a POST request.
+        Logs event, extracts DT headers, manually accepts them, and logs NR trace context.
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs22.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-dt-incoming-nodejs22x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-dt-incoming-nodejs22x
+          NEW_RELIC_LAMBDA_HANDLER: function.handler
+          NEW_RELIC_HOST: !Ref NewRelicHost
+          NEW_RELIC_LOG_ENDPOINT: !Ref NewRelicLogEndpoint
+          NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
+          NEW_RELIC_TELEMETRY_ENDPOINT: !Ref NewRelicTelemetryEndpoint
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS22X-slim:28
+      Tags:
+        owner: kmullaney
+        reason: troubleshooting
+        description: nodejs22 incoming DT header troubleshooting
+
+  KmullaneySamDtIncomingNodejs22xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamDtIncomingNodejs22x}"
+      RetentionInDays: 7
+
+Outputs:
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt KmullaneySamDtIncomingNodejs22x.Arn
