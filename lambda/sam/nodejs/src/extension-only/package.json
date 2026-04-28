@@ -8,7 +8,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.13.5",
-    "newrelic": "^11.23.2"
+    "newrelic": "^13.19.2"
   },
   "scripts": {
     "test": "mocha tests/unit/"
@@ -16,5 +16,8 @@
   "devDependencies": {
     "chai": "^4.5.0",
     "mocha": "^10.7.3"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
   }
 }
