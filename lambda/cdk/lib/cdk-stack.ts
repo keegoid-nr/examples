@@ -16,7 +16,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const myMemory = 256
     const myTimeout = cdk.Duration.seconds(6)
     const licenseKeySecretName = "KMULLANEY_LICENSE_KEY" // Replace with your secret name
-    const logIngestionFunctionName = "newrelic-log-ingestion-02aeffb53869"
+    const logIngestionFunctionName = "newrelic-log-ingestion-0a20a81d97cd"
 
     // Fetch the New Relic account ID from the local environment variable
     const newRelicAccountId = process.env.NEW_RELIC_ACCOUNT_ID;
@@ -168,10 +168,13 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     })
 
     // Define the New Relic log ingestion function
-    const newRelicLogIngestionFunction = lambda.Function.fromFunctionArn(
+    const newRelicLogIngestionFunction = lambda.Function.fromFunctionAttributes(
       this,
       'NewRelicLogIngestionFunction',
-      `arn:aws:lambda:${awsRegion}:${awsAccountId}:function:${logIngestionFunctionName}`
+      {
+        functionArn: `arn:aws:lambda:${awsRegion}:${awsAccountId}:function:${logIngestionFunctionName}`,
+        sameEnvironment: true,
+      }
     );
 
     // Create a subscription filter with a null pattern
