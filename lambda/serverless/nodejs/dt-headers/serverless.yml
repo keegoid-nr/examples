@@ -43,7 +43,7 @@ custom:
     logLevel: trace # Agent log level
     debug: true # Serverless Framework debug
     # manualWrapping: false # use legacy wrapper for better ESM performance
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:100 # pin a layer version
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS-slim:7 # pin a layer version
 
 functions:
   dt-headers-nodejs20x:

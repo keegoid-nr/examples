@@ -39,7 +39,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicNodejsLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaNodejsLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:42"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS-slim:7"
     )
 
     // Create a Node.js Lambda function
@@ -118,7 +118,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicNodejsEsmLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaNodejsEsmLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:42"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS-slim:7"
     )
 
     // Create a Node.js Lambda function
@@ -287,7 +287,7 @@ export class KmullaneyCdkLambdaStack extends cdk.Stack {
     const newRelicPythonLayer = lambda.LayerVersion.fromLayerVersionArn(
       this,
       "NewRelicLambdaPythonLayer",
-      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython312:19"
+      "arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython:3"
     )
 
     // Create a Python Lambda function

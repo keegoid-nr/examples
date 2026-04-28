@@ -6,7 +6,7 @@ provider:
   name: aws
   region: us-west-2
   stage: load-test
-  runtime: nodejs18.x
+  runtime: nodejs22.x
   logRetentionInDays: 7
   tags:
     owner: kmullaney

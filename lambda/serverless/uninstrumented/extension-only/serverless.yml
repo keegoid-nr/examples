@@ -19,7 +19,7 @@ provider:
   environment:
     # NEW_RELIC_LICENSE_KEY_SECRET: ${env:NEW_RELIC_LICENSE_KEY_SECRET}
     NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-    NEW_RELIC_APP_NAME: kmullaney-sls-ext-only-nodejs16x
+    NEW_RELIC_APP_NAME: kmullaney-sls-ext-only-nodejs22x
     NEW_RELIC_NO_CONFIG_FILE: true
     NEW_RELIC_NATIVE_METRICS_ENABLED: false # Reduce cold start duration by not collecting VM metrics
 
@@ -39,18 +39,18 @@ custom:
     logLevel: debug # Agent log level
     debug: true # Serverless Framework debug
     manualWrapping: true # use legacy wrapper (agent not in layer)
-    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:34
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:68
 
 package:
   individually: true
 
 functions:
-  nodejs16x:
+  nodejs22x:
     description: accept or insert dt headers
     # events:
     #   - schedule: rate(5 minutes)
     handler: function.lambda_handler
-    runtime: nodejs16.x
+    runtime: nodejs22.x
     package:
       patterns:
         - "node_modules/**"

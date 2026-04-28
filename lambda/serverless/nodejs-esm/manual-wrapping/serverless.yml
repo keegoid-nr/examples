@@ -44,19 +44,19 @@ custom:
     logLevel: debug # Agent log level
     debug: true # Serverless Framework debug
     manualWrapping: true # use legacy wrapper for better ESM performance
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS18X:48   # uncomment if you want to pin a layer version
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS-slim:7   # uncomment if you want to pin a layer version
 
 package:
   individually: true
 
 functions:
-  manual-wrapping-nodejs18x:
+  manual-wrapping-nodejs22x:
     description: demo manual wrapping for ESM
     handler: function.handler
-    runtime: nodejs18.x
+    runtime: nodejs22.x
     package:
       patterns:
         - "function.mjs"
     provisionedConcurrency: 0
     environment:
-      NEW_RELIC_APP_NAME: kmullaney-sls-esm-manual-wrapping-nodejs18x
+      NEW_RELIC_APP_NAME: kmullaney-sls-esm-manual-wrapping-nodejs22x

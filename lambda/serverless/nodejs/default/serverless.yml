@@ -46,7 +46,7 @@ custom:
     logEnabled: true # Agent logs
     logLevel: info # Agent log level
     debug: true # Serverless Framework debug
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS20X:101 # pinned to bypass SSL issues
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicNodeJS-slim:7 # pinned to bypass SSL issues
 
 package:
   individually: true

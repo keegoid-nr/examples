@@ -37,7 +37,7 @@ custom:
     logEnabled: true
     logLevel: debug
     debug: true
-    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython37:97
+    # layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicPython:3
   pythonRequirements:
     fileName: ./requirements.txt
 
@@ -45,7 +45,7 @@ package:
   individually: true
 
 functions:
-  python37:
+  python312:
     description: print dt headers
     # events:
     #   - schedule: rate(5 minutes)
@@ -55,6 +55,5 @@ functions:
         - ./**
       include:
         - ./function.py
-    # cURL is removed from Lambda runtimes > python3.7
-    runtime: python3.7
+    runtime: python3.12
     provisionedConcurrency: 0

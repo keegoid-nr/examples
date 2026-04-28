@@ -41,7 +41,7 @@ custom:
 #   individually: true
 
 functions:
-  python37:
+  python312:
     description: accept or insert dt headers
     # events:
     #   - schedule: rate(5 minutes)
@@ -50,5 +50,5 @@ functions:
       patterns:
         - "!./**"
         - "function.py"
-    runtime: python3.7
+    runtime: python3.12
     provisionedConcurrency: 0

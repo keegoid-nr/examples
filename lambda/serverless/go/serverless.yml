@@ -42,7 +42,7 @@ custom:
     logEnabled: true # Agent logs
     logLevel: debug # Agent log level
     debug: true # Serverless Framework debug
-    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42
+    layerArn: arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:68
 
 package:
   individually: true
@@ -64,4 +64,4 @@ functions:
         - "!**"
         - "bootstrap"
     layers:
-      - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:42
+      - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicLambdaExtension:68

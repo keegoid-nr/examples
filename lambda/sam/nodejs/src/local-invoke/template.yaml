@@ -12,7 +12,7 @@ Parameters:
     Description: Your New Relic ingest license key.
 
 Resources:
-  KmullaneySamLocalInvokeNodejs18x:
+  KmullaneySamLocalInvokeNodejs22x:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: .
@@ -21,11 +21,11 @@ Resources:
         owner: kmullaney
         reason: demo
         description: demo a Lambda using SAM local invoke
-      FunctionName: kmullaney-sam-local-invoke-nodejs18x
+      FunctionName: kmullaney-sam-local-invoke-nodejs22x
       # The handler for your function needs to be the one provided by the instrumentation layer, below.
       # Handler: newrelic-lambda-wrapper.handler
       Handler: app.lambdaHandler
-      Runtime: nodejs18.x
+      Runtime: nodejs22.x
       PackageType: Zip
       Environment:
         Variables:
@@ -33,7 +33,7 @@ Resources:
           NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
           NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
           NEW_RELIC_NO_CONFIG_FILE: true
-          NEW_RELIC_APP_NAME: kmullaney-sam-local-invoke-nodejs18x
+          NEW_RELIC_APP_NAME: kmullaney-sam-local-invoke-nodejs22x
           NEW_RELIC_NATIVE_METRICS_ENABLED: false
           NEW_RELIC_LAMBDA_HANDLER: app.lambdaHandler
           NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
@@ -57,10 +57,10 @@ Resources:
       Description: New Relic Lambda Extension Layer
       ContentUri: layers/newrelic-extension/
       CompatibleRuntimes:
-        - nodejs18.x
+        - nodejs22.x
 
   Logs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamLocalInvokeNodejs18x}"
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamLocalInvokeNodejs22x}"
       RetentionInDays: 7

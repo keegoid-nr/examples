@@ -9,5 +9,5 @@ module "nodejs_test_function" {
   newrelic_trusted_account_key = var.newrelic_trusted_account_key
   newrelic_license_key_secret = var.newrelic_license_key_secret
   # newrelic_license_key = var.newrelic_license_key
-  newrelic_layer = "arn:aws:lambda:${var.aws_region}:451483290750:layer:NewRelicNodeJS20X:35"
+  newrelic_layer = "arn:aws:lambda:${var.aws_region}:451483290750:layer:NewRelicNodeJS-slim:7"
 }
