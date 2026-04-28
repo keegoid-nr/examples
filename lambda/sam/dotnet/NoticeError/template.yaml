@@ -164,7 +164,7 @@ Resources:
           NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
           NEW_RELIC_IGNORE_EXTENSION_CHECKS: all # Ignore extension checks
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:24
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:52
       Events:
         KmullaneySamDotnet8StringError:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api

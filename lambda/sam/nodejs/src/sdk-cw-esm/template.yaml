@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: ESM Lambda using the SDK method with telemetry shipped via CloudWatch log subscription
+
+Parameters:
+  NewRelicAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NewRelicTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 5
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false
+        NEW_RELIC_LOG_ENABLED: true
+        NEW_RELIC_LOG: stdout
+        NEW_RELIC_LOG_LEVEL: info
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  KmullaneySamEsmSdkCwNodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: ESM Lambda using SDK method with telemetry shipped via CloudWatch
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Handler: function.handler
+      Runtime: nodejs20.x
+      PackageType: Zip
+      FunctionName: kmullaney-sam-esm-sdk-cw-nodejs20x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-esm-sdk-cw-nodejs20x
+      Tags:
+        owner: kmullaney
+        reason: testing
+        description: CloudWatch shipping with ESM function and SDK method
+
+  KmullaneySamEsmSdkCwNodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamEsmSdkCwNodejs20x}"
+      RetentionInDays: 7
+
+  KmullaneySamEsmSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamEsmSdkCwNodejs20xLogGroup
+      FilterName: !Sub "${KmullaneySamEsmSdkCwNodejs20x}-filter"
+
+Outputs:
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt KmullaneySamEsmSdkCwNodejs20x.Arn

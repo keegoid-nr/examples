@@ -105,7 +105,7 @@ Resources:
           NEW_RELIC_LOG_ENDPOINT: !Ref NewRelicLogEndpoint
           NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:64
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicLambdaExtension:68
       Tags:
         owner: kmullaney
         reason: demo

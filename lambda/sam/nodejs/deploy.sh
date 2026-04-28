@@ -13,6 +13,9 @@ if [ -z "$1" ]; then
   echo "  $0 us-west-2 aws-sdk-issue"
   echo "  $0 us-west-2 no-outbound-vpc"
   echo "  $0 us-west-2 dt-incoming"
+  echo "  $0 us-west-2 local-invoke"
+  echo "  $0 us-west-2 sdk-cw-esm"
+  echo "  $0 us-west-2 sdk-cw-record-metric"
   exit 1
 fi
 

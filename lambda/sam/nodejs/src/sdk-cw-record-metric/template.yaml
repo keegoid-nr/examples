@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda using the SDK method to record custom metrics with telemetry shipped via CloudWatch log subscription
+
+Parameters:
+  NewRelicAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NewRelicTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+
+Globals:
+  Function:
+    MemorySize: 256
+    Timeout: 5
+    Environment:
+      Variables:
+        # agent distributed tracing config
+        NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey
+        NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
+
+        # agent serverless config
+        NEW_RELIC_NO_CONFIG_FILE: true
+        NEW_RELIC_NATIVE_METRICS_ENABLED: false
+        NEW_RELIC_LOG_ENABLED: true
+        NEW_RELIC_LOG: stdout
+        NEW_RELIC_LOG_LEVEL: info
+        NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  KmullaneySamRecordMetricSdkCwNodejs20x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: Lambda using SDK method to record custom metrics with telemetry shipped via CloudWatch
+      Handler: function.handler
+      Runtime: nodejs20.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-record-metric-sdk-cw-nodejs20x
+      Environment:
+        Variables:
+          NEW_RELIC_APP_NAME: kmullaney-sam-aws-record-metric-sdk-cw-nodejs20x
+      Tags:
+        owner: kmullaney
+        reason: reproduction
+        description: test aws record metric with SDK method and CloudWatch shipping
+
+  KmullaneySamRecordMetricSdkCwNodejs20xLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamRecordMetricSdkCwNodejs20x}"
+      RetentionInDays: 7
+
+  KmullaneySamRecordMetricSubscriptionFilter:
+    Type: AWS::Logs::SubscriptionFilter
+    Properties:
+      DestinationArn: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:newrelic-log-ingestion-0a20a81d97cd
+      FilterPattern: ""
+      LogGroupName: !Ref KmullaneySamRecordMetricSdkCwNodejs20xLogGroup
+      FilterName: !Sub "${KmullaneySamRecordMetricSdkCwNodejs20x}-filter"
+
+Outputs:
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt KmullaneySamRecordMetricSdkCwNodejs20x.Arn

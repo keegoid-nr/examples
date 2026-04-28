@@ -127,7 +127,7 @@ Resources:
       #   SecurityGroupIds: !Ref SecurityGroupIds
       #   SubnetIds: !Ref SubnetIds
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS22X-slim:28
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS-slim:7
       Tags:
         owner: kmullaney
         reason: reproduction

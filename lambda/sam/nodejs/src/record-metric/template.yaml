@@ -123,7 +123,7 @@ Resources:
           NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
           NEW_RELIC_TELEMETRY_ENDPOINT: !Ref NewRelicTelemetryEndpoint
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS22X-slim:28
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS-slim:7
       Tags:
         owner: kmullaney
         reason: demo

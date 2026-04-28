@@ -5,10 +5,13 @@ Description: >
   the example you want to deploy, then run sam build && sam deploy --guided.
 
   Examples:
-    src/esm/              - ESM Lambda with newrelic-esm-lambda-wrapper (APM mode)
-    src/extension-only/   - Extension-only layer with vendored agent (layerless)
-    src/record-metric/    - Custom events, attributes, and recordMetric
-    src/default/          - Standard layer wrapper on nodejs20.x arm64
-    src/aws-sdk-issue/    - aws-sdk v2 instrumentation reproduction
-    src/no-outbound-vpc/  - VPC with no outbound access (extension timeout reproduction)
-    src/dt-incoming/      - Troubleshoot incoming DT headers from a POST request
+    src/esm/                  - ESM Lambda with newrelic-esm-lambda-wrapper (APM mode)
+    src/extension-only/       - Extension-only layer with vendored agent (layerless)
+    src/record-metric/        - Custom events, attributes, and recordMetric
+    src/default/              - Standard layer wrapper on nodejs20.x arm64
+    src/aws-sdk-issue/        - aws-sdk v2 instrumentation reproduction
+    src/no-outbound-vpc/      - VPC with no outbound access (extension timeout reproduction)
+    src/dt-incoming/          - Troubleshoot incoming DT headers from a POST request
+    src/local-invoke/         - Locally-bundled extension layer for sam local invoke testing
+    src/sdk-cw-esm/           - ESM Lambda using SDK method with CloudWatch log shipping
+    src/sdk-cw-record-metric/ - SDK method recording custom metrics with CloudWatch log shipping

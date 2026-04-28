@@ -1,0 +1,61 @@
+openapi: "3.0.1"
+info:
+  title: "LayerAPI"
+  version: "2019-02-06T01:20:23Z"
+servers:
+- url: "https://af-south-1.layers.newrelic-external.com"
+- url: "https://ap-northeast-1.layers.newrelic-external.com"
+- url: "https://ap-northeast-2.layers.newrelic-external.com"
+- url: "https://ap-northeast-3.layers.newrelic-external.com"
+- url: "https://ap-south-1.layers.newrelic-external.com"
+- url: "https://ap-south-2.layers.newrelic-external.com"
+- url: "https://ap-southeast-1.layers.newrelic-external.com"
+- url: "https://ap-southeast-2.layers.newrelic-external.com"
+- url: "https://ap-southeast-3.layers.newrelic-external.com"
+- url: "https://ap-southeast-4.layers.newrelic-external.com"
+- url: "https://ca-central-1.layers.newrelic-external.com"
+- url: "https://eu-central-1.layers.newrelic-external.com"
+- url: "https://eu-central-2.layers.newrelic-external.com"
+- url: "https://eu-north-1.layers.newrelic-external.com"
+- url: "https://eu-south-1.layers.newrelic-external.com"
+- url: "https://eu-south-2.layers.newrelic-external.com"
+- url: "https://eu-west-1.layers.newrelic-external.com"
+- url: "https://eu-west-2.layers.newrelic-external.com"
+- url: "https://eu-west-3.layers.newrelic-external.com"
+- url: "https://me-central-1.layers.newrelic-external.com"
+- url: "https://me-south-1.layers.newrelic-external.com"
+- url: "https://sa-east-1.layers.newrelic-external.com"
+- url: "https://us-east-1.layers.newrelic-external.com"
+- url: "https://us-east-2.layers.newrelic-external.com"
+- url: "https://us-west-1.layers.newrelic-external.com"
+- url: "https://us-west-2.layers.newrelic-external.com"
+paths:
+  /get-layers:
+    get:
+      parameters:
+      - name: "CompatibleRuntime"
+        in: "query"
+        schema:
+          type: "string"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Empty"
+        required: true
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Empty"
+components:
+  schemas:
+    Empty:
+      title: "Empty Schema"
+      type: "object"

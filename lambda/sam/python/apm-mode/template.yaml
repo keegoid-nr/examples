@@ -79,7 +79,7 @@ Resources:
       # https://layers.newrelic-external.com/
       PackageType: Zip
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython312:53
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython:3
       Environment:
         Variables:
           # --- New Relic APM + Serverless Convergence Configuration ---

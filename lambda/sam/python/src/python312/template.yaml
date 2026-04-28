@@ -1,58 +1,41 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: ESM Lambda using newrelic-esm-lambda-wrapper for improved cold start performance in APM mode
+Description: Python 3.12 Lambda with custom attribute and custom event, telemetry shipped via New Relic extension
 
 Parameters:
-  NewRelicAccountId:
+  NRAccountId:
     Type: String
     Description: Your New Relic account ID; necessary for distributed tracing.
     AllowedPattern: "[0-9]+"
-  NewRelicTrustedAccountKey:
+  NRTrustedAccountKey:
     Type: String
     Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
     AllowedPattern: "[0-9]+"
   LicenseKeyName:
     Type: String
-    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    Description: Your AWS Secrets Manager or Parameter Store name which holds the New Relic ingest license key.
     AllowedPattern: "[\\w/_-]+"
-  NewRelicHost:
-    Type: String
-    Description: The New Relic collector host for the agent.
-    Default: collector.newrelic.com
-  NewRelicLogEndpoint:
-    Type: String
-    Description: The New Relic log endpoint for the extension.
-    Default: https://log-api.newrelic.com/log/v1
-  NewRelicMetricEndpoint:
-    Type: String
-    Description: The New Relic metric endpoint for the extension.
-    Default: https://metric-api.newrelic.com/metric/v1
-  NewRelicTelemetryEndpoint:
-    Type: String
-    Description: The New Relic telemetry endpoint for the extension, if not using APM mode.
-    Default: https://cloud-collector.newrelic.com/aws/lambda/v1
 
 Globals:
   Function:
     MemorySize: 256
-    Timeout: 10
+    Timeout: 20
     Environment:
       Variables:
         # agent distributed tracing config
-        NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId
-        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey
+        NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
+        NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRTrustedAccountKey
         NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
 
         # agent serverless config
         NEW_RELIC_NO_CONFIG_FILE: true
-        NEW_RELIC_NATIVE_METRICS_ENABLED: false
+        NEW_RELIC_PACKAGE_REPORTING_ENABLED: false
         NEW_RELIC_LOG_ENABLED: true
-        NEW_RELIC_LOG: stdout
+        NEW_RELIC_LOG: stderr
         NEW_RELIC_LOG_LEVEL: info
         NEW_RELIC_CLOUD_AWS_ACCOUNT_ID: !Ref AWS::AccountId
 
         # extension config
-        NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName
         NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true
         NEW_RELIC_DATA_COLLECTION_TIMEOUT: 3s
         NEW_RELIC_EXTENSION_LOGS_ENABLED: true
@@ -60,7 +43,6 @@ Globals:
         NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true
         NEW_RELIC_EXTENSION_SEND_PLATFORM_LOGS: true
         NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
-        NEW_RELIC_COLLECT_TRACE_ID: true
 
 Resources:
   LambdaExecutionRole:
@@ -77,7 +59,9 @@ Resources:
         - Key: owner
           Value: kmullaney
         - Key: reason
-          Value: demo
+          Value: testing
+        - Key: description
+          Value: "python312 instrumentation"
       Policies:
         - PolicyName: LambdaAccess
           PolicyDocument:
@@ -87,6 +71,14 @@ Resources:
                 Effect: Allow
                 Action: "secretsmanager:GetSecretValue"
                 Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
+              - Sid: GetParameterStoreValue
+                Effect: Allow
+                Action: "ssm:GetParameter"
+                Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/NEW_RELIC_LICENSE_KEY"
+              - Sid: KmsDecrypt
+                Effect: Allow
+                Action: "kms:Decrypt"
+                Resource: !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
               - Sid: CloudWatchLogsAccess
                 Effect: Allow
                 Action:
@@ -94,45 +86,54 @@ Resources:
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
+        - PolicyName: LambdaXRayAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "xray:PutTraceSegments"
+                  - "xray:PutTelemetryRecords"
+                Resource: "*"
 
-  KmullaneySamEsmApmNodejs22x:
+  KmullaneySamPython312:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: kmullaney-sam-python-312
       CodeUri: .
-      Description: ESM Lambda using newrelic-esm-lambda-wrapper for improved cold start performance in APM mode
+      Description: Python 3.12 Lambda with custom attribute and custom event.
+      Handler: newrelic_lambda_wrapper.handler
+      Runtime: python3.12
       Role: !GetAtt LambdaExecutionRole.Arn
-      Handler: /opt/nodejs/node_modules/newrelic-esm-lambda-wrapper/index.handler
-      Runtime: nodejs22.x
       PackageType: Zip
-      FunctionName: kmullaney-sam-esm-apm-nodejs22x
+      Tracing: Active
       Environment:
         Variables:
-          # APM + Serverless convergence
-          NEW_RELIC_APM_LAMBDA_MODE: "true"
-          NR_TAGS: "NR.Apm.Lambda.Mode:true" # needed when no cloud integration exists
-          NEW_RELIC_APP_NAME: kmullaney-sam-esm-apm-nodejs22x
+          NEW_RELIC_APP_NAME: kmullaney-sam-python-312
           NEW_RELIC_LAMBDA_HANDLER: function.handler
-
-          # environment endpoints (override defaults for eu/staging)
-          NEW_RELIC_HOST: !Ref NewRelicHost
-          NEW_RELIC_LOG_ENDPOINT: !Ref NewRelicLogEndpoint
-          NEW_RELIC_METRIC_ENDPOINT: !Ref NewRelicMetricEndpoint
-          NEW_RELIC_TELEMETRY_ENDPOINT: !Ref NewRelicTelemetryEndpoint
       Layers:
-        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJS-slim:7
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicPython:3
       Tags:
-        NR.Apm.Lambda.Mode: "true"
         owner: kmullaney
-        reason: demo
-        description: nodejs22 ESM handler wrapper for improved cold start performance in APM mode
+        reason: testing
+        description: "python3.12 instrumentation with custom attribute and custom event"
 
-  KmullaneySamEsmApmNodejs22xLogGroup:
+  KmullaneySamPython312LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub "/aws/lambda/${KmullaneySamEsmApmNodejs22x}"
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamPython312}"
       RetentionInDays: 7
 
 Outputs:
   FunctionArn:
     Description: Lambda function ARN
-    Value: !GetAtt KmullaneySamEsmApmNodejs22x.Arn
+    Value: !GetAtt KmullaneySamPython312.Arn

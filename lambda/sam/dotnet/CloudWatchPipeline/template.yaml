@@ -99,7 +99,7 @@ Resources:
       Architectures:
         - x86_64
       Layers:
-        - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicDotnet:33
+        - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicDotnet:52
       Environment:
         Variables:
           # --- New Relic Configuration ---

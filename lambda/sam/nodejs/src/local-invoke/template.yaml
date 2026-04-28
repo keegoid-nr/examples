@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Node.js Lambda with a locally-bundled extension layer for sam local invoke testing
+
+Parameters:
+  NRAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NRLicenseKey:
+    Type: String
+    Description: Your New Relic ingest license key.
+
+Resources:
+  KmullaneySamLocalInvokeNodejs18x:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Description: Node.js Lambda with locally-bundled extension layer for local invoke testing
+      Tags:
+        owner: kmullaney
+        reason: demo
+        description: demo a Lambda using SAM local invoke
+      FunctionName: kmullaney-sam-local-invoke-nodejs18x
+      # The handler for your function needs to be the one provided by the instrumentation layer, below.
+      # Handler: newrelic-lambda-wrapper.handler
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      PackageType: Zip
+      Environment:
+        Variables:
+          NEW_RELIC_LICENSE_KEY: !Ref NRLicenseKey # overrides Secrets Manager and SSM Parameter Store
+          NEW_RELIC_ACCOUNT_ID: !Ref NRAccountId
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NRAccountId
+          NEW_RELIC_NO_CONFIG_FILE: true
+          NEW_RELIC_APP_NAME: kmullaney-sam-local-invoke-nodejs18x
+          NEW_RELIC_NATIVE_METRICS_ENABLED: false
+          NEW_RELIC_LAMBDA_HANDLER: app.lambdaHandler
+          NEW_RELIC_DISTRIBUTED_TRACING_ENABLED: true
+          NEW_RELIC_LAMBDA_EXTENSION_ENABLED: true
+          NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true
+          NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true
+          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG
+          NEW_RELIC_LOG_ENABLED: true
+          NEW_RELIC_LOG_LEVEL: debug
+          NEW_RELIC_LOG: stdout
+      Layers:
+        - !Ref NewRelicExtensionLayer
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !ImportValue NewRelicLicenseKeySecret-NewRelic-LicenseKeySecretARN
+
+  NewRelicExtensionLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: newrelic-lambda-extension
+      Description: New Relic Lambda Extension Layer
+      ContentUri: layers/newrelic-extension/
+      CompatibleRuntimes:
+        - nodejs18.x
+
+  Logs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamLocalInvokeNodejs18x}"
+      RetentionInDays: 7
