@@ -9,6 +9,7 @@ if [ -z "$1" ]; then
   echo "  $0 us-west-2 esm"
   echo "  $0 us-west-2 extension-only"
   echo "  $0 us-west-2 record-metric"
+  echo "  $0 us-west-2 custom-app-name"
   echo "  $0 us-west-2 default"
   echo "  $0 us-west-2 aws-sdk-issue"
   echo "  $0 us-west-2 no-outbound-vpc"
