@@ -45,10 +45,6 @@ Parameters:
     Type: String
     Description: Your AWS EC2 Key Pair name.
     AllowedPattern: "[0-9A-Za-z_-]+"
-  DevAccount:
-    Type: String
-    Description: The New Relic dev account ID for test layers.
-    AllowedPattern: "[0-9]+"
 
 Globals:
   Function:
@@ -76,12 +72,9 @@ Globals:
         NEW_RELIC_LOG_LEVEL: info # info|debug|finest
 
         # --- New Relic Extension Proxy Configuration ---
-        # These variables instruct the New Relic extension to send its telemetry
+        # This variable instructs the New Relic extension to send its telemetry
         # through our dedicated HTTP proxy server.
-        NEW_RELIC_PROXY_HOST: !GetAtt HttpProxyInstance.PrivateIp
-        NEW_RELIC_PROXY_PORT: "8888"
-        NEW_RELIC_PROXY_USER: "" # Not needed for our simple proxy
-        NEW_RELIC_PROXY_PASS: "" # Not needed for our simple proxy
+        NEW_RELIC_LAMBDA_EXTENSION_PROXY: !Sub "http://${HttpProxyInstance.PrivateIp}:8888"
 
 Resources:
   # ------------------------------------------------------------
@@ -337,7 +330,7 @@ Resources:
         - Key: reason
           Value: "reproduction"
         - Key: description
-          Value: "Testing HTTP Proxy with new Extension proxy environment variables"
+          Value: "Testing HTTP Proxy with new Extension proxy environment variable"
 
   # ------------------------------------------------------------
   # Lambda Function
@@ -345,9 +338,9 @@ Resources:
   HttpProxy:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/HttpProxy/
+      CodeUri: HttpProxy/
       Handler: HttpProxy::HttpProxy.Function::FunctionHandler
-      Runtime: dotnet8
+      Runtime: dotnet10
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
       PackageType: Zip
       Architectures:
@@ -358,7 +351,7 @@ Resources:
         SubnetIds:
           - !Ref PrivateSubnet
       Layers:
-        - !Sub arn:aws:lambda:ca-central-1:${DevAccount}:layer:NewRelicDotnet:2
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:58
       Environment:
         Variables:
           # --- New Relic Configuration ---
@@ -377,8 +370,7 @@ Resources:
           NEW_RELIC_EXTENSION_LOGS_ENABLED: true # Enable/disable [NR_EXT] log lines
           NEW_RELIC_EXTENSION_SEND_FUNCTION_LOGS: true # Send function logs
           NEW_RELIC_EXTENSION_SEND_EXTENSION_LOGS: true # Also send extension logs
-          NEW_RELIC_EXTENSION_LOG_LEVEL: DEBUG # INFO or DEBUG
-          # NEW_RELIC_IGNORE_EXTENSION_CHECKS: all # Ignore extension checks
+          NEW_RELIC_EXTENSION_LOG_LEVEL: ALL # INFO, DEBUG, TRACE, ERROR, WARN, ALL
       Tags:
         owner: kmullaney
         reason: "reproduction"

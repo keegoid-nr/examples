@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Each example has its own template.yaml. Navigate to the src/ subdirectory for
+  the example you want to deploy, then run sam build && sam deploy --guided.
+
+  Examples:
+    src/ApplicationProxy/     - Testing an HTTP proxy
+    src/CloudWatchPipeline/   - Testing CloudWatch pipeline
+    src/NoticeError/          - Noticing an error

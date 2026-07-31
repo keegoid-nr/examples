@@ -90,7 +90,7 @@ Resources:
   CloudWatchPipeline:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/CloudWatchPipeline/
+      CodeUri: CloudWatchPipeline/
       Handler: CloudWatchPipeline::CloudWatchPipeline.Function::FunctionHandler
       Runtime: dotnet8
       Role: !GetAtt KmullaneyLambdaExecutionRole.Arn
@@ -99,7 +99,7 @@ Resources:
       Architectures:
         - x86_64
       Layers:
-        - arn:aws:lambda:us-west-2:451483290750:layer:NewRelicDotnet:52
+        - arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicDotnet:58
       Environment:
         Variables:
           # --- New Relic Configuration ---

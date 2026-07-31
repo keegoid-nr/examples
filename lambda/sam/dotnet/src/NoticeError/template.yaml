@@ -95,7 +95,7 @@ Resources:
   KmullaneySamDotnet8ObjectError:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/ObjectError/
+      CodeUri: ObjectError/
       Description: A basic Dotnet 8 Object Error Lambda function using APIGatewayProxyRequest.
       Handler: ObjectError::ObjectError.Function::FunctionHandler
       Runtime: dotnet8
@@ -139,7 +139,7 @@ Resources:
   KmullaneySamDotnet8StringError:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/StringError/
+      CodeUri: StringError/
       Description: A basic Dotnet 8 String Error Lambda function using APIGatewayProxyRequest.
       Handler: StringError::StringError.Function::FunctionHandler
       Runtime: dotnet8
