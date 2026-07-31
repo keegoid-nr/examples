@@ -1,0 +1,13 @@
+{
+  "name": "kmullaney-nodejs",
+  "version": "0.2",
+  "description": "",
+  "type": "commonjs",
+  "main": "function.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
+  },
+  "author": "",
+  "license": "ISC"
+}

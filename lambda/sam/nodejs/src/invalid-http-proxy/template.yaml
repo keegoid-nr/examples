@@ -1,0 +1,318 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda with New Relic Node.js agent on arm64 via the standard layer wrapper in a VPC
+
+Parameters:
+  NewRelicAccountId:
+    Type: String
+    Description: Your New Relic account ID; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  NewRelicTrustedAccountKey:
+    Type: String
+    Description: Your New Relic parent account ID or account ID if no parent; necessary for distributed tracing.
+    AllowedPattern: "[0-9]+"
+  LicenseKeyName:
+    Type: String
+    Description: Your AWS Secrets Manager secret name which holds the New Relic ingest license key.
+    AllowedPattern: "[\\w/_\\-]+"
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: "sts:AssumeRole"
+      Tags:
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: demo
+      Policies:
+        - PolicyName: LambdaAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: GetSecretValue
+                Effect: Allow
+                Action: "secretsmanager:GetSecretValue"
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${LicenseKeyName}-*"
+              - Sid: CloudWatchLogsAccess
+                Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+              - Sid: CloudWatchMetricsAccess
+                Effect: Allow
+                Action:
+                  - "cloudwatch:PutMetricData"
+                Resource: "*"
+                Condition:
+                  StringEquals:
+                    "cloudwatch:namespace":
+                      - "AWS/Lambda"
+              - Sid: VpcAccess
+                Effect: Allow
+                Action:
+                  - "ec2:CreateNetworkInterface"
+                  - "ec2:DescribeNetworkInterfaces"
+                  - "ec2:DescribeSubnets"
+                  - "ec2:DeleteNetworkInterface"
+                  - "ec2:AssignPrivateIpAddresses"
+                Resource: "*"
+
+  # ------------------------------------------------------------
+  # VPC and Networking Resources
+  # ------------------------------------------------------------
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: KmullaneyVPC
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: KmullaneyPublicSubnet
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      Tags:
+        - Key: Name
+          Value: KmullaneyPrivateSubnet
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: KmullaneyIGW
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: KmullaneyPublicRouteTable
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  # ------------------------------------------------------------
+  # Security Groups
+  # ------------------------------------------------------------
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for the Lambda function."
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: KmullaneySG
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+        - Key: description
+          Value: "Testing VPC with Extension"
+
+  # ------------------------------------------------------------
+  # VPC Endpoint for Secrets Manager - ADDED
+  # ------------------------------------------------------------
+  SecretsManagerVPCEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security Group for Secrets Manager VPC Endpoint"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+      Tags:
+        - Key: Name
+          Value: KmullaneySecretsManagerEndpointSG
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+
+  SecretsManagerVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub "com.amazonaws.${AWS::Region}.secretsmanager"
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnet
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - !Ref SecretsManagerVPCEndpointSecurityGroup
+      Tags:
+        - Key: Name
+          Value: KmullaneySecretsManagerEndpoint
+        - Key: owner
+          Value: kmullaney
+        - Key: reason
+          Value: "reproduction"
+
+  NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: KmullaneyNatEIP
+        - Key: owner
+          Value: kmullaney
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: KmullaneyNatGateway
+        - Key: owner
+          Value: kmullaney
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: KmullaneyPrivateRouteTable
+        - Key: owner
+          Value: kmullaney
+
+  DefaultPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+
+  # ------------------------------------------------------------
+  # Lambda Function
+  # ------------------------------------------------------------
+  KmullaneySamVPCNodejs24xArm64:
+    Type: AWS::Serverless::Function
+    Properties:
+      MemorySize: 256
+      Timeout: 10
+      CodeUri: .
+      Description: Lambda with New Relic Node.js agent on arm64 via the standard layer wrapper in a VPC
+      Handler: newrelic-lambda-wrapper.handler
+      Runtime: nodejs24.x
+      Architectures: [arm64]
+      Role: !GetAtt LambdaExecutionRole.Arn
+      PackageType: Zip
+      FunctionName: kmullaney-sam-vpc-nodejs24x-arm64
+      Environment:
+        Variables:
+          NEW_RELIC_ACCOUNT_ID: !Ref NewRelicAccountId
+          NEW_RELIC_DISTRIBUTED_TRACING_EXCLUDE_NEWRELIC_HEADER: 'true'
+          NEW_RELIC_EXTENSION_LOG_LEVEL: ALL
+          NEW_RELIC_EXTENSION_LOGS_ENABLED: true
+          NEW_RELIC_LICENSE_KEY_SECRET: !Ref LicenseKeyName
+          NEW_RELIC_LAMBDA_HANDLER: index.handler
+          NEW_RELIC_TRUSTED_ACCOUNT_KEY: !Ref NewRelicTrustedAccountKey
+          HTTPS_PROXY: "http://10.0.1.5"
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref PrivateSubnet
+      Layers:
+        - !Sub arn:${AWS::Partition}:lambda:${AWS::Region}:451483290750:layer:NewRelicNodeJSARM64:25
+      Tags:
+        owner: kmullaney
+        reason: demo
+        description: nodejs24 arm64 standard layer wrapper
+
+  KmullaneySamVPCNodejs24xArm64LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${KmullaneySamVPCNodejs24xArm64}"
+      RetentionInDays: 7
+
+Outputs:
+  FunctionArn:
+    Description: Lambda function ARN
+    Value: !GetAtt KmullaneySamVPCNodejs24xArm64.Arn
